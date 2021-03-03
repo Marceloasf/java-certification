@@ -1,0 +1,100 @@
+** Chapter 2 - Operators and Statements
+
+* Using Operators and Decision Constructs
+- Use Java operators; including parentheses to override operator precedence;
+- Create if, if/else and ternary constructs;
+- Use a switch statement;
+
+* Using Loop Constructs
+- Create and use while loops;
+- Create and use for loops, including the enchanced for loop;
+- Create and use do/while loops;
+- Compare loop constructs;
+- Use break and continue;
+
+/////////////////////////////////////////////////////////////////////////////
+
+** p.52-55
+** Operators
+ - Three types of operators are available in Java: unary (++, --), binary(+, -, *, /, %) and ternary(a ? b : c);
+ - Unless overridden with parentheses, Java operators follow order of operation;
+ - If two operators have the same level of precedence, then Java guarantees left-to-right evaluation; 
+ - All of the arithmetic operators may be applied to any Java primitives, except boolean;
+ - To String values, only the addition operators + and += may be applied, which results in String concatenation;
+ - Modulus operation (%) may also be applied to negative integers and floating-point integers;
+** Order of operator precedence (decreasing order of precedence):
+ - Post-unary operators - expression++, expression--
+ - Pre-unary operators - ++expression, --expression
+ - Other unary operators - ~, + (positive), - (negative/negates a expression), ! (inverts a boolean's logical value)
+ - Multiplication/Division/Modulus - *, /, %
+ - Addition/Subtraction - +,-
+ - Shift operators - <<, >>, >>>
+ - Relational operators - <, >, <=, >=, instanceof
+ - Equal to/not equal to - ==, !=
+ - Logical operators - &, ^, | - (Evaluates all conditions) 
+ - Short-circuit logical operators - &&, || (Short circuit on the first true)
+ - Ternary operators - boolean expression ? expression1 : expression2
+ - Assignment operators - =, +=, -=, *=, /=, %=, &=, ^=, <<=, >>=, >>>=
+
+** p.55-56
+** Numeric promotion rules:
+ - If two values have different data types, Java will automatically promote one of the values 
+ to the larger of the two data types (ex.: short -> int or long);
+ - If one of the values is integral and other is floating-point, Java will automatically promote 
+ the integral value to the floating-point value's data type;
+ - Smaller data types, namely byte, short and char, are first promoted to int any time they're 
+ used with a Java binary arithmetic operator, even if neither of the operands is int;
+ - After all promotion has occurred and the operands have the same data type, the resulting value 
+ will have the same data type as its promoted operands;
+
+** p.59
+** Increment and Decrement Operators:
+  There are two orders that can be applied when using these operators:
+ PRE (++x or --x) and POST (x++ or x--);
+ Examples of the distinction (code snippet):
+ `int counter = 0;`
+ `System.out.print(counter); // Outputs 0`
+ `System.out.print(++counter); // Outputs 1`
+ `System.out.print(counter); // Outputs 1`
+ `System.out.print(counter--); // Outputs 1`
+ `System.out.print(counter); // Outputs 0`
+**
+ `int x = 3;`
+ `int y = ++x * 5 / x-- + --x;`
+ `System.out.println("x is " + x);`
+ `System.out.println("y is " + y);`
+ 
+ Simplify this:
+ `int y = 4 * 5 / x-- + --x; // x assigned value of 4`
+ then
+ `int y = 4 * 5 / 4 + --x; // x assigned value of 3`
+ then
+ `int y = 4 * 5 / 4 + 2; // x assigned value of 2`
+ then the result is `x is 2` and `y is 7`
+
+** p.61
+** Overflow and Underflow:
+  Overflow is when a number is so large that it will no longer fit within the data type,
+ so the system "wraps around" to the next lowest value and counts up from there. There is 
+ a analogous Underflow, when the number is too low to fit in the data type. For example:
+ - `System.out.print(2147483647+1); // -2147483648`
+ Since 2147483647 is the maximum int value, adding any strictly positive value to it will 
+ cause it to wrap to the next negative number.
+
+** p.63
+** Relational Operators:
+  The instanceof operator is the fifth relational operator, and it's applied to object references and classes or interfaces.
+ - `a instanceof b` - True if the reference that a points to is an instance of a class,
+ subclass or class that implements a particular interface, as named in b.
+
+** p.65
+** Equality Operators:
+   The equality operators (= and !=) are used in one of three scenarios:
+  1. Comparing two numeric primitive types. If the numeric values are of
+  different data types, the values are automatically promoted as previously
+  described. For example, 5 == 5.00 returns true since the left side is
+  promoted to a double.
+  2. Comparing two boolean values.
+  3. Comparing two objects, including null and String values.
+  - For object comparison, the equality operator is applied to the references to the objects, not the objects they point to;
+  - Two references are equal if and only they point to the same object or both point to null.
