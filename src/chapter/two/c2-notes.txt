@@ -12,17 +12,17 @@
 - Compare loop constructs;
 - Use break and continue;
 
-/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ** p.52-55
-** Operators
+** Operators:
  - Three types of operators are available in Java: unary (++, --), binary(+, -, *, /, %) and ternary(a ? b : c);
  - Unless overridden with parentheses, Java operators follow order of operation;
  - If two operators have the same level of precedence, then Java guarantees left-to-right evaluation; 
  - All of the arithmetic operators may be applied to any Java primitives, except boolean;
  - To String values, only the addition operators + and += may be applied, which results in String concatenation;
  - Modulus operation (%) may also be applied to negative integers and floating-point integers;
-** Order of operator precedence (decreasing order of precedence):
+* Order of operator precedence (decreasing order of precedence):
  - Post-unary operators - expression++, expression--
  - Pre-unary operators - ++expression, --expression
  - Other unary operators - ~, + (positive), - (negative/negates a expression), ! (inverts a boolean's logical value)
@@ -58,12 +58,11 @@
  `System.out.print(counter); // Outputs 1`
  `System.out.print(counter--); // Outputs 1`
  `System.out.print(counter); // Outputs 0`
-**
+*
  `int x = 3;`
  `int y = ++x * 5 / x-- + --x;`
  `System.out.println("x is " + x);`
  `System.out.println("y is " + y);`
- 
  Simplify this:
  `int y = 4 * 5 / x-- + --x; // x assigned value of 4`
  then
@@ -98,3 +97,39 @@
   3. Comparing two objects, including null and String values.
   - For object comparison, the equality operator is applied to the references to the objects, not the objects they point to;
   - Two references are equal if and only they point to the same object or both point to null.
+
+** p.67-68
+** The if-then Statement:
+  - For readability, it is considered good coding practice to put blocks around the execution component of if-then
+  statements, as well as many other control flow statements, although it is not required (single line statement: 
+  `if (boolean condition) expression //branch if true;`).
+
+** p.69-70
+** The if-then-else Statement:
+  - The else operator takes a statement or block of statements, in the same manner
+   as the if statement does (`if (b) {} else {}` or `if (b) {} else if (b2) {}`);
+  - Using a if-then-else statement in a single line works, but remember to guarantee that all the semicolons (;) are written:
+    `if (x != 5) 
+         System.out.println("if-then-else single line true branch") // DOES NOT COMPILE
+     else
+         System.out.println("if-then-else single line false branch");` 
+  
+** p.71
+** Ternary Operator:
+   - It takes 3 operands, a boolean expression (condition) and two expressions of any kind that returns a value; 
+   - Note that it is often helpful for readability to add parentheses around the expressions in ternary operators,
+    although it is certainly not required;
+   - In the exam, pay extra attention to any cases which a variable can be modified by the right-hand side
+    expressions of a ternary;
+
+** p.72-75
+** The switch Statement:
+    - Supported data types are byte, short, char, int, enum values, String, Byte, Short, Character and Integer.
+    - A switch statement may contain 0 or more case branches, break inside the case is optional,
+    and the default is optional and it may appear anywhere within the switch statement.
+    - The values in each case statement must be compile-time constant values of the same data type as the switch value,
+    this means that you can use only literals, enum constants or final constant variables of the same data type. A final
+    constant is a variable that is marked with the final modifier and initialized with a literal value in the same
+    expression in which it is declared.
+    - If there isn't a break statement on the default or case block, flow will continue to the next proceeding
+    case or default block automatically until it finds a break statement or finishes the structure.
