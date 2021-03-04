@@ -44,5 +44,31 @@ public class JavaStatements {
                 System.out.println("Friday!");
                 break;
         }
+
+        int bitesOfCheese = 10;
+        int roomInBelly = 5;
+
+        while (bitesOfCheese > 0 && roomInBelly > 0) {
+            --bitesOfCheese;
+            --roomInBelly;
+        }
+
+        System.out.println(bitesOfCheese + " pieces of cheese left.");
+
+        int chips = 10;
+        int roomInPackage = 5;
+
+        do {
+            --chips;
+            --roomInPackage;
+        } while (chips > 0 && roomInPackage > 0);
+
+        System.out.println(chips + " chips left.");
+
+        int f = 0;
+
+        for(long i = 0, p = 4; f < 5 && i < 10; f++, i++) { 
+            System.out.println(i + " ");
+        }
     }
 }

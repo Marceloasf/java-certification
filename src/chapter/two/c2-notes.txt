@@ -133,3 +133,56 @@
     expression in which it is declared.
     - If there isn't a break statement on the default or case block, flow will continue to the next proceeding
     case or default block automatically until it finds a break statement or finishes the structure.
+
+** p.77
+** The while Statement:
+   - Curly braces are required for block of multiple statements and optional for single statement.
+   - The loop may terminate after its first evaluation of the boolean expression (returning a false), 
+   in this manner, the statement block may never be executed (while evaluates before continuing execution).
+
+** p.78
+** The do-while Statement:
+   - Curly braces are required for block of multiple statements and optional for single statement. 
+   - Unlike a while loop, a do-while loop guarantees that the statement or block will be executed at least once.
+
+** p.80-83
+** The Basic for Statement:
+   - Curly braces are required for block of multiple statements and optional for single statement. 
+   - Its composed of 3 sections, an initialization block, boolean expression and an update statement
+    (`for (initialization; booleanExpression; updateStatement)).
+* Basic for steps are:
+  1. Initialization statement executes. 
+  2. If booleanExpression is true continue, else exit loop. 
+  3. Body executes. 
+  4. Execute updateStatement. 
+  5. Return to Step 2. 
+  - The initialization and update sections may contain multiple statements, separated by commas (,).
+* Some examples of exam basic for variations and edge cases:
+  
+  1. Creating an Infinite Loop
+    `for( ; ; ) { ... }`
+  This example will compile, it is an infinite loop that will run the body repeatedly.
+    `for( ; )` or `for( )` will not compile.
+  
+  2. Adding Multiple Terms to the for Statement
+    `int x = 0;
+    for(long y = 0, z = 4; x < 5 && y < 10; x++, y++) { ... } // COMPILES`
+  This example will compile, since you can add multiple terms into for sections.
+  
+  3. Redeclaring a Variable in the Initialization Block
+    `int x = 0;
+    for(long y = 0, x = 4; x < 5 && y < 10; x++, y++) { ... } // DOES NOT COMPILE`
+  Does not compile because x is repeated in the initialization block after being already being declared before the loop,
+  resulting the compiler stopping because of a duplicate variable declaration, we can fix this removing the declaration
+  on the for and only assigning the values to x and a pre declared y.
+    `int x = 0;
+    long y = 10;
+    for(y = 0, x = 4; x < 5 && y < 10; x++, y++) { ... } // COMPILES`
+
+  4. Using Incompatible Data Types in the Initialization Block
+    `for(long y = 0, int x = 4; x < 5 && y < 10; x++, y++) { ... } // DOES NOT COMPILES`
+  The variables in the initialization block must all be of the same type. 
+  
+  5. Using Loop Variables Outside the Loop
+    `for(long y = 0, x = 4; x < 5 && y < 10; x++, y++) { ... }
+    System.out.println(x); // DOES NOT COMPILE`
