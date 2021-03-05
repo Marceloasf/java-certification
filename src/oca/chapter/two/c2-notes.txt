@@ -12,6 +12,8 @@
 - Compare loop constructs;
 - Use break and continue;
 
+Ps.: This chapter covers the same subjects as the Chapters 3 and 4 of the OCP-11 book, but it covers them in Java 8.
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ** p.52-55

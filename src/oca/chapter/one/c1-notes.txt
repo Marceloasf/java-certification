@@ -13,6 +13,8 @@
 - Know how to read or write to object fiels;
 - Explain an Object's Lifecycle (creation, "dereference by reassignment" and garbage collection);
 
+Ps.: This chapter covers the same subjects as the Chapters 1 and 2 of the OCP-11 book, but it covers them in Java 8.
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ** Java comment types:

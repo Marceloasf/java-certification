@@ -1,0 +1,22 @@
+* As mentioned on c1-notes and c2-notes, I am starting this book at this chapter (5) because the OCA-8 book already
+  covers the same subjects of the Chapters 1-4 from this book in its Chapters 1-2, they will be revisited futurely.
+
+** Chapter 5 - Core Java APIs
+
+* Working with Java Primitive Data Types and String APIs
+- Create and manipulate Strings.
+- Manipulate data using the StringBuilder class and its methods.
+
+* Working with Java Arrays
+- Declare, instantiate, initialize and use one-dimensional and two-dimensional arrays.
+
+* Programming Abstractly Through Interfaces
+- Declare and use List and ArrayList instances.
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+** p.166-167
+** String immutability:
+    - Once a String object is created, it is not allowed to change. It cannot be made larger or smaller, and you
+    cannot change one of the characters inside it. You can make a reference point to a different String object.
+    Obs.: Immutable classes in Java are final, which prevents subclasses creation.
