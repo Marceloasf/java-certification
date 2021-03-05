@@ -1,7 +1,7 @@
-package chapter.one;
+package oca.chapter.one;
 import java.util.Random;
 
-//After compiling the .java file, to execute this class type java chapter.one.Zoo "San Diego" Zoo from the \src folder
+//After compiling the .java file, to execute this class type java oca.chapter.one.Zoo "San Diego" Zoo from the \src folder
 public class Zoo {
 
     public Zoo() {

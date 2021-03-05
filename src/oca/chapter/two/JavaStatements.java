@@ -1,4 +1,4 @@
-package chapter.two;
+package oca.chapter.two;
 
 public class JavaStatements {
 
@@ -23,6 +23,12 @@ public class JavaStatements {
         else
             System.out.println("if-then-else single line false branch");
 
+        if (x != 5) 
+            System.out.println("if-then-else single line true branch");
+        else {
+            System.out.println("if-then-else single line false branch");
+        }
+
         if (x > 5) {
             System.out.println("if-then-else-if-then first if true branch");
         } else if (x == 5) {
@@ -34,6 +40,8 @@ public class JavaStatements {
         int y = x == 5 ? 10 : 0; // () on the operands are optional;
 
         System.out.println("ternary result = " + y);
+        
+        System.out.println("\n----------------------------------------\n");
 
         switch(y) {
             case 0:                              // If the value is 0, it will print all the cases 
@@ -44,6 +52,8 @@ public class JavaStatements {
                 System.out.println("Friday!");
                 break;
         }
+        
+        System.out.println("\n----------------------------------------\n");
 
         int bitesOfCheese = 10;
         int roomInBelly = 5;
@@ -65,10 +75,52 @@ public class JavaStatements {
 
         System.out.println(chips + " chips left.");
 
+        System.out.println("\n----------------------------------------\n");
+
         int f = 0;
 
         for(long i = 0, p = 4; f < 5 && i < 10; f++, i++) { 
             System.out.println(i + " ");
         }
+
+        String[] names = new String[3];
+
+        // Prints 3 null values
+        for (String name : names) {
+            System.out.println(name + " ");
+        }
+
+        java.util.List<String> values = new java.util.ArrayList<>();
+
+        // Doesn't iterate over this empty ArrayList.
+        for (String value : values) {
+            System.out.println(value + " ");
+        }
+
+        System.out.println("\n----------------------------------------\n");
+
+        int [][] myComplexArray = {{5,2,1,3}, {3,9,8,9}, {5,7,12,7}};
+
+        for (int[] mySimpleArray : myComplexArray) {
+            for (int i = 0; i < mySimpleArray.length; i++) {
+                System.out.println(mySimpleArray[i] + "\t");
+            }
+            System.out.println();
+        }
+
+        int nestedWhileX = 20;
+
+        while (nestedWhileX > 0) {
+
+            do {
+                nestedWhileX -= 2;
+            } while (nestedWhileX > 5);
+
+            nestedWhileX--;
+            System.out.println(nestedWhileX + "\t");
+        }
+
+        byte n = 10;
+        byte v = 10;
     }
 }

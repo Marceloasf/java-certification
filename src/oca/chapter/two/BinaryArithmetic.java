@@ -1,4 +1,4 @@
-package chapter.two;
+package oca.chapter.two;
 
 public class BinaryArithmetic {
 

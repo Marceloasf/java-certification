@@ -1,4 +1,4 @@
-package chapter.one;
+package oca.chapter.one;
 
 public class InstanceInitializer {
     

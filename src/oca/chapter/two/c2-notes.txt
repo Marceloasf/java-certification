@@ -1,11 +1,11 @@
 ** Chapter 2 - Operators and Statements
 
-* Using Operators and Decision Constructs
+* Using Operators and Decision Constructs (decision-making controls structures)
 - Use Java operators; including parentheses to override operator precedence;
 - Create if, if/else and ternary constructs;
 - Use a switch statement;
 
-* Using Loop Constructs
+* Using Loop Constructs (repetion control structures)
 - Create and use while loops;
 - Create and use for loops, including the enchanced for loop;
 - Create and use do/while loops;
@@ -167,7 +167,7 @@
   2. Adding Multiple Terms to the for Statement
     `int x = 0;
     for(long y = 0, z = 4; x < 5 && y < 10; x++, y++) { ... } // COMPILES`
-  This example will compile, since you can add multiple terms into for sections.
+  This example will compile, since you can add multiple terms into basic for sections.
   
   3. Redeclaring a Variable in the Initialization Block
     `int x = 0;
@@ -186,3 +186,28 @@
   5. Using Loop Variables Outside the Loop
     `for(long y = 0, x = 4; x < 5 && y < 10; x++, y++) { ... }
     System.out.println(x); // DOES NOT COMPILE`
+
+** p.83
+** The for-each Statement (enchanced for):
+  - Curly braces are required for block of multiple statements and optional for single statement. 
+  - The for-each loop declaration is composed of an initialization section and an object to be iterated over.
+  - The right-hand side of the loop (iterable collection of objects) must be a built-in Java array or an
+  object whose class implements java.lang.Iterable (includes most of the Java Collections framework).
+  - The left-hand side of the loop (collection member) must include a declaration for an instance of a variable,
+  whose type matches the type of a member of the array or collection in the right-hand side of the statement.
+
+** p.87-91
+** Optional Labels, break Statement and continue Statement:
+  - if-then statements, switch statements and loops can all have optional labels.
+  - A label is an optional pointer to teh head of a statement that allows the application flow to jump to it or break from it.
+  - It is rarely considered good coding practice to use this labels to control and block structures,
+  they are mostly used in loop structures.
+  Ex.: `OUTER_LOOP: for(long y = 0, z = 4; x < 5 && y < 10; x++, y++) { break OUTER_LOOP; } // COMPILES`
+  - Not using a label on a break statement (`break` instead of `break LOOP:`) will make the break statement terminate
+  the nearest inner loop it is currently on the process of executing. 
+  - continue statement syntax and usage mirrors the break statement, but has different results.
+  - Difference between break and continue statements: While the break statement transfers control to the enclosing statement,
+  terminating the execution of a loop, the continue statement transfers control to the boolean expression that determines if 
+  the loop should continue. In other words, it ends the current iteration of the loop.
+  Obs.: The if-then statement does not allow the usage of unlabeled break statement.
+  The if-then statement and switch statement, both don't allow the continue statement usage.
