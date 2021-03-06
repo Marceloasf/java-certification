@@ -99,7 +99,8 @@ public class JavaStatements {
 
         System.out.println("\n----------------------------------------\n");
 
-        int [][] myComplexArray = {{5,2,1,3}, {3,9,8,9}, {5,7,12,7}};
+        int [][] myComplexArray = new int[][] {{5,2,1,3}, {3,9,8,9}, {5,7,12,7}};
+        // int [][] myComplexArray = {{5,2,1,3}, {3,9,8,9}, {5,7,12,7}}; Both compile 
 
         for (int[] mySimpleArray : myComplexArray) {
             for (int i = 0; i < mySimpleArray.length; i++) {
@@ -120,7 +121,8 @@ public class JavaStatements {
             System.out.println(nestedWhileX + "\t");
         }
 
-        byte n = 10;
-        byte v = 10;
+        String [] bugs = { "cricket", "beetle", "ladybug" };
+
+        System.out.println(java.util.Arrays.toString(bugs));
     }
 }

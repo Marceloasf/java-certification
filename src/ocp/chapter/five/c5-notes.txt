@@ -20,3 +20,82 @@
     - Once a String object is created, it is not allowed to change. It cannot be made larger or smaller, and you
     cannot change one of the characters inside it. You can make a reference point to a different String object.
     Obs.: Immutable classes in Java are final, which prevents subclasses creation.
+
+** p.172
+** trim(), strip(), stripLeading(), stripTrailing() and intern():
+  - trim() and strip() removes whitespaces from the beginning and/or end of a String.
+  The diference is that strip() supports unicode.
+  - stripLeading() removes whitespaces only from the beginning of the String.
+  - stripTrailing() removes whitespaces only from the end of the String.
+  - The intern() method returns the value from the string pool if it is there, otherwise,
+  it adds the value to the string pool;
+
+** p.174-179
+** StringBuilder:
+  - StringBuilder is not immutable (a.append("x") concats to the same object).
+  - StringBuffer is slower and older than StringBuilder, so just use StringBuilder.
+  - When chaining StringBuilder methods, it will changes its own state and returns a reference to itself (append() the same object),
+  different than String that returns a new String on chaining.
+  - charAt(), indexOf(), length and substring() all work the same way as they work with String,
+  but substring() returns a String rather than a StringBuilder.
+  - append() will convert values (any) into String, like true to "true".
+  - insert() adds chars to the StringBuilder at the requested index and returns a reference to the current StringBuilder.
+  - delete() deletes chars from a starting index to a ending index, deleteCharAt() deletes only one char at the indicated index.
+  - StringBuilder a = new StringBuilder("abc"); - a.delete(1, 100); // Compiles because Java will just assume you meant the end,
+  delete() is more flexible. 
+  - StringBuilder replace() works differently, it will take 3 params (startIndex, endIndex and newString), first Java removes the
+  values from the startingIndex to the endingIndex, then inserts the value in that position.
+  - replace() compiles like the delete() with a endingIndex way bigger than the value.
+  - reverse() does just what it sounds like, it reverse the chars in the sequences and returns a ref to the current StringBuilder.
+
+** p.179-180
+** Understanding equality:
+  - Logical equality is asserting the values of the objects (stringA.equals(stringB), same value is true).
+  - Object equality is asserting the references, if they are pointing to the same object (stringA == stringB, same object is true).
+  - If you call equals() on two Objects that doesn't implements the equals() method, it will check reference equality (StringBuilder for example).
+  - Obs.: If you try to check Object equality between two different Objects, the compiler will throw a error, because he is smart enought
+  to know that two references can't possibly point to the same Object when they are completely different types.
+
+** p.181-182
+** String Pool:
+  - The string pool contains literal values and constants ("ABC") that appear in your program.
+  - Java realizes that many strings repeat in the program and solves this issue by reusing common ones,
+  the string pool is a location in the JVM that collects all these strings.
+
+  How the String Pool can impact on reference equality:
+  `String x = "Hello";`
+  `String y = "Hello";`
+  `x == y` // is true, because the JVM created only one literal in memory. x and y both point to the the same location in memory;
+  therefore, the statement outputs true.
+  
+  `String x = "Hello";`
+  `String y = "  Hello".trim();`
+  `x == y` // is false, because we don't have the same String literal. Although both happen to evaluate to the same string,
+  one is computed at runtime, since it isn't the same at compile-time, a new String object is created.
+  - If we call the intern() after that trim(), Java will add it to the string pool and the result will be true.
+
+  Obs.: Never use intern() or == to compare String objects in your code. Just know how they work for the exam.
+
+** p.184-186
+** Understanding Java Arrays:
+  - Default declaration: int[] numbers = new numbers[3] -> arrays are reference variables.
+  - Anonymous array is a declaration of an array that doesn't need you to specify the type and size,
+  for example: `int[] numbers2 = {42, 45}`, since you are specifying the type of the array on the
+  left side of the equal sign, Java already knows the type and since you are specifying the initial 
+  values, it already knows the size.
+  - The array does not allocate space for the Objects, instead, it allocates space for a reference
+  to where the objects are really stored. 
+  - For the exam is good to know that all these statements do the exact thing:
+  * int[] numAnimals;
+  * int [] numAnimals2;
+  * int []numAnimals3;
+  * int numAnimals4[];
+  * int numAnimals5 [];
+  * int[] ids, types; // Declare both as int[].
+  * int ids[], types; // Declare only ids as int[] and types is declared as int.
+  
+  - We can call equals() because an array is an object (any type of array), but it uses reference equality.
+  The equals() method on arrays, does not look at the elements of the array.
+  Note: Since Java 5, Java has provided a method that prints an array nicely:
+  `String [] bugs = { "cricket", "beetle", "ladybug" };`
+  `java.util.Arrays.toString(bugs)` would print [cricket, beetle, ladybug] (inside of a System.out.println...).
