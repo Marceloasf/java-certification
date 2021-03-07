@@ -52,7 +52,8 @@
 
 ** p.179-180
 ** Understanding equality:
-  - Logical equality is asserting the values of the objects (stringA.equals(stringB), same value is true).
+  - Logical equality is asserting the values (for strings, stringA.equals(stringB), same value is true) - equal() depends on the
+  implementation of the object it is being called on.
   - Object equality is asserting the references, if they are pointing to the same object (stringA == stringB, same object is true).
   - If you call equals() on two Objects that doesn't implements the equals() method, it will check reference equality (StringBuilder for example).
   - Obs.: If you try to check Object equality between two different Objects, the compiler will throw an error, because he is smart enought
@@ -79,7 +80,8 @@
   Obs.: Never use intern() or == to compare String objects in your code. Just know how they work for the exam.
 
 ** p.184-186
-** Understanding Java Arrays:
+** Understanding Java arrays:
+  - An array is a fixed-sized area of memory on the heap, that has space for primitives or pointers to objects. 
   - Default declaration: int[] numbers = new numbers[3] -> arrays are reference (object) variables.
   - Anonymous array is a declaration of an array that doesn't need you to specify the type and size,
   for example: `int[] numbers2 = {42, 45}`, since you are specifying the type of the array on the
