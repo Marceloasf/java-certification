@@ -120,9 +120,5 @@ public class JavaStatements {
             nestedWhileX--;
             System.out.println(nestedWhileX + "\t");
         }
-
-        String [] bugs = { "cricket", "beetle", "ladybug" };
-
-        System.out.println(java.util.Arrays.toString(bugs));
     }
 }
