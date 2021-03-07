@@ -23,8 +23,10 @@
     cannot change one of the characters inside it. You can make a reference point to a different String object.
     Obs.: Immutable classes in Java are final, which prevents subclasses creation.
 
-** p.172
-** trim(), strip(), stripLeading(), stripTrailing() and intern():
+** p.167-172
+** substring(), length(), trim(), strip(), stripLeading(), stripTrailing() and intern():
+  - substring() has one starting index param and a ending index optional param, if the endingIndex is specified, it will stop at the index.
+    `"abcde".substring(1, 4);` // Result is "bcd".
   - trim() and strip() (Java 11) removes whitespaces from the beginning and end of a String.
   The diference between then is that strip() supports unicode.
   - stripLeading() removes whitespaces only from the beginning of the String.
@@ -37,12 +39,12 @@
   - StringBuilder is not immutable (a.append("x") concats to the same object).
   - StringBuffer is slower and older than StringBuilder, so just use StringBuilder.
   - When chaining StringBuilder methods, it will changes its own state and returns a reference to itself (append() the same object),
-  different than String that returns a new String on chaining.
-  - charAt(), indexOf(), length and substring() all work the same way as they work with String,
+  different than String that returns a new String on chaining. 
+  - charAt(), indexOf(), length() and substring() all work the same way as they work with String,
   but substring() returns a String rather than a StringBuilder.
   - append() will convert values (any type) into String, like true to "true".
   - insert() adds chars to the StringBuilder at the requested index and returns a reference to the current StringBuilder.
-  - delete() deletes chars from a starting index to an ending index, deleteCharAt() deletes only one char at the indicated index.
+  - delete() deletes chars from a starting index to stop right before the ending index, deleteCharAt() deletes only one char at the indicated index.
   - StringBuilder a = new StringBuilder("abc"); - a.delete(1, 100); // Compiles because Java will just assume you meant the end,
   delete() is more flexible. 
   - StringBuilder replace() works differently than the others, it will take 3 params (startIndex, endIndex and newString), first Java removes the
@@ -53,7 +55,7 @@
 ** p.179-180
 ** Understanding equality:
   - Logical equality is asserting the values (for strings, stringA.equals(stringB), same value is true) - equal() depends on the
-  implementation of the object it is being called on.
+  implementation of the object it is being called on, the default is using object equality (comparing references).
   - Object equality is asserting the references, if they are pointing to the same object (stringA == stringB, same object is true).
   - If you call equals() on two Objects that doesn't implements the equals() method, it will check reference equality (StringBuilder for example).
   - Obs.: If you try to check Object equality between two different Objects, the compiler will throw an error, because he is smart enought
@@ -98,7 +100,8 @@
   * int[] ids, types; // Declare both as int[].
   * int ids[], types; // Declare only ids as int[] and types is declared as int.
   
-  - We can call equals() because an array is an object (any type of array), but it uses reference equality.
+  - We can call equals() because an array is an object (any type of array), but it uses reference equality because it
+  doesn't override Object implementation. **
   The equals() method on arrays, does not look at the elements of the array.
   Note: Since Java 5, Java has provided a method that prints an array nicely:
   `String [] bugs = { "cricket", "beetle", "ladybug" };`
@@ -108,7 +111,7 @@
 ** Using an Array:
   - length is not a method.
   - length does not consider what is in the array, it only considers how many slots have been allocated.
-  `String[] numbers = new String[6];` // numbers.length results in 6, even though all six elements are null.
+    `String[] numbers = new String[6];` // numbers.length results in 6, even though all six elements are null.
   - There is no direct way to remove and add elements from an array in Java.
 
 ** p.188
@@ -161,12 +164,12 @@
   but if a type is specified, only that type can be added (add()) into the ArrayList.
   - add() method can be used in two different ways, add(index, value) and add(value), one adding the value at the 
   specified index and the other adding to the end of the ArrayList.
-  - remove() remove the first matching value in the ArrayList (remove(Object object)) or remove thge element at a specified
+  - remove() removes the first matching value in the ArrayList (remove(Object object)) or remove the element at a specified
   index (remove(int index)). 
   - set(int index, E newElement) changes one of the elements of the ArrayList without changing the size (updates a value).
   - isEmpty() and size() methods look at how many of the slots are in use.
   - contains(Object object) checks whether a certain value is in the ArrayList.
-  - equals(Object object) compare two lists to see whether they contain the same elements in the same order.
+  - equals(Object object) compare two lists to see whether they contain the same elements in the same order. *
 
   * Note.: E appears in this chapter on some method signatures. E is used by convention in generics to
   mean "any class that this array can hold". If you didn't specify a type when creating the ArrayList, 
@@ -182,7 +185,7 @@
   String's valueOf() is different, because it can receive char, int, long, float, double and Objects as params.
   - All the parse methods (parseInt(s), parseFloat(s)...) on the wrapper classes receive a String as the param.
 * Autoboxing and Unboxing:
-  - Since Java 5, you can just type the primitive value and Java will convert it to the relevant wrapper class for you.
+  - Since Java 5, you can just type the primitive value and Java will convert it to the relevant wrapper class for you (data types matter).
   The reverse conversion of wrapper class to primitive value is called unboxing.
   For example:
     `Integer a = 50;` // Autoboxing 50 (literal) to Integer.
@@ -202,7 +205,7 @@
   list and is also known as a backed List, because the array changes with it. You can 'update' the values from the List, but you can't 
   change the size of the List (for example using a list.remove(0)).
   - List.of(array) is another option to create a list from an array, but this option returns an immutable List, that means you cannot change 
-  the values or the size of the List. You can change the original array, but will not be reflected in the immutable List.
+  the values or the size of the List. You can change the original array, but will not be reflected in the immutable List like Arrays.asList().
   - None of the options allows you to change the number of elements.
 
 ** p.205
@@ -242,3 +245,4 @@
   min() returns the smaller of A and B and max() returns the bigger of A and B.
   - round(double/float num) method gets rid of the decimal portion of the value, choosing the next higher number if appropriate (.5 or higher will round up).
   - pow(double num, double exponent) handles exponents (fractional too).
+  - random() generates a value greater or equal to 0 and less than 1.0 (returns a double).

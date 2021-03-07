@@ -8,7 +8,7 @@ public class ManipulatingArrays {
 
     public static void main(String... args) {
 
-        String [] bugs = { "cricket", "beetle", "ladybug" };
+        String [] bugs = new String[] { "cricket", "beetle", "ladybug" };
 
         System.out.println(Arrays.toString(bugs));
 
