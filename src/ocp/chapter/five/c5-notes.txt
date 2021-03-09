@@ -19,20 +19,34 @@
 
 ** p.166-167
 ** String immutability:
+    - STRINGS ARE IMMUTABLE.
     - Once a String object is created, it is not allowed to change. It cannot be made larger or smaller, and you
     cannot change one of the characters inside it. You can make a reference point to a different String object.
     Obs.: Immutable classes in Java are final, which prevents subclasses creation.
 
 ** p.167-172
-** substring(), length(), trim(), strip(), stripLeading(), stripTrailing() and intern():
+** Creating and Manipulating Strings:
+  - charAt(int index) lets you query the string to find out what character is at a specific index.
+  - indexOf() has multiple signatures and returns an int value, looks at the characters in the string and finds the first index that matches
+  the desired value. indexOf can owrk with an individual character or a whole String as input. It can also start from a requested postion. 
+  A char can be passed to an int parameter type. Signatures `indexOf(int ch)`, `indexOf(int ch, int fromIndex)`, `indexOf(String str)`,
+  `indexOf(String str, int fromIndex)`.
   - substring() has one starting index param and a ending index optional param, if the endingIndex is specified, it will stop at the index.
     `"abcde".substring(1, 4);` // Result is "bcd".
-  - trim() and strip() (Java 11) removes whitespaces from the beginning and end of a String.
-  The diference between then is that strip() supports unicode.
+  - Strings has two implementations of equals methods to check equality. The equals() that checks if the string values are the same
+  and equalsIgnoreCase() that does the same thing but ignore the case, because it will converts the chars if needed.
+  - startsWith(Strings prefix) and endsWith(String suffix) do exactly what they sound like, they check if a string is the prefix
+  or is the suffix of a String. 
+  - replace() method has two signatures, one that takes a oldChar and a newChar, and another that takes a charSequence as target 
+  and charSequence as replacement to replace them left to right.
+  - contains() method looks for matches in the String, using the a CharSequence ("ABC") - the match can be anywhere in the String.
+  - trim() and strip() (strip was added in Java 11) removes whitespaces from the beginning and end of a String.
+  The diference between them is that strip() supports unicode.
   - stripLeading() removes whitespaces only from the beginning of the String.
   - stripTrailing() removes whitespaces only from the end of the String.
   - The intern() method returns the value from the string pool if it is there, otherwise,
   it adds the value to the string pool;
+  - Strings support Method Chaining and each time a method is called, a new String is returned.
 
 ** p.174-179
 ** StringBuilder:
@@ -49,14 +63,17 @@
   delete() is more flexible. 
   - StringBuilder replace() works differently than the others, it will take 3 params (startIndex, endIndex and newString), first Java removes the
   values from the startingIndex to the endingIndex, then inserts the value in that position.
-  - replace() compiles like the delete() with a endingIndex way bigger than the value.
+  - replace(int startingIndex, int endingIndex, String newString) works differently for StringBuilder than it did for String. Java deletes the chars
+   between the startingIndex and stops right before endingIndex, then java inserts the replacement value.
   - reverse() does just what it sounds like, it reverse the chars in the sequences and returns a ref to the current StringBuilder.
+  - toString() converts a StringBuilder to a String. Methods that expect a String will not accept a StringBuilder instance (use sb.toString() to work). 
 
 ** p.179-180
 ** Understanding equality:
-  - Logical equality is asserting the values (for strings, stringA.equals(stringB), same value is true) - equal() depends on the
-  implementation of the object it is being called on, the default is using object equality (comparing references).
-  - Object equality is asserting the references, if they are pointing to the same object (stringA == stringB, same object is true).
+  - Logical equality is asserting the values (for strings, the equals() will assert the value between a and b).
+  - Object equality is asserting the references, if they are pointing to the same object (objectA == objectB, same reference is true).
+  - Primitives always assert the values when using ==.
+  - equals() depends on the implementation of the object it is being called on, the default is using object equality (comparing references).
   - If you call equals() on two Objects that doesn't implements the equals() method, it will check reference equality (StringBuilder for example).
   - Obs.: If you try to check Object equality between two different Objects, the compiler will throw an error, because he is smart enought
   to know that two references can't possibly point to the same Object when they are completely different types.
@@ -101,8 +118,7 @@
   * int ids[], types; // Declare only ids as int[] and types is declared as int.
   
   - We can call equals() because an array is an object (any type of array), but it uses reference equality because it
-  doesn't override Object implementation. **
-  The equals() method on arrays, does not look at the elements of the array.
+  doesn't overrides Object implementation. ** The equals() method on arrays, does not look at the elements of the array. *
   Note: Since Java 5, Java has provided a method that prints an array nicely:
   `String [] bugs = { "cricket", "beetle", "ladybug" };`
   `java.util.Arrays.toString(bugs)` would print [cricket, beetle, ladybug] (inside of a System.out.println...).
@@ -117,7 +133,7 @@
 ** p.188
 ** Sorting:
   - Arrays.sort requires an import -> `java.util.*` or `java.util.Arrays`.
-  - Numbers sort before letters, and uppercase sorts before lowercase.
+  - Numbers sort before letters, and uppercase sorts before lowercase (with Strings).
 
 ** p.189
 ** Searching:
@@ -155,6 +171,17 @@
   Obs.: When comparing two arrays, they must be the same array type, otherwise, the code will not compile.
   - Arrays.mismatch() (Java 9): Returns -1 if the arrays are equal, otherwise, it returns the first index where they differ.
 
+** p.193-194
+** Multidimensional Arrays:
+  * int[] a[]; // 2D array.
+  * int[][] b; // 2D array.
+  * int c [][]; // 2D array.
+  * int[] d[], e[][]; // 2D array and a 3D array.
+  * String [][] f = new String[3][2];
+* Assymetric Arrays:
+  * int[][] g = {{1, 4}, {3}, {9, 8, 7}};
+  * int[][] args = new int[4][]; -> args[0] = new int[5]; -> args[1] = new int[3];
+
 ** p.196-197
 ** ArrayList:
   - Default contructor slots size value is 10 (new ArrayList<>()).
@@ -162,6 +189,7 @@
   but not vice versa, because List is an interface and interfaces can't be instantiated.
   - If you don't specify a type for the ArrayList, it will accept any Object subclasses (not primitives),
   but if a type is specified, only that type can be added (add()) into the ArrayList.
+  - If a type is not specified with the diamond operator < and >, Object will be the default type for ArrayList and List.
   - add() method can be used in two different ways, add(index, value) and add(value), one adding the value at the 
   specified index and the other adding to the end of the ArrayList.
   - remove() removes the first matching value in the ArrayList (remove(Object object)) or remove the element at a specified

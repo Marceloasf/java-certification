@@ -100,6 +100,7 @@ Ps.: This chapter covers the same subjects as the Chapters 1 and 2 of the OCP-11
 
 ** p.30-31
  - Local variables must be initialized, if not, you'll get a compiler error when you try to read its value;
+ - Instance variables are those that can be declared inside a class, without being static.
  - A class variable has the static keyword in its declaration;
  - Instance and class variables do not require you to initialize them. As soon as they are declared,
   they are given a default value.
