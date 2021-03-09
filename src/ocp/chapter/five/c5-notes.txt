@@ -21,17 +21,18 @@
 ** String immutability:
     - STRINGS ARE IMMUTABLE.
     - Once a String object is created, it is not allowed to change. It cannot be made larger or smaller, and you
-    cannot change one of the characters inside it. You can make a reference point to a different String object.
+    cannot change one of the characters inside it. You can make a reference point to a different String object
+    or replace a char for other.
     Obs.: Immutable classes in Java are final, which prevents subclasses creation.
 
 ** p.167-172
 ** Creating and Manipulating Strings:
   - charAt(int index) lets you query the string to find out what character is at a specific index.
   - indexOf() has multiple signatures and returns an int value, looks at the characters in the string and finds the first index that matches
-  the desired value. indexOf can owrk with an individual character or a whole String as input. It can also start from a requested postion. 
-  A char can be passed to an int parameter type. Signatures `indexOf(int ch)`, `indexOf(int ch, int fromIndex)`, `indexOf(String str)`,
-  `indexOf(String str, int fromIndex)`.
-  - substring() has one starting index param and a ending index optional param, if the endingIndex is specified, it will stop at the index.
+  the desired value. indexOf can work with an individual character or a whole String as input. It can also start from a requested postion. 
+  A char can be passed to an int parameter type. Signatures are `indexOf(int ch)`, `indexOf(int ch, int fromIndex)`, `indexOf(String str)`,
+  `indexOf(String str, int fromIndex)`. Returns -1 when the value is not found.
+  - substring() has one starting index param and a ending index optional param, if the endingIndex is specified, it will stop right before the endingIndex.
     `"abcde".substring(1, 4);` // Result is "bcd".
   - Strings has two implementations of equals methods to check equality. The equals() that checks if the string values are the same
   and equalsIgnoreCase() that does the same thing but ignore the case, because it will converts the chars if needed.
@@ -39,7 +40,7 @@
   or is the suffix of a String. 
   - replace() method has two signatures, one that takes a oldChar and a newChar, and another that takes a charSequence as target 
   and charSequence as replacement to replace them left to right.
-  - contains() method looks for matches in the String, using the a CharSequence ("ABC") - the match can be anywhere in the String.
+  - contains() method looks for matches in the String, using a CharSequence ("ABC") - the match can be anywhere in the String.
   - trim() and strip() (strip was added in Java 11) removes whitespaces from the beginning and end of a String.
   The diference between them is that strip() supports unicode.
   - stripLeading() removes whitespaces only from the beginning of the String.
@@ -52,7 +53,7 @@
 ** StringBuilder:
   - StringBuilder is not immutable (a.append("x") concats to the same object).
   - StringBuffer is slower and older than StringBuilder, so just use StringBuilder.
-  - When chaining StringBuilder methods, it will changes its own state and returns a reference to itself (append() the same object),
+  - When chaining StringBuilder methods, it will change its own state and returns a reference to itself (append() the same object),
   different than String that returns a new String on chaining. 
   - charAt(), indexOf(), length() and substring() all work the same way as they work with String,
   but substring() returns a String rather than a StringBuilder.
@@ -70,12 +71,12 @@
 
 ** p.179-180
 ** Understanding equality:
-  - Logical equality is asserting the values (for strings, the equals() will assert the value between a and b).
+  - Logical equality is asserting the values (for strings, the equals() will assert the equality between the value of a and b).
   - Object equality is asserting the references, if they are pointing to the same object (objectA == objectB, same reference is true).
   - Primitives always assert the values when using ==.
-  - equals() depends on the implementation of the object it is being called on, the default is using object equality (comparing references).
+  - equals() depends on the implementation of the object it is being called on, the default implementation is using object equality (comparing references).
   - If you call equals() on two Objects that doesn't implements the equals() method, it will check reference equality (StringBuilder for example).
-  - Obs.: If you try to check Object equality between two different Objects, the compiler will throw an error, because he is smart enought
+  - Obs.: If you try to check Object equality between two different data type Objects, the compiler will throw an error, because he is smart enought
   to know that two references can't possibly point to the same Object when they are completely different types.
 
 ** p.181-182
@@ -140,13 +141,13 @@
   - binarySearch only works if the array is already sorted.
   Binary search (Arrays.binarySearch) rules: 
   * Target element found in sorted array: Index of match.
-  * Target element not found in sorted array: Negative value showing one smaller than the negative of the index,
-  where a match needs to be inserted to preserve sorted order.
+  * Target element not found in sorted array: Negative value showing one smaller than the negative of the index 
+  where a match needs to be inserted to preserve the sorted order.
   * Unsorted array: A surprise (this result isn't predictable).
 
 ** p.190-191
 ** Comparing
-  - compare() returns -1, 0 and +1 (negative number, zero and positive number).
+  - compare() returns -1, 0 and +1 (negative number, zero and positive number on the exam).
     * -1: First array is smaller than the second.
     * 0: Arrays are equal.
     * +1: First array is larger than the second.
@@ -242,7 +243,7 @@
   which let you pass in an array or just type out the String values.
 
 ** p.206
-** Sorting ArrayList: Is similar to sorting an array, the difference is the helper class, which is `Collections`.sort(array).
+** Sorting ArrayList: Is similar to sorting an array, the difference is the helper class, which is `Collections`.sort(array) for an ArrayList.
 
 ** p.206-208
 ** Introducing Sets and Maps
