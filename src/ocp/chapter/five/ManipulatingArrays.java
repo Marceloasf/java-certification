@@ -45,8 +45,8 @@ public class ManipulatingArrays {
 
         Arrays.sort(strings);
 
-        for(String s : strings) // Autoboxing with the sorted int array
-            System.out.println(s + " "); // "0300", "112", "123", "9" - alphabetic order - sorts from 0 to 9
+        for(String s : strings)
+            System.out.println(s + " "); // "0300", "112", "123", "9" - alphabetic order - sorts from 0 to 9, then from A to Z and finally from a to z.
 
         System.out.println("\n----------------------------------------\n");
 
