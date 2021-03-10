@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 // p.230
-// Predicate interface - Good for conditional and validation (returns boolean).
+// Predicate interface - Good for conditional statements (returns boolean).
 // public interface Predicate<T> {
 //     boolean test(T t);
 // }

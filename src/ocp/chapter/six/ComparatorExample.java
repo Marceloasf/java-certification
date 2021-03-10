@@ -24,7 +24,7 @@ public class ComparatorExample {
         Comparator<String> moreStrings = (s1, s2) -> - s1.compareTo(s2); // This call uses the default order (ascending); however, it applies
                                                                          // a negative sign to the result, which reverses it to descending.
 
-        System.out.println(strings.compare("bc", "az")); // -1
-        System.out.println(moreStrings.compare("a", "az")); // 1
+        System.out.println(strings.compare("bc", "az")); // -1 - descending
+        System.out.println(moreStrings.compare("a", "az")); // 1 - descending
     }
 }

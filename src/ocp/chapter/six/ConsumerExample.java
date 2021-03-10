@@ -27,7 +27,7 @@ public class ConsumerExample {
 
     public static void print(Consumer<String> consumer, String value) {
 
-        consumer.accept(value); // Will execute the consumer passed by params using the value param in it.
+        consumer.accept(value); // Will execute the consumer passed by params and using the value param in it.
     }
 
     // Only works/compiles because all these local and method parameter variables that are used in the lambda are "effectively final",
