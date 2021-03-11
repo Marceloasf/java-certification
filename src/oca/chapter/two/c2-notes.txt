@@ -85,12 +85,12 @@ Ps.: This chapter covers the same subjects as the Chapters 3 and 4 of the OCP-11
 ** p.63
 ** Relational Operators:
   The instanceof operator is the fifth relational operator, and it's applied to object references and classes or interfaces.
- - `a instanceof b` - True if the reference that a points to is an instance of a class,
- subclass or class that implements a particular interface, as named in b.
+ - `a instanceof b` - True if the reference that 'a' points to is an instance of a class,
+ subclass or class that implements a particular interface, as named in 'b'.
 
 ** p.65
 ** Equality Operators:
-   The equality operators (= and !=) are used in one of three scenarios:
+   The equality operators (== and !=) are used in one of three scenarios:
   1. Comparing two numeric primitive types. If the numeric values are of
   different data types, the values are automatically promoted as previously
   described. For example, 5 == 5.00 returns true since the left side is
@@ -201,15 +201,15 @@ Ps.: This chapter covers the same subjects as the Chapters 3 and 4 of the OCP-11
 ** p.87-91
 ** Optional Labels, break Statement and continue Statement:
   - if-then statements, switch statements and loops can all have optional labels.
-  - A label is an optional pointer to teh head of a statement that allows the application flow to jump to it or break from it.
+  - A label is an optional pointer to the head of a statement that allows the application flow to jump to it or break from it.
   - It is rarely considered good coding practice to use this labels to control and block structures,
   they are mostly used in loop structures.
   Ex.: `OUTER_LOOP: for(long y = 0, z = 4; x < 5 && y < 10; x++, y++) { break OUTER_LOOP; } // COMPILES`
-  - Not using a label on a break statement (`break` instead of `break LOOP:`) will make the break statement terminate
+  - Not using a label on a 'break' statement (`break` instead of `break LOOP:`) will make the break statement terminate
   the nearest inner loop it is currently on the process of executing. 
-  - continue statement syntax and usage mirrors the break statement, but has different results.
-  - Difference between break and continue statements: While the break statement transfers control to the enclosing statement,
+  - 'continue' statement syntax and usage mirrors the break statement, but has different results.
+  - Difference between 'break' and 'continue' statements: While the break statement transfers control to the enclosing statement,
   terminating the execution of a loop, the continue statement transfers control to the boolean expression that determines if 
   the loop should continue. In other words, it ends the current iteration of the loop.
   Obs.: The if-then statement does not allow the usage of unlabeled break statement.
-  The if-then statement and switch statement, both don't allow the continue statement usage.
+  The if-then and switch statements, both don't allow the continue statement usage.

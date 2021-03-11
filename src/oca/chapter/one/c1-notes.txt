@@ -33,7 +33,7 @@ Ps.: This chapter covers the same subjects as the Chapters 1 and 2 of the OCP-11
 - javac Zoo.java -> Generates bytecode file (.class)
 - WITHOUT PACKAGE - java Zoo -> Executes generated file (Zoo.class)
 - p.14-15 - WITH PACKAGE - java chapter.one.Zoo from the \src (because the package is underneath him) -> Executes generated file (Zoo.class)
-- Obs.: Filename needs to match the filename of a public class in the .java file to compile
+- Obs.: Filename needs to match the name of a public class in the .java file to compile
 
 ** p.6
 ** Rules for what a java code file content:
