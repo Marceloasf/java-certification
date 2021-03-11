@@ -73,6 +73,10 @@
     - `Predicate<String> p = (String x) -> true;` 
   - The type of the lambda parameter is String in all of these, because a lambda infers the type from the surrounding context.
 
+    - `Predicate<String> p = (String x, y) -> true;` // Do not compile, because type declaration for the params is optional,
+                                                     // but if the params type is declared, it needs to be consistent.
+    - `Predicate<String> p = (String x, String y) -> true;` // Compiles
+
 * Local Variables inside the Lambda Body:
   It is legal to define a block in the lambda's body. That block can have anything that is valid in a normal Java block, including
   local variable declarations.
