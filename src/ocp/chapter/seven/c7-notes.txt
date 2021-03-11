@@ -1,0 +1,12 @@
+** Chapter 7 - Methods and Encapsulation
+
+* Creating and Using Methods
+  - Create methods and contructors with arguments and return values
+  - Create and invoke overloaded methods
+  - Apply the static keyword to methods and fields
+
+* Applying Encapsulation
+  - Apply access modifiers
+  - Apply encapsulation principles to a class
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
