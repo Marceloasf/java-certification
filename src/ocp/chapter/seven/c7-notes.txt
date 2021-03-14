@@ -14,7 +14,7 @@
 ** p.250-251
 ** Designing Methods:
   - A method declaration is composed by, respectively, an access modifier (public), *optional* specifier (final), return type (void),
-  method name (any name that starts with a letter, $ or _), list of parameters (which must be wrapped in parentheses), exception
+  method name (any name that starts with a letter, $ or _), list of parameters (which must be wrapped in parentheses), exceptions
   (optional) and the method body (must have braces).
   - The method name and parameter list are called the method signature.
   Parts of a method declaration:
@@ -40,7 +40,7 @@
     * protected: The protected modifier means the method can be called only from classes in the same package or subclasses.
     * public: The public modifier means the method can be called from any class.
     Obs.: The default keyword exists in Java, but it's not used for access control (Chapter 9 will cover interfaces).
-  - Some tricky method declarations that can appear in the exam:
+  - Some tricky method declarations that may appear in the exam:
     `public void walk1() { }` // VALID
     `default void walk2() { }` // DOES NOT COMPILE
     `void public walk3() { }` // DOES NOT COMPILE
@@ -79,7 +79,7 @@
 ** p.254-255
 ** Method Name:
   - Review of some rules:
-    * An identifier may only contain letters, number, $ or _.
+    * An identifier may only contain letters, numbers, $ or _.
     * The first character is not allowed to be a number.
     * An identifier is not allowed to contain special characters (%,#,&,@...).
     * Reserved words are not allowed (public), but remember that Java is camelcase, for example public !== Public. 
@@ -98,9 +98,9 @@
     * Pass in an array with the values.
     * List the elements of the array and let Java create if for you.
     * Omit the varargs values in the method call, Java will create an array of length zero (empty array).
-    * It is possible to pass null explicitly, but you can get a nullpointer exception in the usage of this null varargs.
+    * It is possible to pass null explicitly, but you can get a nullpointer exception in the usage of this null varargs array.
 
-  * Note.: Remember that a member of a class, is an instance variable or instance method.
+* Note.: Remember that a member of a class, is an instance variable or instance method.
 
 ** p.258-259
 ** Applying Access Modifiers:
@@ -111,7 +111,7 @@
     * Default (package-private) access: Only classes in the same package may call these methods or access these fields.
       `String name;` or `String getName() { ... }`
 
-    * protected: Allows everything that package-private alows plus adds the ability to access members of a parent class (subclasses).
+    * protected: Allows everything that package-private allows, plus adds the ability to access members of a parent class (subclasses).
     We are not allowed to refer to protected members of a parent class if we are not in the same package and the reference type of
     an object is not a subclass of the parent class. You can only access the protected members with the reference of the subclass
     from inside the subclass.
@@ -120,5 +120,6 @@
     * public: Anyone can access the member from anywhere.
       `public String name;` or `public String getName() { ... }`
 
-  Obs.: Extending means creating a subclass that access to any protected and public members of the parent class. Modules redefine
+  Obs.: Extending means creating a subclass that has access to any protected and public members of the parent class. Modules redefine
   public access, making possible to restrict access to public code.
+ 
