@@ -27,7 +27,7 @@ public class StaticExamples {
         // third(); // - Does not compile because main() is static and is trying to access a nonstatic method. 
                     // - If we add the static specifier to third(), it will only change the problem.
                     // - Because third is trying to access an Instance variable (nonstatic). Adding static
-                    // to name would solve the problem. Another solution would have been to call third an instance method
+                    // to name would solve the problem. Another solution would have been to call third using an instance of the object
 
         new StaticExamples().third(); // Will compile normally
 

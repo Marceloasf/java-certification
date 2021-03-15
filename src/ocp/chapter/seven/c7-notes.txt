@@ -162,7 +162,7 @@
   - Only an instance member can call another instance member on the same class without using a reference variable (instance of the object), because 
   instance objects do require an object.
   - Method params can be used inside static methods to access nonstatic members of a class.
-  - Each object has a copy of the inbstance variables.
+  - Each object has a copy of the instance variables.
   - There is only one copy of the code for the instance methods.
   - Parameters and local variables go on the stack.
 
@@ -170,53 +170,57 @@
   - Constants are variables that are meant to never change during the program. It uses the final modifier to ensure the variable never changes.
   - Constants use the modifier static final and a different naming convention than other variables. They use all upercase letters with underscores
   between "words". `private static final int NUM_BUCKETS = 45;` - If you try to change this value the code will note compile.
-  - The compiler can only check if we don't try to reassign the final values to point to a different object. So adding a element to a final
+  - The compiler can only check if we don't try to reassign the final value to point to a different object. So adding a element to a final
   ArrayList will compile. 
 
 * Static Initialization:
   - They are like instance initializers, just code inside braces, but they add the static keyword to specify they should be run when the class is first loaded.
   - All static initializers run when the class is first used in the order they are defined.
-  - You can initialize a constant variable (static final) inside an instance initializer, without initializing it before the block, if you initialize in either
-  of them, the code will not compile.
+  - You can initialize a constant variable (static final) inside an static initializer, without initializing it before the block, if you initialize in 
+  the same line as the declaration and inside the static initializer, the code will not compile.
   - Try to avoid static and instance initializers. One case that a static initializer is usefull, is when the code needed to initialize a constant variable 
   required more than one line of code.
 
 * Static Imports:
   - This imports are only for static members, like "import static java.util.Arrays.asList" // will import only the static method asList,
   and it can be used directly without Arrays.
-  - If we create an asList method in our coding class. Java would give it preference over the important one, and the method we coded would be used.
+  - If we create an asList method in our coding class. Java would give it preference over the imported one, and the method we coded would be used.
   - Some exam cases of static import usage:
     `import static java.util.Arrays;` // Does not compile
     `import static java.util.Arrays.asList;` // Compile
     `static import java.util.Arrays.*;` // Does not compile
     `import static java.util.Arrays.*;` // Does not compile
-    Obs.: If we try to use Arrays.asList() will not compile, since we don't import the class, we import only the static member asList().
-  Note.: Regular imports are for classes and Static imports are for static members of a class.
+    Obs.: If we try to use Arrays.asList() it will not compile, since we didn't imported the class, we imported only the static member asList().
+
+  Note: Regular imports are for classes and Static imports are for static members of a class.
 
 ** p.274-277
 ** Passing Data among Methods:
   - Java is a "pass-by-value" language. This means that a copy of the variable is made and the method receives that copy. Assignments made in the
   method do not affect the caller.
-  - If the change made on the other method will change a value of the copy of the object, like StringBuilder append() method, the change will be
+  - If the change made on the other method changes a value of the object, like StringBuilder append() method, the change will be
   available to both references, but in a case of trying to assign a new value to the copy, it will not mirror the change.
-  - "pass-by-reference" is another approach, which Java don't utilize, that the values can be affected if they are passed as params and modified inside.
-  - To review: Assigning a new primitive of reference to a parameter doesn't change the caller. Calling methods on a reference to an object can affect
+  - "pass-by-reference" is another approach, which Java don't utilize, that the values can be affected if they are passed as params and modified.
+  - To review: Assigning a new primitive or reference to a parameter doesn't change the caller. Calling methods on a reference to an object can affect
   the caller.
 
 ** p.277-283
 ** Overloading Methods:
   - Method overloading occurs when methods have the same name but different method signatures, which means they differ by method parameters.
   - Everything other than the method name can vary for overloading methods.
-  - You cannot have methods where the only difference is that one is an instance method and one is a static method.
+  - You cannot have methods where the only difference is that one is an instance method and the other is a static method.
   - It's not allowed to overload methods with the same parameter list. They must differ in at least one of the parameters.
   - Java will always pick the most specific version of a method that it can. So it will not autobox if we have two methods with the corresponding param type,
-  one being a Wrapper and the other a primitive. It would call the primitive method in this case: `(int a)` and `(Integer a)`.
-  - Remember that Java only accept wider types, It will not automatically convert to a narrower type. If you want so,
+  one being a Wrapper and the other a primitive. It would call the primitive method in this case: `a(1)` -> `a(int a)` instead of `a(Integer a)`.
+  - Remember that Java only accept wider types, it will not automatically convert to a narrower type. If you want so,
   you'll need to explicitly cast the wider to a narrower type.
   - Java has a concept called "type erasure", where generics are used only at compile time. So you can't overload with two Lists of different generics.
-   * `List<String> strings` and `List<Integers> integers` look like this in copile code `List strings` and `List integers`, so they are considered equal.
+   * `List<String> strings` and `List<Integers> integers` look like this in compiled code `List strings` and `List integers`, so they are considered equal.
   - Normal arrays will work just fine with overload (`int[] ints` and `Integers[] integers`), they don't participate in type erasure.
   
+  Note: Java will always do only one conversion. Java can convert a 4 (int) to a long or autobox it to an Integer 4, but it will not convert a 4 (int) 
+  to a long and then autobox it to a Long 4.
+
   * The order that Java uses to choose the right overloaded method:
      _______________________________________________________________________________
     | Rule                            Example of what will be chosen for glide(1, 2)|
@@ -226,9 +230,6 @@
     | Autoboxed type                  String glide(Integer i, Integer j)            |
     | Varargs                         String glide(int... nums)                     |
     |_______________________________________________________________________________|
-
-  Note.: Java will do only one conversion. Java can convert a 4 (int) to a long or autobox it to Integer 4, but it will not convert a 4 (int) 
-  to a long and then autobox it to a Long.
 
 ** p.283-285
 ** Encapsulation:
