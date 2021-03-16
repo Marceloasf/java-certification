@@ -116,5 +116,3 @@
 - Consumer takes any type and doesn't return a value.
 - Supplier returns a value and does not take any parameters.
 - Comparator takes two parameters and returns an int.
-
-
