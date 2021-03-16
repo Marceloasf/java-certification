@@ -149,6 +149,7 @@
 
 * Accessing a static Variable or Method:
   - You don't need an instance of the object to call a static member. `System.out.println(Koala.count);`
+  - If the static member is declared inside the same class you're calling, you just call him directly. `System.out.println(count);` - inside Koala class. 
   - You can use an instance of the object to call a static member. The compiler checks for the type of the REFERENCE and uses that instead of the OBJECT.
     `Koala k = new Koala();`
     `System.out.println(k.count);` // k is a Koala, so print 0
@@ -169,6 +170,7 @@
 * static Variables:
   - Constants are variables that are meant to never change during the program. It uses the final modifier to ensure the variable never changes.
   - Constants use the modifier static final and a different naming convention than other variables. They use all upercase letters with underscores
+  - Constants must be set exactly once, in the same line as the declaration or inside a static initializer block.
   between "words". `private static final int NUM_BUCKETS = 45;` - If you try to change this value the code will note compile.
   - The compiler can only check if we don't try to reassign the final value to point to a different object. So adding a element to a final
   ArrayList will compile. 
@@ -189,7 +191,7 @@
     `import static java.util.Arrays;` // Does not compile
     `import static java.util.Arrays.asList;` // Compile
     `static import java.util.Arrays.*;` // Does not compile
-    `import static java.util.Arrays.*;` // Does not compile
+    `import static java.util.Arrays.*;` // Compile
     Obs.: If we try to use Arrays.asList() it will not compile, since we didn't imported the class, we imported only the static member asList().
 
   Note: Regular imports are for classes and Static imports are for static members of a class.
@@ -240,3 +242,5 @@
     * Getter methods most frequently begin with 'get' if the property is not a boolean.
     * Setter methods begin with 'set'.
   
+** Notes after the review exam: Some exam questions try tricking you with the type 'var' in method declaration.
+   Remember that 'var' can only be used with local variables.   
