@@ -1,0 +1,12 @@
+** Chapter 8 - Class Design
+
+* Creating and Using Methods
+  - Create methods and contructors with arguments and return values
+
+* Reusing Implementations Through Inheritance
+  - Create and use subclasses and superclasses
+  - Enable polymorphism by overriding methods
+  - Utilize polymorphism to cast and call methods, differentiating object type versus reference type
+  - Distinguish overloading, overriding and hiding
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
