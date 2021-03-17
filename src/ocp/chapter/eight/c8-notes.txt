@@ -15,18 +15,18 @@
 ** Understanding Inheritance:
   - Is the process by which a subclass automatically includes any public or protected members of the class, including primitives,
   objects or methods, that are defined in the parent class.
-  - Package-private members are only avaible if the child class is in the same package as the parent class.
+  - Package-private members are only available if the child class is in the same package as the parent class.
   - private members are restricted to the class they are defined in and are never available via inheritance. This means that the 
   direct access to them is restricted, but other members with more lenient access modifiers can modify and access them.
 
 ** p.299-300
 ** Single vs. Multiple Inheritance:
-  - Java allows a class Z to inherit from a class X and that class X inherit from a class Y, making class Z inherit the members of 
+  - Java allows a class Z to inherit from a class X and if that class X inherit from a class Y, then class Z will inherit the members of 
   X and Y.
-  - But it doens't support multiple inheritance like this: `public class C Extends A, B {}`. Because it can lead to complex often 
+  - But it doesn't support multiple inheritance like this: `public class C Extends A, B {}`. Because it can lead to complex often 
   difficult-to-maintain data models.
   - Java does allow one exception to the single inheritance rule: A class may implement multiple interfaces.
-  - The final modifier on a class, prevents the class from being extended. // Code will node compile if you try to extend a final class
+  - The final modifier on a class, prevents the class from being extended. // Code will not compile if you try to extend a final class
   
 ** p.300
 ** Inheriting Object:
@@ -42,8 +42,9 @@
     * Class keyword: Class (required).
     * Class name: anyNameFollowingTheRules (required).
     * Extends parent class: extends Class (optional).
+    * Implements interface(s): implements A, B... (optional).
     * Brackets (required) and body inside them (optional).
-  Obs.: Remeber that final means a class cannot be extended.
+  Obs.: Remember that final means a class cannot be extended.
   - If the classes are in the same package they don't require an import statement to access each other.
 
 ** p.303
@@ -63,26 +64,26 @@
   - If Java encounters a variable or method it cannot find, it will check the class hierarchy to see if it is available.
 
 * Note: You can't use this inside static members, because this refers to an instance of the class and in static contexts you will
-possible don't have access to a reference. For variables it's better to use static reference (not using the 'this' reference).
+not have access to a reference. For static variables it's better to use static reference (not using the 'this' reference).
 
 ** p.305-306
 ** Calling the super Reference:
   - The super reference is similar to the this reference, except that it excludes any members found in the current class.
-  - You can use super to call variables that have the same method in a class A that extends a class B.
+  - You can use super to call members that have the same name in a class A that extends a class B.
     `return super.type + ":" + this.type;`
     * Java uses the narrowest scope it can, so if you don't use the super.type, it will pick the type variable from the class that its the caller.
-  Obs.: If you try to call a variable that doesn't exist on the superclass with `super`, the code will not compile, since super only looks at the
+  Obs.: If you try to call a member that doesn't exist on the superclass with `super`, the code will not compile, since super only looks at the
   parent's scope.
 
 ** p.307
 ** Declaring Constructors:
-  - Contructors are special methods that matches the name fo the class and has no return type.
+  - Contructors are special methods that matches the name of the class and has no return type.
   - It is called only when a new instance of the class is created.
   - It is the last block to execute in the instantiation of a class.
   - Contructor parameters are similar to method parameters (Remember that they may not include var).
   - A class can have multiple contructors, so long as each contructor has a unique signature (parameters must be distinct). This practice is also 
   known as 'contructor overloading'.
-  - Contructors can only be called by writing new before the name of the contructor or this()/super() inside a constructor (first line of it).
+  - Contructors can only be called by writing new before the name of the class or this()/super() inside a constructor (first line of it).
 
 ** p-308-309
 ** Default Contructor:
@@ -115,7 +116,7 @@ constructor call within the class.
 
 ** p.312-314
 ** Calling Parent Contructors with super():
-  - super() is very similar to this(), but instead it refers to any parent constructor.
+  - super() is very similar to this(), but instead it refers to any and only parent constructor.
   - It must be the first statement and there can be only one call to super() in any contructor, just like this().
   - Any valid parent contructor is acceptable to be called inside the child contructors, as long as the appropriate input parameters to the parent
   constructor are provided.
@@ -142,14 +143,14 @@ constructor call within the class.
 ** Notes about classes with only private constructors:
   - Classes with only private constructors are not considered final. Because they can be extended, but only an inner class defined in the class
   itself can extend it.
-  - An inner class is the only one that would have access to a private constructor and be able to call super().
+  - An inner class is the only one that would have access to a private constructor and would be able to call super().
   - Other top-level classes cannot extend such a class.
 
 ** p.315-316
 ** Missing a Default No-Argument Constructor:
-  - If a class extends a class that has no default no-argument constructor, having at least one already, if this child class doesn't have one 
-  constructor, Java will insert a default no-argument on the child and call super() by default, but the code will not compile since the parent 
-  class has already a constructor declared and it's not a no-argument constructor (it has parameters).
+  - If a class extends a class that has no default no-argument constructor, having at least one constructor already, if this child class doesn't have one 
+  constructor, Java will insert a default no-argument constructor on the child and call super() by default, but the code will not compile since the parent 
+  class has already a constructor declared and it's not a no-argument constructor (because it has parameters).
     For example: 
       `public class Mammal {
         public Mammal (int a) {}
@@ -162,7 +163,7 @@ constructor call within the class.
 
 ** p.316-318
 ** Constructors and final Fields:
-  - final instance variables can be initialized inside constructors, instance initializers or in the line they are declared.
+  - final instance variables can be initialized inside constructors, instance initializers or in the same line as they are declared.
   - static final instance variables can't be initialized inside constructors, only in the same line as the declaration or inside a static initializer.
   - By the time the constructor completes (last block to be executed), all final instance variables must be assigned a value. **
   - Unlike local final variables, which are not required to have a value unless they are actually used, final instance variables must be assigned.
@@ -178,7 +179,7 @@ constructor call within the class.
 ** Order of Initialization:
 
 * Class Initialization:
-  - This is often referred to as loading the class, the JVM controls when the class is initialized, although you can assume the class is loaded before
+  - This is often referred to as 'loading the class', the JVM controls when the class is initialized, although you can assume the class is loaded before
   it is used, the reality is that the class may be initialized when the program first starts, when a static member of the class is referenced, or
   shortly before an instance of the class is created.
   - First all static members in the class hierarchy are invoked, starting with the highest superclass and working downward.
@@ -198,9 +199,12 @@ constructor call within the class.
     2. Process all instance variable declarations in the order they appear in the class.
     3. Process all instance initializers in the order they appear in the class.
     4. Initialize the constructor including any overloaded constructors referenced with this().
-* Note: super() call on the child constructor is called before the initialization of the child class. It works like if the parent class 
-is instantiated before the child class. 
+* Note: super() call on the child constructor is called before the initialization of the child class. It works like this because the parent class 
+        is instantiated before the child class. 
 
+* Note for Class and Instance Initialization: The order of initialization of the variables and initializer blocks will follow the declaring order of the class.
+  You can't access or modify a variable inside a initializer block before she has been declared.
+  
 * Reviewing Contructor Rules:
   1. The first statement of every constructor is a call to an overloaded constructor via this(), or a direct parent constructor via super().
   2. If the first statement of a constructor is not a call to this() or super(), then the compiler will insert a no-argument super() as the first statement.
