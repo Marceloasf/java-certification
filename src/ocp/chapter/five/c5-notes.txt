@@ -28,6 +28,7 @@
 
 ** p.167-172
 ** Creating and Manipulating Strings:
+  - length() returns the number of characters in the String.
   - charAt(int index) lets you query the string to find out what character is at a specific index.
   - indexOf() has multiple signatures and returns an int value, looks at the characters in the string and finds the first index that matches
   the desired value. indexOf can work with an individual character or a whole String as input. It can also start from a requested postion. 

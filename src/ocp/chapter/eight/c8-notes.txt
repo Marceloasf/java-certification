@@ -217,3 +217,48 @@ constructor call within the class.
 
 * Exam Note: Before even attempting to answer the question on the exam, check if the constructors are properly defined using the previous set of rules. 
 Also verify if the classes include valid access modifiers for members.
+
+** p.326-332
+** Overriding a Method in Inheritance:
+  - Remember that you can't have two methods with the same signature inside a class.
+  - Occurs when a subclass declares a new implementation for an inherited method with the same signature and compatible return type.
+  - You may reference the parent version of the method using the super keyword.
+  - this and super keywords allow you to select between the current and parent versions of a method, respectively.
+  - The compiler performs the following checks when you override a method:
+    1. The method in the child class must have the same signature as the method in the parent class.
+    2. The method in the child class must be at least as accessible as the method in the parent class (same or broader access modifer only).
+    3. The method in the child class may not declare a checked exception that is new or broader than the class of any exception 
+    declared in the parent class method (this rule only applies for CHECKED exceptions).
+      * Basically, the overridden method can't be more restrictive than the inherit method.
+    4. If the method returns a value, it must be the same or a subtype of the method return type in the parent class, known as 'covariant return types'.
+      * If the inherited method return type is void, then the overridden must be void too, as nothing is covariant with void except itself.
+      * To check if two types are covariant: Given an inherited return type A and an overriding return type B, can you assign an instance of B to a 
+      reference of A without a cast? If so, then they are covariant (like String and CharSequence, all Strings are CharSequence since String 
+      implements CharSequence).
+
+* Defining Subtype and Supertype:
+  - A subtype is the relationship between two types where one type inherits the other.
+  - If we define X to be a subtype of Y, then one of the following is true:
+    * X and Y are classes, and X is a subclass of Y.
+    * X and Y are interfaces, and X is a subinterface of Y.
+    * X is a class and Y is an interface, and X implements Y (either directly or through an inherited class).
+  - Likewise, a supertype is the reciprocal relationship between two types where one type is the ancestor of the other.
+  - Remember, a subclass is a subtype, but not all subtypes are subclasses (subinterfaces are subtypes too).
+
+* Overloading vs. Overriding:
+  - If two methods have the same name but different signatures, the methods are overloaded and not overridden.
+  - Overloaded methods are considered independent and do not share the same polymorphic properties as overridden methods.
+  - Both involve redefining a method using the same name.
+  - On overloaded methods the return type and parameter list can change.
+  - On overridden methods the return type must be compatible with the parent's type and the parameter list can't change.
+
+* Access Modifiers on Overridden Methods:
+  - Java avoids ambiguity caused by access modifiers being different in the parent and child methods, by limiting overriding a method to access modifiers 
+  that are as accessible or more accessible than the version in the inherited method.
+    * If the parent method has public access, then the overridden method must be public too, other options will not compile.
+
+** p.332-334
+** Overriding a Generic Method:
+  - Remember that you can't overload methods with generic parameters, because of type erasure. Generics are used only at compile time. 
+  So you can't overload with two Lists of different generics for example, because they will result in the same after (`List X` and `List Y`). 
+  - But you can override a method with generic parameters, since the signatures match, including the generic type exactly.
