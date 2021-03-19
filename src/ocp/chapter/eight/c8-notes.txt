@@ -262,3 +262,93 @@ Also verify if the classes include valid access modifiers for members.
   - Remember that you can't overload methods with generic parameters, because of type erasure. Generics are used only at compile time. 
   So you can't overload with two Lists of different generics for example, because they will result in the same after (`List X` and `List Y`). 
   - But you can override a method with generic parameters, since the signatures match, including the generic type exactly.
+
+** p.334-335
+** Redeclaring private Methods:
+  - You can't override private methods, since they are not inherited.
+  - Java permits you to redeclare a new method in the child class with the same or modified signature as the method in the parent class. 
+  This method in the child class is a separate and independent method, unrelated to the parent version's method, so none of the rules of 
+  overriding methods is invoked. Child classes may override only methods that are public, protected and package-private (if they are in 
+  the same package).
+
+** p.335-337
+** Hiding Static Methods:
+  - A hidden method occurs when a child class defined a static method with the same name and signature as an inherited static method defined in a parent class.
+  - Method hiding is similar but not exactly the same as method overriding.
+  - The previous four rules for overriding a method must be followed when a method is hidden. In addition, a new rule is added:
+    5. The method defined in the child class must be marked as static if it is marked as static in a parent class.
+  
+** p.337-338
+** Creating final Methods:
+  - final methods cannot be replaced. By marking a method final you forbid a child class from replacing this method.
+  - This rule is in place both when you override a method and when you hide a method.
+  - Remember that this rule only applies to inherited methods. So if you have have a inherited method that is not final, you can use the final 
+  on the overridden method.
+  - Using final on methods will guarantee certain behavior of a method in the parent class, regardless of which child is invoking the method.
+
+* Note: All the rules listed above apply on this situations.
+
+** p.338
+** Hiding Variables:
+  - Remember that Java doesn't allow variables to be overridden. Variables can be hidden, though.
+  - A hidden variable occurs when a child class defines a variable with the same name as an inherited variable defined in the parent class.
+  This creates two distinct copies of the variable within an instance of the child class:
+    - One instance defined in the parent class.
+    - One instance defined in the child class.
+
+* Note on Hiding Inherited Members: Hiding a method or variable replaces the member only if a child REFERENCE type is used. Java uses the REFERENCE type to 
+use the member (p.339).
+
+** p.339-340
+** Understanding Polymorphism:
+  - The property of an object can take on many different forms.
+  - A Java object may be accessed using a reference with the same type as the object, a reference that is a superclass of the object, or a reference that 
+  defines an interface the object implements, either directly or through a superclass.
+  - Once the object has been assigned to a new reference type using polymorphism, only the methods and variables available to that reference type are 
+  callable on the object without an explicit cast.
+
+** p.341
+** Object vs. Reference:
+  - The object in memory will never change depending on the reference type you assign him. What changes is our ability to access members within the object, 
+  those being only the members of the reference type. We can have access back to the object members only if we do a direct cast back to the object type.
+  - Summarizing this principle with the following two rules:
+    1. The type of the object determines which properties exist within the object in memory.
+    2. The type of the reference to the object determines which methods and variables are accessible to the Java program.
+
+** p.342-343
+** Casting Objects:
+  - Is similar to casting primitives. You do not need a cast operator if the current reference is a subtype of the target type (implicit cast or type conversion).
+  - Alternatively, if the current reference is not a subtype of the target type, then you need to perform an explicit cast with a compatible type.
+  - If the underlying object is not compatible with the type, then a ClassCastException will be thrown at runtime. *
+  - Summarizing these concepts into a set of rules:
+    1. Casting a reference from a subtype to a supertype doesn't require an explicit class.
+    2. Casting a reference from a supertype to a subtype requires an explicit cast.
+    3. The compiler disallows casts to an unrelated class.
+    4. At runtime, an invalid cast of a reference to an unrelated type results in a ClassCastException being thrown.
+    * Note: The third rule on casting applies to class types only, not interfaces.
+  - The fourth rule will apply in a situation that either the reference type and object type are the same as the supertype, when trying to cast this object to 
+  an subtype reference, the ClassCastException will be thrown. Keep in mind that the object created with the parent's type does not inherit the child class.
+  - When reviewing a question on the exam that involves this topics, be sure to remember what the instance of the object actually is. Then, focus on whether 
+  the compiler will allow the object to be referenced with or without explicit casts.
+
+** p.343-344
+** The instanceOf Operator:
+  - Can be used to check whether an object belongs to a particular class or interface and to prevent ClassCastException at runtime (inside a if for example).
+  - The compiler does not allow instanceOf to be used with unrelated types, just like casting.
+
+** p.344-345
+** Polymorphism and Method Overriding:
+  - When a method is overridden in the subclass and called by a object of its type, all calls to it are replaced at runtime, meaning that the calls will be 
+  associated with the precise object in memory, not the current reference type where is called. Even using the this reference, does not call the parent 
+  version because the method has been replaced. // Coded example on file PolymorphismOverridingExample.java
+  - The facet of polymorphism that replaces methods via overriding is one of the most important properties of Java. It allows to create complex inheritance 
+  models, with subclasses that have their own custom implementation of overridden methods.
+
+** p.346-347
+** Overriding vs. Hiding Members:
+  - While method overriding replaces the method everywhere it is called, static method and variable hiding does not.
+  - Hiding members is not a form of polymorphism since the methods and variables maintain their individual properties.
+  - Hiding members is very sensitive to the reference type and location where the member is used.
+  - Contrast this with overriding a method, where it returns the same value for an object regardless of which class it is called in.
+
+* Real World Scenario Note: Hiding variables and methods is allowed by Java, but it is considered an extremely poor coding practice.
