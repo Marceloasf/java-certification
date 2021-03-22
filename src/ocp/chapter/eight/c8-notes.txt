@@ -23,7 +23,7 @@
 ** Single vs. Multiple Inheritance:
   - Java allows a class Z to inherit from a class X and if that class X inherit from a class Y, then class Z will inherit the members of 
   X and Y.
-  - But it doesn't support multiple inheritance like this: `public class C Extends A, B {}`. Because it can lead to complex often 
+  - But it doesn't support multiple inheritance like this: `public class C extends A, B {}`. Because it can lead to complex often 
   difficult-to-maintain data models.
   - Java does allow one exception to the single inheritance rule: A class may implement multiple interfaces.
   - The final modifier on a class, prevents the class from being extended. // Code will not compile if you try to extend a final class
@@ -39,11 +39,11 @@
   - The declaration of a class has the following members:
     * Access modifier: public or default (package-private).
     * Optional modifier: abstract or final keyword (optional).
-    * Class keyword: Class (required).
-    * Class name: anyNameFollowingTheRules (required).
+    * Class keyword: class (required).
+    * Class name: AnyNameFollowingTheRules (required).
     * Extends parent class: extends Class (optional).
     * Implements interface(s): implements A, B... (optional).
-    * Brackets (required) and body inside them (optional).
+    * Brackets (required) and body inside (optional).
   Obs.: Remember that final means a class cannot be extended.
   - If the classes are in the same package they don't require an import statement to access each other.
 
@@ -157,17 +157,17 @@ constructor call within the class.
       }`
       `public class Elephant extends Mammal {}` // DOES NOT COMPILE
     * It doesn't because there is no superclass no-argument constructor, so the implicit super() call on Elephant will fail.
-    * Remember that Java will automatically create a no-arguments constructor for Elephant with a call to super() at the first line.
+    * Remember that Java will automatically create a no-argument constructor for Elephant with a call to super() at the first line.
     * To fix this, we can create a constructor in Elephant with a explicit call of super(int a).
 * Note: super() always refers to the most direct parent.
 
 ** p.316-318
 ** Constructors and final Fields:
   - final instance variables can be initialized inside constructors, instance initializers or in the same line as they are declared.
-  - static final instance variables can't be initialized inside constructors, only in the same line as the declaration or inside a static initializer.
+  - static final variables (class variables) can't be initialized inside constructors, only in the same line as the declaration or inside a static initializer.
   - By the time the constructor completes (last block to be executed), all final instance variables must be assigned a value. **
   - Unlike local final variables, which are not required to have a value unless they are actually used, final instance variables must be assigned.
-  - Default values are not used for these variables. They aren't for static final instance variables too.
+  - Default values are not used for these variables. They aren't for static final variables too.
   - A final instance variable can be assigned a value only once, like the static final variables. Initializing them in more than one place, will result 
   in a compiler error.
   - Each constructor is considered independently in terms of assignment. The constructor must initialize all final variables if they aren't before him,
@@ -182,7 +182,7 @@ constructor call within the class.
   - This is often referred to as 'loading the class', the JVM controls when the class is initialized, although you can assume the class is loaded before
   it is used, the reality is that the class may be initialized when the program first starts, when a static member of the class is referenced, or
   shortly before an instance of the class is created.
-  - First all static members in the class hierarchy are invoked, starting with the highest superclass and working downward.
+  - First, all static members in the class hierarchy are invoked, starting with the highest superclass and working downward.
   - The most important rule with class initialization is that it happens at most once for each class.
   - A class may also never be loaded if it is not used in the program.
   - Summarized order of initialization of a class X:
@@ -211,8 +211,8 @@ constructor call within the class.
   3. Calling this() and super() after the first statement of a contructor results in a compiler error.
   4. If the parent class doesn't have a no-argument constructor, then every constructor in the child class must start with an explicit this() or super() call.
   5. If the parent class doens't have a no-argument constructor and the child doesn't define any constructors, then the child class will not compile.
-  6. If a class only defines private constructors, then it cannot be extended by a top-level class, nor be instantiated.
-  7. All final instance variables must be assigned a value exactly once, if they are not initialized before the contructor call they must be by the end of
+  6. If a class only defines private constructors, then it cannot be extended, nor be instantiated by a top-level class.
+  7. All final instance variables must be assigned a value exactly once, if they are not initialized before the contructor call, they must be by the end of
   the constructor. Any final instance variables not assigned a value will be reported as a compiler error on the line the constructor is declared.
 
 * Exam Note: Before even attempting to answer the question on the exam, check if the constructors are properly defined using the previous set of rules. 
@@ -232,7 +232,7 @@ Also verify if the classes include valid access modifiers for members.
       * Basically, the overridden method can't be more restrictive than the inherit method.
     4. If the method returns a value, it must be the same or a subtype of the method return type in the parent class, known as 'covariant return types'.
       * If the inherited method return type is void, then the overridden must be void too, as nothing is covariant with void except itself.
-      * To check if two types are covariant: Given an inherited return type A and an overriding return type B, can you assign an instance of B to a 
+      * To check if two types are covariant: Given an inherited return type A and an overridden return type B, can you assign an instance of B to a 
       reference of A without a cast? If so, then they are covariant (like String and CharSequence, all Strings are CharSequence since String 
       implements CharSequence).
 
@@ -260,8 +260,8 @@ Also verify if the classes include valid access modifiers for members.
 ** p.332-334
 ** Overriding a Generic Method:
   - Remember that you can't overload methods with generic parameters, because of type erasure. Generics are used only at compile time. 
-  So you can't overload with two Lists of different generics for example, because they will result in the same after (`List X` and `List Y`). 
-  - But you can override a method with generic parameters, since the signatures match, including the generic type exactly.
+    * So you can't overload with two Lists of different generics for example, because they will result in the same after (`List X` and `List Y`). 
+  - But you can override a method with generic parameters, since the signatures and the generic types match exactly.
 
 ** p.334-335
 ** Redeclaring private Methods:
@@ -282,7 +282,7 @@ Also verify if the classes include valid access modifiers for members.
 ** Creating final Methods:
   - final methods cannot be replaced. By marking a method final you forbid a child class from replacing this method.
   - This rule is in place both when you override a method and when you hide a method.
-  - Remember that this rule only applies to inherited methods. So if you have have a inherited method that is not final, you can use the final 
+  - Remember that this rule only applies to inherited methods. So if you have a inherited method that is not final, you can use the final 
   on the overridden method.
   - Using final on methods will guarantee certain behavior of a method in the parent class, regardless of which child is invoking the method.
 
@@ -321,7 +321,7 @@ use the member (p.339).
   - Alternatively, if the current reference is not a subtype of the target type, then you need to perform an explicit cast with a compatible type.
   - If the underlying object is not compatible with the type, then a ClassCastException will be thrown at runtime. *
   - Summarizing these concepts into a set of rules:
-    1. Casting a reference from a subtype to a supertype doesn't require an explicit class.
+    1. Casting a reference from a subtype to a supertype doesn't require an explicit cast.
     2. Casting a reference from a supertype to a subtype requires an explicit cast.
     3. The compiler disallows casts to an unrelated class.
     4. At runtime, an invalid cast of a reference to an unrelated type results in a ClassCastException being thrown.
@@ -339,14 +339,14 @@ use the member (p.339).
 ** p.344-345
 ** Polymorphism and Method Overriding:
   - When a method is overridden in the subclass and called by a object of its type, all calls to it are replaced at runtime, meaning that the calls will be 
-  associated with the precise object in memory, not the current reference type where is called. Even using the this reference, does not call the parent 
+  associated with the precise object in memory, not the current reference type where is called. Even using the this reference, it does not call the parent 
   version because the method has been replaced. // Coded example on file PolymorphismOverridingExample.java
   - The facet of polymorphism that replaces methods via overriding is one of the most important properties of Java. It allows to create complex inheritance 
   models, with subclasses that have their own custom implementation of overridden methods.
 
 ** p.346-347
 ** Overriding vs. Hiding Members:
-  - While method overriding replaces the method everywhere it is called, static method and variable hiding does not.
+  - While method overriding replaces the method everywhere it is called, method (static) and variable hiding does not.
   - Hiding members is not a form of polymorphism since the methods and variables maintain their individual properties.
   - Hiding members is very sensitive to the reference type and location where the member is used.
   - Contrast this with overriding a method, where it returns the same value for an object regardless of which class it is called in.
