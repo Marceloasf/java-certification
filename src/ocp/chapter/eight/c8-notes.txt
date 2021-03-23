@@ -189,6 +189,7 @@ constructor call within the class.
     1. If there is a superclass Y of X, then initialize Y first.
     2. Process all static variable declarations in the order they appear in the class.
     3. Process all static initializers in the order they appear in the class.
+      * Following the order they appear.
 
 * Note.: The class containing the program entry point, aka the main() method, is loaded before the main() method is executed.
 
@@ -352,3 +353,12 @@ use the member (p.339).
   - Contrast this with overriding a method, where it returns the same value for an object regardless of which class it is called in.
 
 * Real World Scenario Note: Hiding variables and methods is allowed by Java, but it is considered an extremely poor coding practice.
+
+** p.348
+** Summary:
+  - All instance methods, contructors and instance initializers have access to this and super.'
+  - this() and super() can only be used in constructors, following the rules of constructors.
+  - A method is overloaded if it has the same name but a different signature as another accessible method.
+  - A method is overridden if it has the same signature as an inherited method, with access modifiers, exceptions and a return type that are compatible.
+  - A static method is hidden if it has the same signature as an inherited static method. Remember that the four rules plus a fifth rule are applied here. 
+  - A method is redeclared if it has the same name and possibly the same signature as an uninherited method (superclass private methods).
