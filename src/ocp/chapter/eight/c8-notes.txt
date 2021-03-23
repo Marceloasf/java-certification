@@ -359,6 +359,10 @@ use the member (p.339).
   - All instance methods, contructors and instance initializers have access to this and super.'
   - this() and super() can only be used in constructors, following the rules of constructors.
   - A method is overloaded if it has the same name but a different signature as another accessible method.
-  - A method is overridden if it has the same signature as an inherited method, with access modifiers, exceptions and a return type that are compatible.
+  - A method is overridden if it has the same signature as an inherited method and has access modifiers, exceptions and a return type that are compatible.
+  - Remember that 'covariant types' only apply to return values of overridden methods, not method parameters.
   - A static method is hidden if it has the same signature as an inherited static method. Remember that the four rules plus a fifth rule are applied here. 
   - A method is redeclared if it has the same name and possibly the same signature as an uninherited method (superclass private methods).
+  - You can access private methods (instance methods and constructors) from the main() method, if he is declared inside the same class.
+  
+  
