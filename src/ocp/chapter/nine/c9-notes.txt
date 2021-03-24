@@ -1,0 +1,11 @@
+** Chapter 9 - Advanced Class Design
+
+* Reusing Implementations Through Inheritance
+  - Create and extend abstract classes
+
+* Programming Abstractly Through interfaces
+  - Create and implement interfaces
+  - Distinguish class inheritance from interface inheritance including abstract classes
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
