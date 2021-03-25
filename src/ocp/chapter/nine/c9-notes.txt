@@ -66,3 +66,89 @@
     3. Abstract methods must not provide a method body/implementation in the abstract class in which they are declared.
     4. Implementing an abstract method in a subclass follows the same rules for overriding a method, including covariant return types, exception 
     declarations, etc.
+
+** p.375-379
+** Implementing Interfaces:
+  - An interface is an abstract data type that declares a list of abstract methods that any class implementing the interface must provide.
+  - An interface can also include constant variables.
+  - An interface can also include private, private static, static and default methods.
+  - A default method is one in which the interface method has a body and is not marked abstract, it doesn't need to be overridden.
+    * private, private static, static and default methods in interfaces will be covered in 1Z0-816 topics of the book.
+  - Both abstract methods and constant variables included with an interface are implicitly assumed to be public.
+  - Java allows a class to implement any number of interfaces.
+  - Interface declaration in order of appearance:
+    - Access modifier: public or default (package-private).
+    - `Implicit` modifier: abstract.
+    - Interface keyword: interface.
+    - Interface name and brackets.
+    - Interface members:
+      - For methods:
+        - `Implicit` modifiers: public abstract
+        - Return type: Integer or int for example.
+        - Method name.
+        - Parentheses, parameter list (optional) and semicolon. // (); or (int a); 
+      - For constant variables:
+        - `Implicit` modifiers: public static final
+        - Variable type: Integer or int for example.
+        - Variable name.
+        - Variable constant value assignment.
+        * Note on interface constants: Since they are all public and static, they can be used outside the interface declaration without requiring 
+        an instance of the interface. // An instance of the interface, means the instance of a class that implements the interface.
+  - Interfaces are not required to define any methods.
+  - The abstract modifier is optional, because the compiler will insert it implicitly in the declaration if there is no explicit declaration of it. 
+  - Interfaces can't be final for the same reason as abstract classes, since they are always abstract too.
+  - The concrete class that implements an interface, must declare the overridden methods as public, since they are all public (the ones viewed in this chapter).
+  - Interfaces can extends other interfaces. Unlike a class, an interface can extend multiple interfaces.
+  - Interfaces are not part of instance initialization.
+  - Many of the rules for class declarations also apply to interfaces, including the following:
+    1. A Java file may have at most one public top-level class or interface (top-level types), and it must match the name of the file.
+    2. A top-level class or interface can only be declared with public or package-private access.
+  
+** p.379
+** Inserting Implicit Modifiers:
+  - Is one that the compiler will automatically insert.
+  - You can choose to insert this implicit modifiers yourself or let the compiler insert them for you.
+  - List of implicit modifiers for the exam (1Z0-815):
+    - Interfaces are assumed to be abstract.
+    - Interface variables are assumed to be public, static and final.
+    - Interface methods without a body are assumed to be abstract and public.
+
+** p.380-381
+** Conflicting Modifiers:
+  - Examples of conflicts:
+    `private final interface Crawl {
+      String distance;
+      private int MAXIMUM = 1000;
+      protected abstract boolean UNDERWATER = false;
+      private void dig(int depth);
+      protected abstract double depth();
+      public final void surface();
+    }` // Every single line does not compile, since some modifiers are conflicting with the implicit modifiers and interface rules..
+
+* Note for difference between interfaces and classes (p.381): Remember that ONLY interfaces make use of implicit modifiers.
+
+** p.382-383
+** Inheriting an Interface:
+  - An interface can be inherited in one of three ways:
+    - An interface can extends another interface(s).
+    - A class can implements an interface(s).
+    - A class can extend another class whose ancestor implements an interface.
+  - Just like abstract classes, the first concrete subclass (nonabstract) that inherits the interface, must implement all of the inherited ABSTRACT methods.
+
+** p.383
+** Mixing Class and Interface Keywords:
+  - The following is the only valid syntax for relating classes and interfaces in their declarations:
+    - class1 extends class2
+    - interface1 extends interface2, interface3, ...
+    - class1 implements interface1, interface2, ...
+
+** p.384
+** Duplicate Interface Method Declarations:
+  - When two methods have identical declaration on two (or more) implemented interfaces, they are considered compatible. By that, we mean that the commpiler 
+  can resolve the differences between the two (or more) declarations without finding any conflicts.
+  - If two (or more) interface methods have identical behaviors (the same method declaration), you just need to be able to create a single method that 
+  overrides both inherited abstract methods at the same time.
+  - If two (or more) interface methods have the same name but different signatures, it is considered a method overload and there is no conflict.
+  - When overload happens, all the methods must be implemented by the concrete class, since they are considered separate methods.
+  - If the return types are different in interface methods, they must be covariant, or else the class that implements them will not compile. The compiler 
+  would also throw an exception if you define an abstract class or interface that inherits from two conflicting abstract types.
