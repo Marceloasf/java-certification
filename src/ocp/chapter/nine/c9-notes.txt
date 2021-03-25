@@ -152,3 +152,65 @@
   - When overload happens, all the methods must be implemented by the concrete class, since they are considered separate methods.
   - If the return types are different in interface methods, they must be covariant, or else the class that implements them will not compile. The compiler 
   would also throw an exception if you define an abstract class or interface that inherits from two conflicting abstract types.
+
+** p.387
+** Casting Interfaces:
+  - When casting two classes that implement the same interface but don't have any kind of relation between them, Java will not throw a compiler error, but 
+  will throw a ClassCastException after. This is one of the rules of casting discussed in Chapter 8, that the compiler does not allow casts to unrelated 
+  types, like String casting to Long, but with interfaces there are limitations to what the compiler can validate.
+    * For ex.: `interface Canine {}
+               class Dog implements Canine {}
+               class Wolf implements Canine {}
+               ... 
+               Canine canine = new Wolf();
+               Canine badDog = (Dog)canine;` // Compiles, but will throw a ClassCastException in runtime, because both classes don't have any kind of relation.  
+  - But the compiler can enforce one rule around interface casting. The compiler does not allow a cast from an interface reference to an object reference if 
+  the object type does not implement the interface.
+    * For ex.: `Object badDog = (String)canine;` // Since String does not implements Canine, the compiler recognizes that this cast is not possible.
+
+** p.388
+** Interfaces and the instanceof Operator:
+  - With interfaces, the compiler has limited ability to enforce the rule of unrelated classes when using the intanceOf operator too, because even though a 
+  reference type may not implement an interface, one of its subclasses could. 
+  - But the compiler can check for unrelated interfaces if the reference is a class that is marked final, like Integer.
+
+** p.388-389
+** Reviewing Interface Rules
+* Interface Definition Rules:
+  1. Interfaces cannot be instantiated.
+  2. All top-level types, including interfaces, cannot be marked protected or private.
+  3. Interfaces are assumed to be abstract and cannot be marked final.
+  4. Interfaces may include zero or more abstract methods.
+    * Note that this four rules are similar to the abstract class declaration rules seen before.
+  5. An interface can extend any number of interfaces.
+  6. An interface reference may be cast to any reference that inheritsthe interface, although this may produce an exception at runtime if the classes aren't 
+  related.
+  7. The compiler will only report an unrelated type error for an instanceof operation with an interface on the right side if the reference on the left side 
+  is a final class that does not inherit the interface.
+  8. An interface method with a body must be marked default, private, static or private static (covered on 1Z0-816).
+
+* Abstract Interface Method Rules:
+  1. Abstract methods can be defined only in abstract classes and interfaces.
+  2. Abstract methods cannot be declared private or final. 
+  3. Abstract methods must not provide a method body/implementation in the abstract class/interface in which is it declared.
+  4. Implementing an abstract method in a subclass follows the same rules for overriding a method, including covariant return types, exception declarations, etc.
+    * Note that this four rules are similar to the abstract methods rules seen before.
+  5. Interface methods without a body are assumed to be abstract and public. **
+
+* Interface Variable Rules:
+  1. Interface variables are assumed to be public, static and final.
+  2. Because interface variables are marked final, they must be initialized with a value when they are declared.
+
+* Note: Remember that the primary differences between interfaces and abstract classes are that interfaces include implicit modifiers, do not contain constructors, 
+do not participate in the instance initialization process, and support multiple inheritance (classes only support single inheritance).
+
+* p.390-391
+* Introducing Inner Classes:
+  - A member inner class is a class defined at the member level of a class (same level as the methods, instance variables, etc). It can be declared only inside 
+  a another class.
+  - For the 1Z0-816 exam, there are for types of nested classes you will need to know about (they will be covered further): member inner classes, local classes, 
+  anonymous classes and static nested classes.
+  - A class can have inner classes and interfaces.
+  - While top-level classes and interfaces can only be set with public or package-private access, member inner classes do not have the same restriction. A member 
+  inner class, can be declared with all of the same access modifiers as a class member.
+  - A member inner class can contain many of the same methods and variables as a top-level class, but it cannot contain some members, such as static members.
