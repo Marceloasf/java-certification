@@ -142,7 +142,7 @@
     - interface1 extends interface2, interface3, ...
     - class1 implements interface1, interface2, ...
 
-** p.384
+** p.384-386
 ** Duplicate Interface Method Declarations:
   - When two methods have identical declaration on two (or more) implemented interfaces, they are considered compatible. By that, we mean that the commpiler 
   can resolve the differences between the two (or more) declarations without finding any conflicts.
