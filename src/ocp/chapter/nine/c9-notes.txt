@@ -9,3 +9,60 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+** p.367
+** Introducing Abstract Classes:
+  - An abstract class is a class that cannot be instantiated and may contain abstract methods.
+  - An abstract method is a method that does not define an implementation when it is declared.
+    * Both abstract classes and methods are denoted with the 'abstract' modifier.
+  - A class that inherits an abstract class, must override the abstract methods of the superclass (all override rules from the last chapter apply).
+  - An abstract class can be initialized, but only as part of the instantiation of a nonabstract subclass.
+  - Only at runtime that the methods of an abstract class that have been overridden can be defined.
+  - Abstract classes can extends nonabstract classes.
+
+** p.368-370
+** Defining Abstract Methods:
+  - An abstract class may include all of the same members as a nonabstract class (even constructors).
+  - It is not required to include any abstract methods in an abstract class.
+  - An abstract method can only be defined in an abstract class (or an interface).
+  - Remember that optional modifiers, such as abstract and final, can be placed before or after the access modifier in a class and method declarations. 
+  - It is not possible to define an abstract method that has a body or default implementation.
+  - Abstract classes constructors work just like nonabstract classes constructors. The only difference is that an abstract class constructor can only 
+  be called when it is being initialized by a nonabstract class (super()).
+  - Even with abstract methods, all the rules for overriding methods must be followed.
+* Note: Remember that abstract methods can't have a body and must be declared like this:
+  - access modifier - abstract modifier (the order between these first two can vary) - return type - method name and ();
+
+** p.371-372
+** Invalid Modifiers:
+  - abstract and final modifiers are an invalid combination of optional modifiers, since the final modifier won't let a class be extended and a method overridden.
+  - A method cannot be marked as both abstract and private, since an private method can't be inherited/overridden.
+  - abstract and static modifiers are an invalid combination of optional modifiers, since a static method is defined as belonging to the class, not an instance of 
+  the class, so it cannot be overridden (only hidden).
+    * The compiler recognizes all this invalid combinations in the parent class and reports an error as soon as the invalid combinations are applied.
+
+** p.372-374
+** Creating a Concrete Class:
+  - A concrete class is a nonabstract class.
+  - The first concrete subclass that extends an abstract class is required to implement all inherited abstract methods.
+  - If the first concrete subclass extends an abstract class that extends another abstract class too and that overrides an abstract method to being a nonabstract 
+  method, the first concrete subclass is not required to override this method, since is not abstract anymore.
+
+** p.374-375
+** Reviewing Abstract Class Rules:
+  * Abstract Class Definition Rules:
+    1. Abstract classes cannot be instantiated.
+    2. All top-level types, including abstract classes, cannot be marked protected or private.
+    3. Abstract classes cannot be marked final.
+    4. Abstract classes may include zero or more abstract and nonabstract methods.
+    5. An abstract class that extends another abstract class inherits all of its abstract methods.
+    6. The first concrete class that extends an abstract class must provide an implementation for all of the inherited abstract methods.
+    7. Abstract class constructors follow the same rules for initialization as regular constructors, except they can be called only as part of the 
+    initialization of a subclass.
+
+  - The following rules for abstract methods apply regardless of whether the abstract method is defined in an abstract class or interface.
+  * Abstract Method Definition Rules:
+    1. Abstract methods can be defined only in abstract classes or interfaces.
+    2. Abstract methods cannot be declared private, final or static.
+    3. Abstract methods must not provide a method body/implementation in the abstract class in which they are declared.
+    4. Implementing an abstract method in a subclass follows the same rules for overriding a method, including covariant return types, exception 
+    declarations, etc.

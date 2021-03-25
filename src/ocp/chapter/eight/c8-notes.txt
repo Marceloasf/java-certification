@@ -228,6 +228,7 @@ Also verify if the classes include valid access modifiers for members.
   - The compiler performs the following checks when you override a method:
     1. The method in the child class must have the same signature as the method in the parent class.
     2. The method in the child class must be at least as accessible as the method in the parent class (same or broader access modifer only).
+      * The subclass can't reduce the visibility of the parent method.
     3. The method in the child class may not declare a checked exception that is new or broader than the class of any exception 
     declared in the parent class method (this rule only applies for CHECKED exceptions).
       * Basically, the overridden method can't be more restrictive than the inherit method.
