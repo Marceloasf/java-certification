@@ -1,0 +1,8 @@
+** Chapter 10 - Exceptions
+
+* Handling Exceptions
+  - Describe the advantages of Exception handling and differentiate among checked, unchecked execeptions and Errors.
+  - Create try-catch blocks and determine how exceptions alter program flow.
+  - Create and invoke a method that throws an exception.
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
