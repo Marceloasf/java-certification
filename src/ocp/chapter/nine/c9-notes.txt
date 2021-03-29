@@ -214,3 +214,5 @@ do not participate in the instance initialization process, and support multiple 
   - While top-level classes and interfaces can only be set with public or package-private access, member inner classes do not have the same restriction. A member 
   inner class, can be declared with all of the same access modifiers as a class member.
   - A member inner class can contain many of the same methods and variables as a top-level class, but it cannot contain some members, such as static members.
+  - Remember that an abstract class may include all of the same members as a nonabstract class (even constructors).
+  - The main() method can be included inside an abstract class.
