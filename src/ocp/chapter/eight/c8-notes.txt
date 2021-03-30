@@ -365,5 +365,3 @@ use the member (p.339).
   - A static method is hidden if it has the same signature as an inherited static method. Remember that the four rules plus a fifth rule are applied here. 
   - A method is redeclared if it has the same name and possibly the same signature as an uninherited method (superclass private methods).
   - You can access private methods (instance methods and constructors) from the main() method, if he is declared inside the same class.
-  
-  

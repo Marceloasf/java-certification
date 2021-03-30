@@ -1,11 +1,13 @@
 package ocp.chapter.nine;
 
+interface Fly { }
+
 abstract class Animal {
 
     protected abstract void makeNoise(String a);
 }
 
-abstract class Bird extends Animal { // This class isn't instantiable
+abstract class Bird extends Animal implements Fly { // This class isn't instantiable
 
     public abstract String getName();
 
