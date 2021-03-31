@@ -6,3 +6,44 @@
   - Create and invoke a method that throws an exception.
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+** p.406-407
+** Understanding Exception Types:
+  - An exception is an event that alters program flow.
+  - Java has a Throwable superclass for ALL objects that represent these events.
+  - Not all of them have the word 'exception' in their class name.
+* Categories of exception:
+                                                <- java.lang.Error
+  (top) java.lang.Object <- java.lang.Throwable                             
+                                                <- java.lang.Exception <- RuntimeException
+
+  - Error means something went so horribly wrong that your program should not attempt to recover from it (life if the program ran out of memory).
+  - Remember for the exam that Throwable it's the parent class of all exceptions (including the Error class).
+  - While you can handle Throwable and Error exceptions, it is not recommended you do so in your application code.
+
+** p.407-408
+** Checked Exceptions:
+  - A checked exception is an exception that MUST be declared or handled by the application code where it is thrown.
+  - In Java, checked exceptions all inherit from Exception but not RuntimeException.
+  - Tend to be more anticipated, for example, trying to read a file that doesn't exist.
+  - For the exam, you just need to know about checked exceptions that extend Exception, but they also include any class that inherits Throwable, 
+  but not Error or RuntimeException, so for example, a class that directly extends Throwable would be a checked exception.
+* Checked Exceptions? What are we checking?
+  - Java has a rule called the handle or declare rule. Which means that all checked exceptions that could be thrown within a method are either 
+  wrapped in compatible try and catch blocks or declared in the method signature.
+  - IOException is an unchecked exception for example. Is usually seen in method signatures (... throws IOException { }) and try-catch blocks.
+* Note: The 'throw' keyword tells Java that you want to throw an Exception, while the throws keyword simply declare that the method might throw an Exception.
+
+** p.408-409
+** Unchecked Exceptions:
+  - An unchecked exception is any exception that does NOT need to be declared or handled by the application code where it is thrown.
+  - Often referred to as runtime exceptions, although in Java, unchecked exception include any class that inherits RuntimeException or Error.
+  - A runtime exception is defined as the RuntimeException class and its subclasses.
+  - Runtime exceptions tend to be unexpected but no necessarily fatal, for example, accessing an invalid array index is unexpected.
+  - An unchecked exception can often occur on nearly any line of code, as it is not required to be handled or declared (only on signatures or try-catch like checked).
+  Like a nullpointer exception, that can be thrown anytime if a reference is null and the code tries to reach on a property of that null reference.
+  - The code will compile you declare an unchecked exception. However it is redundant.
+* Runtime vs. at the Time the Program Is Run
+  - A runtime (unchecked) exception is a specific type of exception. All exceptions occur at the time that the program is run (The alternative is compile time, 
+  which would be a compiler error). People don't refer to them as "run time" exceptions because that would be too easy to confuse with runtime. So when you see 
+  runtime exception, it means unchecked.
