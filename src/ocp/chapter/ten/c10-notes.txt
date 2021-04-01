@@ -47,3 +47,111 @@
   - A runtime (unchecked) exception is a specific type of exception. All exceptions occur at the time that the program is run (The alternative is compile time, 
   which would be a compiler error). People don't refer to them as "run time" exceptions because that would be too easy to confuse with runtime. So when you see 
   runtime exception, it means unchecked.
+
+** p.409-411
+** Throwing an Exception
+  - throw vs. throws:
+    - throw keyword is used as a statement inside a code block to throw a new exception or rethrow an existing exception.
+    - throws keyword is used ONLY at the end of a method declaration to indicate what exceptions it supports.
+
+  - An Exception is an Object. This means you can store in a variable (Exception e = new RuntimeException();).
+  - Exception has a constructor that takes a message (String).
+  - Remember that Exceptions are classes, so they need to be have an instance to be thrown (throw new Exception();).
+  - You should not catch Throwable directly in your code.
+  - Types of exceptions and errors:
+    * Runtime exception -> Subclass of RuntimeException -> It's okay for the program to catch -> The program doesn't need to handle or declare. 
+    * Checked exception -> Subclass of Exception but not of RuntimeException -> It's okay for the program to catch -> The program need to handle or declare.
+    * Error -> Subclass of Error -> Isn't okay for the program to catch -> The program doesn't need to handle or declare. 
+
+** p.411-416
+** Recognizing Exception Classes:
+  * RuntimeException Classes
+    - RuntimeException and its subclasses are unchecked exceptions that don't have to be handled or declared.
+    - They can be thrown by the programmer or by the JVM. 
+    - Common RuntimeException classes include the following:
+      - ArithmeticException: Thrown when code attempts to divide by zero.
+      - ArrayIndexOutOfBoundsException: Thrown when code uses an illegal index to access an array.
+      - ClassCastException: Thrown when an attempt is madde to cast an object to a class of which it is not an instance.
+      - NullPointerException: Thrown when there is a null reference where an object is required.
+      - IllegalArgumentException: Thrown by the programmer to indicate that a method has been passed an illegal or inappropriate argument.
+      - NumberFormatException: Subclass of IllegalArgumentException thrown when an attempt is made to convert a string to a numeric type but the string doesn't 
+      have an appropriate format.
+  * Checked Exceptions Classes
+    - They have an Exception in their hierarchy but not RuntimeException. They must be handled or declared.
+    - Common checked exceptions include the following:
+      - IOException: Thrown programmatically when there's a problem reading or writing a file.
+      - FileNotFoundException: Subclass of IOException thrown programmatically when code tries to reference a file that does not exist.
+  * Error Classes
+    - Errors are unchecked exceptions that extend the Error class.
+    - They are thrown by the JVM and should not be handled or declared.
+    - Errors prevents Java from continuing.
+    - Errors are rare, but you might see these:
+      - ExceptionInInitializerError: Thrown when a static initializer throws an exception and doesn't handle it (if a RuntimeException is thrown inside an 
+      instance initialiazer, Java can't start using the class, so it will throw this ExceptionInInitializerError).
+      - StackOverflowError: Thrown when a method calls itself too many times (this is called 'infinite recursion' because the method typically calls itself 
+      without end).
+      - NoClassDefFoundError: Thrown when a class that the code uses is available at compile time but not runtime.
+
+** p.416-418
+** Using try and catch Statements:
+  - try statement sintax is simple, it has the try keyword, curly braces (required) and the protected code inside of it (code block), after the curly braces 
+  there is the catch keyword with the type and identifier of the exception object, another set of curly braces (required) and the exception handler code 
+  inside of the curly braces.
+    `try {
+      // Protected code
+    } catch (Exception e) {
+      // Exception handler
+    }`  
+  - If any of the statements running in the try block throws an exception that can be caught by the exception type listed in the catch block, the try block 
+  stops running and execution goes to the catch statement.
+  - If none of the statements in the try block throws an exception that can be caught, the catch clause is not run.
+  - Both Block and Clause terms are correct. "Block" is correct because there are braces present and "Clause" is correct because they are part of a try statement.
+  - Remember that the point of a try statement is for ssomething to happen if an exception is thrown. So the code will not compile if you only declare the try block 
+  without the catch clause. 
+    `try { // DOES NOT COMPILE
+      // Something
+    }`
+
+** p.418-420
+** Chaining catch Blocks:
+  - When chaining catch blocks, it is not possible for all of them to be executed.
+  - Java looks at them in the order they appear.
+  - If it is impossible for one of the catch blocks to be executed, a compiler error about unreachable code occurs. For example, this occurs when a superclass catch 
+  block appears before a subclass catch block.
+  - Chaining with inherited exceptions example: 
+    `try { // COMPILES
+      seeAnimal();
+    } catch (NumberFormatException e) { // subcla ss exception
+      System.out.print("NumberFormat");
+    } catch (IllegalArgumentException e) { // superclass exception
+      System.out.print("IllegalArgument");
+    }` 
+  - In cases like this, the order of the catch blocks matters, if we reverse the catch blocks shown above, the code would not compile on the line of the subclass 
+  catch statement declaration.
+
+** 420-423
+** Applying a Multi-catch Block
+  - A multi-catch block allows multiple exception types to be caught by the same catch block.
+    `try {
+      fly(Integer.parseInt(array[1]));
+    } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+      System.out.print("Missing or invalid input");
+    }`
+  - You can declare another catch block in case you want to handle other types of exceptions differently.
+  - Basically it's like a regular catch clause, except two or more EXCEPTION TYPES are specified separated by a pipe, and there is only one variable name in the 
+  catch clause. Remember that the pipe (|) is also used as the "or" logical operator.
+  - The exceptions can be listed in any order within the catch clause.
+  - Some exam examples:
+    `catch (Exception1 e | Exception2 e | Exception3 e) {}` // DOES NOT COMPILE
+    `catch (Exception1 e1 | Exception2 e2 | Exception3 e3) {}` // DOES NOT COMPILE
+    `catch (Exception1 | Exception2 | Exception3 e) {}` // COMPILES
+  - Java intends mult-catch to be used for exceptions that aren't related, and it prevents you from specifying redundant types in a multi-catch.
+    `try {
+      throw new IOException();
+    } catch (FileNotFoundException | IOException e) { }` // DOES NOT COMPILE, redundant since FileNotFoundException is already caught by the alternative IOException.
+  - The same rules listed before are applied to multi-catch blocks, if there are other catch blocks in the try statement for example. But the main difference is that 
+  the order of does not matter on multi-catch blocks within a single catch expression.
+* Reviewing some 'rules':
+  - There can be only one exception variable per catch block.
+  - You can't list the same exception type more than once in the same try statement.
+  - The more general superclasses must be caught after their subclasses.
