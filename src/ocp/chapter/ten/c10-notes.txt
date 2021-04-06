@@ -130,7 +130,7 @@
   - In cases like this, the order of the catch blocks matters, if we reverse the catch blocks shown above, the code would not compile on the line of the subclass 
   catch declaration, because the exception its unreachable.
 
-** 420-423
+** p.420-423
 ** Applying a Multi-catch Block
   - A multi-catch block allows multiple exception types to be caught by the same catch block.
     `try {
@@ -156,3 +156,150 @@
   - There can be only one exception variable per catch block.
   - You can't list the same exception type more than once in the same try statement.
   - The more general superclasses must be caught after their subclasses.
+
+** p.423-426
+** Adding a finally Block:
+  - The try statement also lets you run code at the END with a finally clause, regardless of whether an exception is thrown.
+  - The block always executes, whether or not an exception occurs.
+  - The catch block is optional when finally is used.
+      `try {
+      // Protected code
+    } catch (Exception e) { // OPTIONAL **
+      // Exception handler
+    } finally {
+      // Finally block
+    }`  
+  - The finally is always executed, and is always the last clause to be executed.
+  - A finally block with a 'return' statement will replace other returns on the try and catch block, since is always executed last.
+  - System.exit(int status) is the only exception to 'the finally block is always executed' rule:
+    - Java defines this method that you call as System.exit(int status), it takes an integer parameter that represents the error code that gets returned.
+    - When System.exit(int status) is used in the try or catch block, the finally block does not run.
+  
+** p.426-428
+** Finally Closing Resources:
+  - If you don't close a resource when you are one with it, a lot of bad things could happen. If you are connecting to a database, you could use up all available 
+  connections, meaning no one can talk to the database until you release your connections. Although you commonly hear about memory leaks as causing programs to 
+  fail, a resource leak is just as bad and occurs when a program fails to release its connections to a resource and then the resource becoming inaccessible.
+  - To treat this without needing lots of try and catch blocks, Java includes the 'try-with-resources' statement to automatically close all resources opened in a 
+  try clause.
+  - This feature is also known as 'automatic resource management', because Java takes care of the closing.
+    `// Instead of using this:
+      	FileInputStream is = null;
+      	try {
+      	  is = new FileInputStream("myfile.txt");
+      	  // Read file data
+      	} catch (IOException e) {
+      	  e.printStackTrace();
+      	} finally {
+      	  if (is != null) {
+      	    try {
+      	      is.close();
+      	    } catch (IOException e2) {
+      	      e2.printStackTrace();
+      	    }
+      	  }
+      	}
+
+    // You can use try-with-resources:
+       public void readFile(String file) {
+         try (FileInputStream is = new FileInputStream("myfile.txt")) {
+           // Read file data
+         } catch (IOException e) {
+           e.printStackTrace();
+         }
+       }`
+  - Using a try-with-resources statement, guarantees that as soon as a connection passes out of scope, Java will attempt to close it within the same method.
+  - try-with-resources has implicit finally blocks. Behind the scenes, the compiler replaces a try-with-resources block with a try and finally block:
+    - We refer to this "hidden" finally block as an implicit finally block since it is created and used by the compiler automatically.
+    - You can still create a programmer-defined finally block when using a try-with-resources statement; just be aware that the implicit one will be created and 
+    called first.
+
+** p.428-432
+** Try-with-Resources:
+  - One or more resources can be opened in the try clause.
+  - When there are multiple resources opened, they are closed in the REVERSE order from which they were created.
+  - Notice that parentheses are used to list those resources, and semicolons are used to separate the declarations. It works just like declaring multiple 
+  indexes in a for loop.
+  - The syntax of a basic try-with-resources:
+   
+    `try (FileInputStream in = new FileInputStream("data.txt"); // Required semicolon between resource declarations
+            FileOutputStream out = FileOutputStream("output.txt");) { // Last semicolon is optional and is usually omitted 
+      // Protected code
+    }` // Resources are closed at this point
+  
+  - the catch and finally block are optional with ONLY a try-with-resources statement.
+  - try statement must have one or more catch blocks or a finally block, this is still true with this case, but the finally clause exists implicitly as said before.
+  - Is still allowed to have catch and/or finally blocks declared anyway. In fact, if the code within the try block throws a checked exception not declared by the 
+  method in which it is defined or handled by another try/catch blocks, then it will need to be handled by the catch block. *
+  - The catch and finally blocks are run in addition to the implicit one that closes the resources. Remember that the implicit finally block always runs before any 
+  programmer-coded ones.
+  - The syntax of try-with-resources including catch/finally:
+
+    `try (FileInputStream in = new FileInputStream("data.txt"); FileOutputStream out = FileOutputStream("output.txt");) {
+      // Protected code
+    } // Resources are closed at this point (implicit finally)
+      catch (IOException e) {
+        // Exception handler
+    } finally {
+      // finally block 
+    }`
+
+  - Legal vs. illegal configurations with a traditional try statement:
+   _____________________________________________________________________________________________                 
+  |                          0 finally blocks      1 finally block     2 or more finally blocks |
+  |0 catch blocks            Not legal             Legal               Not legal                |
+  |1 or more catch blocks    Legal                 Legal               Not legal                |
+  |_____________________________________________________________________________________________|
+
+  - Legal vs. illegal configurations with a try-with-resources statement:
+   _____________________________________________________________________________________________                 
+  |                          0 finally blocks      1 finally block     2 or more finally blocks |
+  |0 catch blocks            Legal                 Legal               Not legal                |
+  |1 or more catch blocks    Legal                 Legal               Not legal                |
+  |_____________________________________________________________________________________________|
+  - You can see that for both of these try statements, two or more programmer-defined finally blocks are not allowed. The implicit one is not count here.
+
+* AutoCloseable:
+  - You can't just put any random class in a try-with-resources statement. 
+  - Java requires classes used in a try-with-resources implement the AutoCloseable interface, which includes a void close() method.
+
+* Declaring Resources:
+  - try-with-resources statement does not support multiple variable declarations, so each variable must be declared in a separate statement. For example 
+  the following do not compile.
+
+      `try (FileInputStream in = new FileInputStream("data.txt"), out = FileInputStream("output.txt")) { // DOES NOT COMPILE
+        // Protected code
+      }`
+      `try (FileInputStream in = new FileInputStream("data.txt"), FileInputStream out = FileInputStream("output.txt")) { // DOES NOT COMPILE
+        // Protected code
+      }`
+  - Each resource must include the data type and be separated by a semicolon (;).
+  - Declaring resources is a common situation where using var is quite helpful, as it shortens the already long line of code.
+
+      `try (var in = new BufferedInputStream(new FileInputStream("data.txt"));) { // COMPILES
+        // Protected code
+      }`
+
+* Scope of Try-with-Resources:
+  - The resources created in the try clause are in scope only within the try block. Because the implicit finally runs before any catch/finally blocks that 
+  you code yourself.
+  
+      `try (Scanner s = new Scanner(System.in)) {
+        s.nextLine();
+      } catch (Exception e) {
+        s.nextInt(); // DOES NOT COMPILE
+      } finally {
+        s.nextInt(); // DOES NOT COMPILE
+      }`
+
+* Following Order of Operation:
+  - Remember these two rules:
+    1. Resources are closed after the try clause ends and before any catch/finally clauses.
+    2. Resources are closed in the reverse order from which they were created.
+  - The try-with-resources only guarantees that the close() method of the AutoCloseable subclass will be called.
+
+** p.432-434
+** Throwing Additional Exceptions:
+  - A catch or finally block can have any valid Java code in it, including another try statement.
+  - The exception will always be handled in the catch statement if its properlly handled.
+  - If an exceptions is thrown inside a catch/finally block, and not handled, then the exception thrown in the last executed block will be the one thrown.
