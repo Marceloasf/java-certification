@@ -153,6 +153,7 @@
     } catch (FileNotFoundException | IOException e) { }` // DOES NOT COMPILE, redundant since FileNotFoundException is already caught by the alternative IOException.
   - The same rules listed before are applied to multi-catch blocks, if there are other catch blocks in the try statement for example.
   - The main difference between chaining and multi-catch is that the order they appear does not matter on multi-catch blocks within a single catch expression.
+  
 * Reviewing some 'rules':
   - There can be only one exception variable per catch block.
   - You can't list the same exception type more than once in the same try statement.
