@@ -26,8 +26,9 @@
   - A checked exception is an exception that MUST be declared or handled by the application code where it is thrown.
   - In Java, checked exceptions all inherit from Exception but not RuntimeException.
   - Tend to be more anticipated, for example, trying to read a file that doesn't exist.
-  - For the exam, you just need to know about checked exceptions that extend Exception, but they also include any class that inherits Throwable, 
+  - For the exam, you just need to know about checked exceptions extend Exception, but they also include any class that inherits Throwable, 
   but not Error or RuntimeException.
+  - You can't throw a checked exception inside a method without declaring it on the method signature.
 * Checked Exceptions? What are we checking?
   - Java has a rule called the 'handle or declare' rule. Which means that all checked exceptions that could be thrown within a method are either 
   wrapped in compatible try and catch blocks or declared in the method signature.
@@ -266,32 +267,35 @@
 * Declaring Resources:
   - try-with-resources statement does not support multiple variable declarations, so each variable must be declared in a separate statement. For example 
   the following do not compile.
-
-      `try (FileInputStream in = new FileInputStream("data.txt"), out = FileInputStream("output.txt")) { // DOES NOT COMPILE
+      `
+      try (FileInputStream in = new FileInputStream("data.txt"), out = FileInputStream("output.txt")) { // DOES NOT COMPILE
         // Protected code
-      }`
-      `try (FileInputStream in = new FileInputStream("data.txt"), FileInputStream out = FileInputStream("output.txt")) { // DOES NOT COMPILE
+      }
+      `
+      `
+      try (FileInputStream in = new FileInputStream("data.txt"), FileInputStream out = FileInputStream("output.txt")) { // DOES NOT COMPILE
         // Protected code
-      }`
+      }
+      `
   - Each resource must include the data type and be separated by a semicolon (;).
   - Declaring resources is a common situation where using var is quite helpful, as it shortens the already long line of code.
-
-      `try (var in = new BufferedInputStream(new FileInputStream("data.txt"));) { // COMPILES
+      `
+      try (var in = new BufferedInputStream(new FileInputStream("data.txt"));) { // COMPILES
         // Protected code
-      }`
-
+      }
+      `
 * Scope of Try-with-Resources:
   - The resources created in the try clause are in scope only within the try block. Because the implicit finally runs before any catch/finally blocks that 
   you code yourself.
-  
-      `try (Scanner s = new Scanner(System.in)) {
+      `
+      try (Scanner s = new Scanner(System.in)) {
         s.nextLine();
       } catch (Exception e) {
         s.nextInt(); // DOES NOT COMPILE
       } finally {
         s.nextInt(); // DOES NOT COMPILE
-      }`
-
+      }
+      `
 * Following Order of Operation:
   - Remember these two rules:
     1. Resources are closed after the try clause ends and before any catch/finally clauses.
@@ -303,3 +307,126 @@
   - A catch or finally block can have any valid Java code in it, including another try statement.
   - The exception will always be handled in the catch statement if its properlly handled.
   - If an exceptions is thrown inside a catch/finally block, and not handled, then the exception thrown in the last executed block will be the one thrown.
+
+** p.434-436
+** Calling Methods That Throw exceptions:
+  - When you have a method with a checked exception on the signature (declared), even if the exception is not thrown on the code, you must declare or 
+  handle that exception where you use the method.
+  - Example where the code do not compile:
+    `
+    class NoMoreCarrotsException extends Exception { }
+     public class Bunny {
+       public static void main(String[] args) {
+         eatCarrot(); // DOES NOT COMPILE - Because NoMoreCarrotsException is a checked exception
+       }
+
+       private static void eatCarrot() throws NoMoreCarrotsException { }
+     }
+     ` 
+  - There are some ways to fix this and make this code work:
+    `
+    public static void main(String[] args) throws NoMoreCarrotsException { // declare exception
+         eatCarrot();
+    }
+    `
+    `
+    public static void main(String[] args) { 
+      try {
+        eatCarrot();
+      } catch (NoMoreCarrotsException e) { // handle exception
+        ...
+      }
+    }
+    `
+  - The compiler is always on the lookout for unreachable code, and declaring an unused exception isn't considered unreachable code.
+    `
+    private static void bad() {
+      try {
+        eatCarrot();
+      } catch (NoMoreCarrotsException e) { // DOES NOT COMPILE, because Java knows that this checked exception or a subclass of the checked exception  
+                                           // will not be thrown on eatCarrot() implementation (unreachable code).
+        ...
+      }
+    }
+
+      public void good() throws NoMoreCarrotsException { // COMPILES, since this exception on good() is unused (not unreachable).
+           eatCarrot();
+      }
+
+      private void eatCarrot() { } // NO EXCEPTION DECLARED
+    ` 
+  - You can handle a checked exception with runtime exceptions together in a multi-catch or chaining catch blocks, but you need to handle the checked exception.
+  - This rule does not extend to unchecked exceptions or exceptions declared in a method signature. So a method such as eatCarrot() can be called inside a
+   try block, but the exception on the catch block can't be a checked one, because its unreachable.
+* Note: Remember that you can't throw a checked exception inside a method without declaring it on the method signature. If eatCarrot() needed to throw 
+NoMoreCarrotsException, then you'll need to declare it on the eatCarrot() signature.
+
+** p.436-437
+** Declaring and Overriding Methods with Exceptions:
+  - Remember that an overridden method, it's not allowed to add new CHECKED exceptions to the method signature. For example, this is not allowed:
+    `
+    class CanNotHopException extends Exception { }
+     class Hopper {
+       public void hop() { }
+     }
+
+     public class Bunny extends Hopper {
+       public void hop() throws CanNotHopException { } // DOES NOT COMPILE
+     }
+     ` 
+  - An overridden method in a subclass is allowed to declare fewer exceptions than the superclass or interface. This is legal because callers are already 
+  handling them. For example, this is allowed:
+    `
+    class Hopper {
+       public void hop() throws CanNotHopException { }
+     }
+
+     public class Bunny extends Hopper {
+       public void hop()  { } // COMPILES
+     }
+     ` 
+  - Similarly, a class is allowed to declare a subclass of an exception type. The superclass or interface has already taken care of a broader type. Example:
+     `
+     class Hopper {
+       public void hop() throws Exception { }
+     }
+
+     public class Bunny extends Hopper {
+       public void hop() throws CanNotHopException { } // COMPILES - Bunny could declare that it throws Exception directly, or a more specific type of Exception or 
+                                                       //            even that it throws nothing at all.
+     }
+     ` 
+* Note: Remember that this rule applies only to checked exceptions. So a subclass overridden method can throws unchecked exceptions. Because this is relevant, since 
+a unchecked exception doesn't need to be handled or declared, because methods are free to throw any unchecked exceptions they want.
+
+** p.437-438
+** Printing an Exception:
+  - There are three ways to print an exception. You can let Java print it out, print just the message or print where the stack trace comes from.
+  - Example of the three approaches:
+    `
+    public static void main(String[] args) {
+      try {
+        hop();
+      } catch (Exception e) {
+        System.out.println(e);
+        System.out.println(e.getMessage());
+        e.printStackTrace();
+      }
+    }
+
+    private static void hop() {
+      throw new RuntimeException("Cannot hop");
+    }
+    `
+  - The code results are:
+    1. java.lang.RuntimeException: Cannot hop // Shows that Java prints out by default: the exception type and message
+    2. Cannot hop // Shows just the message
+    3. java.lang.RuntimeException: Cannot hop // Shows a stack trace
+          at Handling.hop(Handling.java:15)
+          at Handling.main(Handling.java:7)
+  - The stack trace is usually the most helpful one because it is a picture in time the moment the exception is thrown. It shows the hierarchy of method calls 
+  that were made to reach the line that threw the exception.
+  - The stack trace shows all the methods on the stack. Every time you call a method, Java adds it to the stack until it completes. When an exception is thrown, 
+  it goes through the stack until it finds a method that can handle it or it runs out of stack.
+  - A method stack:
+    (top) new RuntimeException -> hop() -> main()
