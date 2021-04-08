@@ -1,0 +1,8 @@
+** Chapter 11 - Modules
+
+* Understanding Modules
+  - Describe the Modular JDK.
+  - Declare modules and enable access between modules.
+  - Describe how a modular project is compiled and run.
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

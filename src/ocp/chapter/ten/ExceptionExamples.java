@@ -24,6 +24,8 @@ public class ExceptionExamples implements Animal {
         } catch (NoMoreCarrotsException e) {
             System.out.println(e.getMessage());
             System.out.println("HA NoMoreCarrots...");
+        } catch (java.io.IOException e) {
+            System.out.println("IO? Not printed...");
         }
         
         try {
@@ -36,7 +38,7 @@ public class ExceptionExamples implements Animal {
         throw new Error("OH NO");
     }
 
-    public static void nice() throws NoMoreCarrotsException {
+    public static void nice() throws NoMoreCarrotsException, java.io.IOException {
         System.out.println("NICE");
 
         throw new NoMoreCarrotsException();

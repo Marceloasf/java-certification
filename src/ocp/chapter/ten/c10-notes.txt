@@ -29,6 +29,7 @@
   - For the exam, you just need to know about checked exceptions extend Exception, but they also include any class that inherits Throwable, 
   but not Error or RuntimeException.
   - You can't throw a checked exception inside a method without declaring it on the method signature.
+  - You can't declare a checked exception on a catch block without throwing it on the try block (from a method or directly with the throw statement).
 * Checked Exceptions? What are we checking?
   - Java has a rule called the 'handle or declare' rule. Which means that all checked exceptions that could be thrown within a method are either 
   wrapped in compatible try and catch blocks or declared in the method signature.
