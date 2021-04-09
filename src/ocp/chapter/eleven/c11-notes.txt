@@ -6,3 +6,25 @@
   - Describe how a modular project is compiled and run.
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+** p.454-457
+** Introducing Modules:
+  - Since Java 9, packages can be grouped into modules.
+  - When you have a big project that consist of hundred or thousand of classes grouped into packages, all these packages 
+  are grouped into Java archive (JAR) files. A JAR is a zip file with some extra info, and the extension is .jar.
+  - The main purpose of a module is to provide groups of related packages to offer a particular set of functionality to 
+  developers. It's like a JAR file except a developer chooses which packages are accessible outside the module.
+  - The Java Platform Module System includes the following:
+    - A format for module JAR files.
+    - Partitioning of the JDK into modules.
+    - Additional command-line options for Java tools.
+  - A module is a group of one or more packages plus a special file called module-info.java.
+  - Modules have 'dependencies' between them, where one module relies on code in another.
+  - Using modules is optional.
+* Benefits of Modules
+  - Better Access Control: Modules can act like as a fifth level of access control. They can expose packages within the 
+  modular JAR to specific other packages.
+  - Clearer Dependency Management: In a fully modular environment, each of the open source projects specify their dependencies 
+  in the module-info.java file. When launching the program, Java would complain that a library isn't in the module path and 
+  you'd know right away, instead of just blowing up on runtime with a message about not finding a required class if you forget 
+  to include a library in the classpath.
