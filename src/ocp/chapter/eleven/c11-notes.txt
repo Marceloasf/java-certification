@@ -14,6 +14,7 @@
   are grouped into Java archive (JAR) files. A JAR is a zip file with some extra info, and the extension is .jar.
   - The main purpose of a module is to provide groups of related packages to offer a particular set of functionality to 
   developers. It's like a JAR file except a developer chooses which packages are accessible outside the module.
+  - A complex chain of dependencies and minimum version is often referred to by the community as JAR hell.
   - The Java Platform Module System includes the following:
     - A format for module JAR files.
     - Partitioning of the JDK into modules.
@@ -28,3 +29,19 @@
   in the module-info.java file. When launching the program, Java would complain that a library isn't in the module path and 
   you'd know right away, instead of just blowing up on runtime with a message about not finding a required class if you forget 
   to include a library in the classpath.
+  - Custom Java Builds:
+    - In the past, Java attempted to solve the size of JRE and JDK with a compact profile. The three compact profiles provided 
+    a subset of the built-in Java classes so there would be a smaller package for mobile and embedded devices. However, the 
+    compact profiles lacked flexibility, because many packages were included that developers were unlikely to use and at the 
+    same time, using other packages like Image I/O required the full JRE.
+    - The JPMS allows developers to specify what modules they actually need. This makes it possible to create a smaller runtime 
+    iamge that is customized to what the application needs and nothing more. Users can run that image without having Java 
+    installed at all.
+  - Improved Performance: Since Java now knows which modules are required, it only needs to look at those at class loading time. 
+  This improves startup time for big programs and requires less memory to run. This impacts mostly big applications.
+  - Unique Package Enforcement: 
+    - Another manifestation of JAR hell is when the same package is in two JARs. There are number of causes of this problem 
+    including renaming JARs, clever developers using a package name that is already taken and having two version of the 
+    same JAR on the classpath
+    - The JPMS prevents this scenario. A package is only allowed to be supplied by one module. No more unpleasant surprises about 
+    a package at runtime.
