@@ -45,3 +45,78 @@
     same JAR on the classpath
     - The JPMS prevents this scenario. A package is only allowed to be supplied by one module. No more unpleasant surprises about 
     a package at runtime.
+
+** p.458-464
+** Creating, Compiling, Running and Packaging a Modular Program
+* Note: There is lots of practice in this chapter, so the .java files are located in subpackages of package eleven.
+  - There are a few key differences between a module-info file and a regular Java class:
+    - The module-info file must be in the root directory of your MODULE. Regular Java classes should be in packages.
+    - The module-info file must use the keyword module instead of class, interface or enum.
+    - The module name follows the naming rules for package names. It often includes periods (.) in its name. Regular class and package 
+    names are not allowed to have dashes (-). Module names follows the same rule.
+  - A module-info.java file can be empty. The compiler sees there isn't a class in there and exits without creating a .class file.
+  - An empty module-info.java file can be omitted since there are no dependencies. 
+  - You can think of module-path as replacing the classpath option when you are working on a modular program.
+  - Some valid commands that can be used to compile a module (using package eleven as the 'root' directory to execute and feeding as the module root): 
+    - `javac --module-path mods -d feeding feeding/zoo/animal/feeding/*.java feeding/module-info.java`
+    - `javac -p mods -d feeding feeding/zoo/animal/feeding/*.java feeding/*.java`
+    - `javac -p mods -d feeding feeding/zoo/animal/feeding/*.java feeding/module-info.java`
+    - `javac -p mods -d feeding feeding/zoo/animal/feeding/Task.java feeding/module-info.java`
+    - `javac -p mods -d feeding feeding/zoo/animal/feeding/Task.java feeding/*.java`
+      * --module-path and -p are equivalent.
+      * The usage of classpath is still available on Java 11, with it's three forms: -cp, --class-path and -classpath.
+  - Options you need to know for using modules with javac:
+   _________________________________________________________________________
+  |  Use for                       Abbreviation        Long form            |
+  |  Directory for class files     -d <dir>            n/a                  |
+  |  Module path                   -p <path>           --module-path <path> |
+  |_________________________________________________________________________|
+
+  - Running a module syntax example:
+    - `java --module-path feeding --module zoo.animal.feeding/zoo.animal.feeding.Task`
+      - "--module-path" is the location of modules
+      - "zoo.animal.feeding" is the module name
+      - "zoo.animal.feeding" is the package name followed class name "Task" (the fully qualified class name)
+      - module name is followed by a slash (/) followed by the fully qualified class name
+    * Note: Its common for the module name to match either the full package name or the beginning of it (convention).
+  - "-module" has a short form too, is -m. So the following command is equivalent:
+    - `java -p feeding -m zoo.animal.feeding/zoo.animal.feeding.Task`
+    
+  - Options you need to know for using modules with javac:
+   _________________________________________________________________________
+  |  Use for                       Abbreviation        Long form            |
+  |  Module name                   -m <name>           --module             |
+  |  Module path                   -p <path>           --module-path <path> |
+  |_________________________________________________________________________|
+
+  - A module isn't much use if we can run it only in the folder it was created in. So we package it. Be sure to create a mods 
+  directory before running this command.
+    - `jar -cvf mods/zoo.animal.feeding.jar -C feeding/ .`
+
+  - With this command, we package everything under the feeding directory and store it in a JAR file named zoo.animal.feeding.jar 
+  under the mods folder. This represents how the module JAR will look to other code that wants to use it.
+* Note: It is possible to version your module using the --module-version option, which is good to do when you are ready to share 
+your module with others.
+  - Now we can run the program using the mods directory instead of the loose classes:
+    - `java -p mods -m zoo.animal.feeding/zoo.animal.feeding.Task`
+      * Since a module path is used, a module JAR is being run.
+
+** p.465-472
+** Updating Our Example for Multiple Module:
+* Note: The first version of the code until this section is located at the directory other/single_module_c11, to execute those files you need 
+to use the single_module_c11 folder as the 'root'.
+  - The exports keyword is used to indicate that a module intends for those packages to be used by Java code outside the module:
+    - `exports zoo.animal.feeding`
+  - You can reuse the same javac and jar commands ran previously to recompile and repackage the module inside the .jar file.
+  - Remember that all modules must have a module-info file on the module root.
+  - The requires statement specifies that a module is needed. So a module X depends on the Y:
+    - `requires zoo.animal.feeding;`
+  - Its intentional that the packages names begin with the same prefix as the module name.
+
+  - Compiling more than one package command example:
+    - `javac -p mods -d care care/zoo/animal/care/details/*.java care/zoo/animal/care/medical/*.java (...) care/module-info.java `
+    * The --module-path (-p) directory must be the path where the modules jars were compiled, to Java require the dependencies from the other modules.
+    * Note that order matters when compiling a module. For example, the module-info can't go first on the command to compile, because Java will not find
+    the packages that are being exported from the module-info and a compiler error will be thrown, since those packages haven't been compiled yet.
+  - Remember to package the module using the jar command.
+    - `jar -cvf mods/zoo.animal.feeding.jar -C feeding/ .`
