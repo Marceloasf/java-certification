@@ -15,49 +15,50 @@
   - The main purpose of a module is to provide groups of related packages to offer a particular set of functionality to 
   developers. It's like a JAR file except a developer chooses which packages are accessible outside the module.
   - A complex chain of dependencies and minimum version is often referred to by the community as JAR hell.
-  - The Java Platform Module System includes the following:
+  - The Java Platform Module System (JPMS) includes the following:
     - A format for module JAR files.
     - Partitioning of the JDK into modules.
     - Additional command-line options for Java tools.
   - A module is a group of one or more packages plus a special file called module-info.java.
-  - Modules have 'dependencies' between them, where one module relies on code in another.
+  - Modules have 'dependencies' between them, where one module can relie on code that is in another.
   - Using modules is optional.
 * Benefits of Modules
   - Better Access Control: Modules can act like as a fifth level of access control. They can expose packages within the 
-  modular JAR to specific other packages.
+  modular JAR to specific packages.
   - Clearer Dependency Management: In a fully modular environment, each of the open source projects specify their dependencies 
-  in the module-info.java file. When launching the program, Java would complain that a library isn't in the module path and 
-  you'd know right away, instead of just blowing up on runtime with a message about not finding a required class if you forget 
-  to include a library in the classpath.
+  in the module-info.java file. When launching the program, Java will complain that a library isn't in the module path in case 
+  it isn't and you'd know right away, instead of just blowing up on runtime with a message about not finding a required class 
+  if you forget to include a library in the classpath (non-modular).
   - Custom Java Builds:
     - In the past, Java attempted to solve the size of JRE and JDK with a compact profile. The three compact profiles provided 
     a subset of the built-in Java classes so there would be a smaller package for mobile and embedded devices. However, the 
     compact profiles lacked flexibility, because many packages were included that developers were unlikely to use and at the 
     same time, using other packages like Image I/O required the full JRE.
-    - The JPMS allows developers to specify what modules they actually need. This makes it possible to create a smaller runtime 
-    iamge that is customized to what the application needs and nothing more. Users can run that image without having Java 
+    - The JPMS allows developers to specify which modules they actually need. This makes it possible to create a smaller runtime 
+    image that is customized to what the application needs and nothing more. Users can run that image without having Java 
     installed at all.
   - Improved Performance: Since Java now knows which modules are required, it only needs to look at those at class loading time. 
   This improves startup time for big programs and requires less memory to run. This impacts mostly big applications.
   - Unique Package Enforcement: 
     - Another manifestation of JAR hell is when the same package is in two JARs. There are number of causes of this problem 
-    including renaming JARs, clever developers using a package name that is already taken and having two version of the 
-    same JAR on the classpath
-    - The JPMS prevents this scenario. A package is only allowed to be supplied by one module. No more unpleasant surprises about 
+    including renaming JARs, or clever developers using a package name that is already taken and having two version of the 
+    same JAR on the classpath.
+    - The JPMS prevents this scenario, by making a package allowed to be supplied by only one module. No more unpleasant surprises about 
     a package at runtime.
 
 ** p.458-464
 ** Creating, Compiling, Running and Packaging a Modular Program
-* Note: There is lots of practice in this chapter, so the .java files are located in subpackages of package eleven.
+* Note: There is lots of practice in this chapter, so the .java files are located in subpackages of packages eleven and other.
   - There are a few key differences between a module-info file and a regular Java class:
     - The module-info file must be in the root directory of your MODULE. Regular Java classes should be in packages.
     - The module-info file must use the keyword module instead of class, interface or enum.
     - The module name follows the naming rules for package names. It often includes periods (.) in its name. Regular class and package 
-    names are not allowed to have dashes (-). Module names follows the same rule.
+    names are not allowed to have dashes (-) and module names follows the same rule.
   - A module-info.java file can be empty. The compiler sees there isn't a class in there and exits without creating a .class file.
-  - An empty module-info.java file can be omitted since there are no dependencies. 
+  - An empty module-info.java file can be omitted in a module since there are no dependencies. 
   - You can think of module-path as replacing the classpath option when you are working on a modular program.
-  - Some valid commands that can be used to compile a module (using package eleven as the 'root' directory to execute and feeding as the module root): 
+  - Some valid commands that can be used to compile a module (using package eleven or single_module_c11 as the 'root' directory to 
+  execute and feeding as the module root): 
     - `javac --module-path mods -d feeding feeding/zoo/animal/feeding/*.java feeding/module-info.java`
     - `javac -p mods -d feeding feeding/zoo/animal/feeding/*.java feeding/*.java`
     - `javac -p mods -d feeding feeding/zoo/animal/feeding/*.java feeding/module-info.java`
@@ -65,24 +66,24 @@
     - `javac -p mods -d feeding feeding/zoo/animal/feeding/Task.java feeding/*.java`
       * --module-path and -p are equivalent.
       * The usage of classpath is still available on Java 11, with it's three forms: -cp, --class-path and -classpath.
-  - Options you need to know for using modules with javac:
+  - Options you need to know for using modules with 'javac':
    _________________________________________________________________________
   |  Use for                       Abbreviation        Long form            |
-  |  Directory for class files     -d <dir>            n/a                  |
+  |  Directory for .class files    -d <dir>            n/a                  |
   |  Module path                   -p <path>           --module-path <path> |
   |_________________________________________________________________________|
 
   - Running a module syntax example:
     - `java --module-path feeding --module zoo.animal.feeding/zoo.animal.feeding.Task`
       - "--module-path" is the location of modules
-      - "zoo.animal.feeding" is the module name
-      - "zoo.animal.feeding" is the package name followed class name "Task" (the fully qualified class name)
+      - "zoo.animal.feeding" on the left side of the slash is the module name
+      - "zoo.animal.feeding" on ther right side is the package name followed by the class name "Task", 
+      zoo.animal.feeding.Task (the fully qualified class name)
       - module name is followed by a slash (/) followed by the fully qualified class name
-    * Note: Its common for the module name to match either the full package name or the beginning of it (convention).
+      * Note: Its common for the module name to match either the full package name or the beginning of it (convention).
   - "-module" has a short form too, is -m. So the following command is equivalent:
     - `java -p feeding -m zoo.animal.feeding/zoo.animal.feeding.Task`
-    
-  - Options you need to know for using modules with javac:
+  - Options you need to know for using modules with 'java':
    _________________________________________________________________________
   |  Use for                       Abbreviation        Long form            |
   |  Module name                   -m <name>           --module             |
@@ -90,9 +91,8 @@
   |_________________________________________________________________________|
 
   - A module isn't much use if we can run it only in the folder it was created in. So we package it. Be sure to create a mods 
-  directory before running this command.
+  directory before running this command, because 'mods' is where the generated artifacts will be stored (.jar for example).
     - `jar -cvf mods/zoo.animal.feeding.jar -C feeding/ .`
-
   - With this command, we package everything under the feeding directory and store it in a JAR file named zoo.animal.feeding.jar 
   under the mods folder. This represents how the module JAR will look to other code that wants to use it.
 * Note: It is possible to version your module using the --module-version option, which is good to do when you are ready to share 
@@ -103,20 +103,20 @@ your module with others.
 
 ** p.465-472
 ** Updating Our Example for Multiple Module:
-* Note: The first version of the code until this section is located at the directory other/single_module_c11, to execute those files you need 
-to use the single_module_c11 folder as the 'root'.
+* Note: The first version of the code until this section is located at the directory 'other/single_module_c11', to execute those files you need 
+to use the single_module_c11 folder as the 'root'. The multiple module example is under directory 'eleven'.
   - The exports keyword is used to indicate that a module intends for those packages to be used by Java code outside the module:
-    - `exports zoo.animal.feeding`
-  - You can reuse the same javac and jar commands ran previously to recompile and repackage the module inside the .jar file.
-  - Remember that all modules must have a module-info file on the module root.
+    - `exports zoo.animal.feeding;`
+  - You can reuse the same javac and jar commands ran previously to recompile and repackage the module inside the .jar file, so it'll update the 
+  dependencies exports and requires.
+  - Remember that all modules must have a module-info file on the module root and inside of this file are located the dependencies of the module.
   - The requires statement specifies that a module is needed. So a module X depends on the Y:
     - `requires zoo.animal.feeding;`
   - Its intentional that the packages names begin with the same prefix as the module name.
-
   - Compiling more than one package command example:
-    - `javac -p mods -d care care/zoo/animal/care/details/*.java care/zoo/animal/care/medical/*.java (...) care/module-info.java `
-    * The --module-path (-p) directory must be the path where the modules jars were compiled, to Java require the dependencies from the other modules.
-    * Note that order matters when compiling a module. For example, the module-info can't go first on the command to compile, because Java will not find
-    the packages that are being exported from the module-info and a compiler error will be thrown, since those packages haven't been compiled yet.
-  - Remember to package the module using the jar command.
+    - `javac -p mods -d care care/zoo/animal/care/details/*.java care/zoo/animal/care/medical/*.java (...) care/module-info.java`
+    * The --module-path (-p) directory must be the path where the modules jars were compiled, so Java can require the dependencies from the other modules.
+    * Note that order matters when compiling a module. For example, the module-info can't go first on the command to compile, because Java will not find the 
+    packages that are being exported or required from the module-info files, a compiler error will be thrown since those packages haven't been compiled yet.
+  - Remember that you need to repackage the modules using the jar command to refresh changes.
     - `jar -cvf mods/zoo.animal.feeding.jar -C feeding/ .`
