@@ -28,7 +28,7 @@
   - Clearer Dependency Management: In a fully modular environment, each of the open source projects specify their dependencies 
   in the module-info.java file. When launching the program, Java will complain that a library isn't in the module path in case 
   it isn't and you'd know right away, instead of just blowing up on runtime with a message about not finding a required class 
-  if you forget to include a library in the classpath (non-modular).
+  if you forget to include a library in the classpath (nonmodular).
   - Custom Java Builds:
     - In the past, Java attempted to solve the size of JRE and JDK with a compact profile. The three compact profiles provided 
     a subset of the built-in Java classes so there would be a smaller package for mobile and embedded devices. However, the 
@@ -296,3 +296,117 @@ to use the single_module_c11 folder as the 'root'. The multiple module example i
     - list: Lists all files in the JMOD file.
     - hash: Shows a long string that goes with the file.
   
+** p.483-485
+** Reviewing Command-Line Options:
+  - The command lines you should expect to encounter on the exam (1Z0-815):
+   _______________________________________________________________________________________________________________________________________
+  |  Description                 Syntax                                                                                                   |
+  |_______________________________________________________________________________________________________________________________________|
+  |  Compile nonmodular code     javac -cp classpath -d directory classesToCompile                                                        |
+  |                              javac --class-path classpath -d directory classesToCompile                                               |
+  |                              javac -classpath classpath -d directory classesToCompile                                                 |
+  |_______________________________________________________________________________________________________________________________________|                                                                                                                                       |
+  |  Run nonmodular code         java -cp classpath package.className                                                                     |
+  |                              java -classpath classpath package.className                                                              |
+  |                              java --class-path classpath package.className                                                            |
+  |_______________________________________________________________________________________________________________________________________|
+  |  Compile a module            javac -p moduleFolderName -d directory classesToCompileIncludingModuleInfo                               |
+  |                              javac --module-path moduleFolderName -d directory classesToCompileIncludingModuleInfo                    |
+  |_______________________________________________________________________________________________________________________________________|
+  |  Run a module                java -p moduleFolderName -m moduleName/package.className                                                 |    
+  |                              java --module-path moduleFolderName --module moduleName/package.className                                |
+  |_______________________________________________________________________________________________________________________________________|
+  |  Describe a module           java -p moduleFolderName -d moduleName                                                                   |
+  |                              java --module-path moduleFolderName --describe-module moduleName                                         |
+  |                              jar --file jarName --descibre-module                                                                     |
+  |                              jar -f jarName -d                                                                                        |
+  |_______________________________________________________________________________________________________________________________________|
+  |  List available modules      java --module-path moduleFolderName --list-modules                                                       |
+  |                              java -p moduleFolderName --list-modules                                                                  |
+  |                              java --list-modules                                                                                      |
+  |_______________________________________________________________________________________________________________________________________|
+  |  View dependencies           jdeps -summary --module-path moduleFolderName jarName                                                    |
+  |                              jdeps -s --module-path moduleFolderName jarName                                                          |
+  |_______________________________________________________________________________________________________________________________________|
+  |  Show module resolution      java --show-module-resolution -p moduleFolderName -m moduleName                                          | 
+  |                              java --show-module-resolution --module-path moduleFolderName --module moduleName                         |
+  |_______________________________________________________________________________________________________________________________________|
+
+  - Now some options that you need to know for the exam.
+  * 'javac' options:
+   ___________________________________________________________________________
+  | Option                          Description                               |
+  |___________________________________________________________________________|
+  | -cp <classpath>                 Location of JARs in a nonmodular program  |
+  | -classpath <classpath>                                                    |
+  | --class-path <classpath>                                                  |
+  |___________________________________________________________________________|
+  | -d <dir>                        Directory to place generated class files  |
+  |___________________________________________________________________________|
+  | -p <path>                       Location of JARs in a modular program     |
+  | --module-path <path>                                                      |
+  |___________________________________________________________________________|
+
+  * 'java' options:
+   ____________________________________________________________________________________
+  | Option                          Description                                        |
+  |____________________________________________________________________________________|
+  | -p <path>                       Location of JARs in a modular program              |
+  | --module-path <path>                                                               |
+  |____________________________________________________________________________________|
+  | -m <name>                       Module name to run                                 |
+  | --module <name>                                                                    |
+  |____________________________________________________________________________________|
+  | -d                              Describes the details of a module                  |
+  | --describe-module                                                                  |
+  |____________________________________________________________________________________|
+  | --list-modules                  Lists observable modules without running a program |
+  |____________________________________________________________________________________|
+  | -show-module-resolution         Shows modules when running a program               |
+  |____________________________________________________________________________________|
+
+  * 'jar' options:
+   _______________________________________________________________________________________
+  | Option                         Description                                            |
+  |_______________________________________________________________________________________|
+  | -c                             Create a new JAR file                                  |
+  | --create                                                                              |
+  |_______________________________________________________________________________________|
+  | -v                             Prints details when working with JAR files             |
+  | --verbose                                                                             |
+  |_______________________________________________________________________________________|
+  | -f                             JAR filename                                           |
+  | --file                                                                                |
+  |_______________________________________________________________________________________|
+  | -C                             Directory containing files to be used to create the JAR|
+  |_______________________________________________________________________________________|
+  | -directory                     Describes the dails of a module                        |
+  | --describe-module                                                                     |
+  |_______________________________________________________________________________________|
+
+  * 'jdeps' options:
+   ___________________________________________________________________________
+  | Option                          Description                               |
+  |___________________________________________________________________________|
+  | --module-path <path>            Location of JARs in a modular program     |
+  |___________________________________________________________________________|
+  | -s                              Summarizes output                         |
+  | -summary                                                                  |
+  |___________________________________________________________________________|
+
+** p.485-486
+** Summary:
+  - The JPMS organizes code at a higher level than packages. Each module contains one or more packages and a module-info file.
+  - Advantages of the JPMS include better access control, clearer dependency management, custom runtime images, improved performance 
+  and unique package enforcement.
+  - The module info file suports a number of keywords:
+    - exports: Specifies that a package should be accessible outside the module. It can optionally restrict that export to a specific package (to Y).
+    - requires: Is used when a module depends on code in another module. Additionally, 'requires transitive' can be used when all modules that require 
+    one module should always require another. 
+    - provides: Is used when exposing an API.
+    - uses: Is used when consuming an API.
+    - opens: Is used for allowing access via reflection.
+  - The 'java' command can also describe a module, list available modules or show the module resolution.
+  - The 'jar' command can also describe a module similar how the 'java' command does. 
+  - The 'jdeps' command prints details about a module and packages.
+  - The 'jmod' command provides various modes for working with JMOD files rather than JAR files.  
