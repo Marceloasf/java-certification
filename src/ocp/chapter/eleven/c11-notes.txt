@@ -120,3 +120,179 @@ to use the single_module_c11 folder as the 'root'. The multiple module example i
     packages that are being exported or required from the module-info files, a compiler error will be thrown since those packages haven't been compiled yet.
   - Remember that you need to repackage the modules using the jar command to refresh changes.
     - `jar -cvf mods/zoo.animal.feeding.jar -C feeding/ .`
+
+** p.472-476
+** Diving into the module-info File:
+  - In these sections we will look at 'exports', 'requires', 'provides', 'uses' and 'opens'. All these keywords can appear in any order in the module-info file.
+  - Java is a bit sneaky here. These 'keywords' are only keywords inside a module-info.java file. In other files, like classes and interfaces, you are free to name
+   your variable exports for example. These special keywords are called directives. You might ask why they are like this, its all about backward compatibility.
+
+* exports:
+  - Exports a package to other modules. It's also possible to export a package to a specific module. For example:
+    `
+    module zoo.animal.talks {
+      exports zoo.animal.talks.content to zoo.staff; // Exports 'content' only to 'staff' module.
+      exports zoo.animal.talk.media;
+      requires zoo.animal.feeding;
+    }
+    `
+  - On the module-info of zoo.staff, nothing changes (requires...). However, no other modules are allowed to access 'content' package.
+  - When exporting a package, all public classes, interfaces and enums are exported.
+  - Any public and protected fields and methods in those files are visible, but any fields and methods that are private or package-private are not visible.
+  - Access control with modules:
+   ________________________________________________________________________________________________________________________________________
+  | Level                       Within module code                                    Outside module                                       |
+  | private                     Available only within class                           No access                                            |
+  | default (package-private)   Available only within packages                        No access                                            |
+  | protected                   Available only within package or to subclasses        Accessible to subclasses only if package is exported |
+  | public                      Available to all classes                              Accessible only if package is exported               |
+  |________________________________________________________________________________________________________________________________________|
+
+* requires and requires transitive:
+  - requires specifies that the current module X depends on another module Y.
+  - requires transitive specifies that any module X that requires a module Y that requires transitive Z will also depend on Z. 
+  - Example:
+    `
+    module zoo.animal.feeding {
+      exports zoo.animal.feeding;
+    }
+
+    module zoo.animal.care {
+      exports zoo.animal.care;
+      requires transitive zoo.animal.feeding;
+    }
+
+    module zoo.animal.talks {
+      exports zoo.animal.talks.content to zoo.staff;
+      exports zoo.animal.talks.media;
+      exports zoo.animal.talks.schedule;
+
+      // requires zoo.animal.feeding - no longer needed
+      // requires zoo.animal.care - no longer needed
+      requires transitive zoo.animal.care;
+    }
+
+    module zoo.animal.staff {
+      // requires zoo.animal.feeding - no longer needed
+      // requires zoo.animal.care - no longer needed;
+      requires zoo.animal.talks;
+    }
+    `
+  - Applying the transitive modifier has the following effects:
+    - Module zoo.animal.talks can optionally declare it requires the zoo.animal.feeding module, but is not required. Kind of reduntant.
+    - Module zoo.animal.care cannot be compiled or executed without access to the zoo.animal.feeding module.
+    - Module zoo.animal.talks cannot be compiled or executed without access to the zoo.animal.feeding module.
+  - Remember that without the transitive modifier, all modules would need to explicitly use requires in order to reference any other packages.
+  - Java doesn't allow you to repeat the same module in a requires clause (requires and requires transitive). It's reduntant.
+
+* provides, uses and opens:
+  - For 1Z0-815 exam you only need to be aware of them, on 1Z0-816 chapters will be more content about them.
+  - The provides keyword specifies that a class provides an implementation of a service. To use it, you supply the API and class name that 
+  implements the API:
+    - `provides zoo.staff.ZooApi with zoo.staff.ZooImpl;`
+  - The uses keyword specifies a module is relying on a service. To code it, you supply the API you want to call:
+    - `uses zoo.staff.ZooApi;`
+  - Java allows callers to inspect and call code at runtime with a technique called 'reflection'. This is a powerful approach that allows calling 
+  code that might not be available at compile time. It can even be used to subvert access control. But don't worry, you don't need to know how to 
+  write code using reflection for the exam.
+  - Since reflection can be dangerous, the module system requires developers to explicitly allow reflection in the module-info if they want, calling 
+  modules to be allowed to use it. For example:
+    - `opens zoo.animal.talks.schedule;`
+    - `opens zoo.animal.talks.media to zoo.staff;`
+  - The first example allows any module using this one to use reflection. The second example only gives that privilege to the zoo.staff package.
+
+** p.477-482
+** Discovering Modules:
+  - Since Java 9, the classes built into the JDK were modularized as well.
+  - For this section is important to know the syntax of the commands and what they do.
+
+* The java Command:
+  - Has three module-related options. One describes a module, another lists the available modules, and the third shows the module resolution logic.
+  - It is also possible to add modules, exports and more at the command line, but don't do that, is confusing and hard to maintain.
+  
+  1. Describing a Module
+  - If you want to to know about a module structure, you can "unjar" it and open the module-info file. But you can use the 'java' command to describe 
+  the module. The following two commands are equivalent:"
+    - `java -p mods -d zoo.animal.feeding`
+    - `java -p mods -describe-module zoo.animal.feeding`
+  - Each prints information about the module. For example, it might print this:
+    `
+    zoo.animal.feeding file:///C:/Dev/java-certification/src/ocp/chapter/eleven/mods/zoo.animal.feeding.jar
+    exports zoo.animal.feeding
+    requires java.base mandated
+     `
+  - The java.base module is special. It is automatically added as a dependency to all modules. This module has frequently used packages like java.util.
+  Works like the java.lang package, that is automatically imported on classes whether you type it or not.
+  When printing information about a module that is structured like this:
+    `
+    module zoo.animal.care {
+      exports zoo.animal.care.medical to zoo.staff;
+      requires transitive zoo.animal.feeding;
+    }
+    `
+  You'll get this result:
+    `
+    zoo.animal.care file:///C:/Dev/java-certification/src/ocp/chapter/eleven/mods/zoo.animal.care.jar
+    requires zoo.animal.feeding transitive
+    requires java.base mandated
+    qualified exports zoo.animal.care.medical to zoo.staff
+    contains zoo.animal.care.details 
+    `
+  - The qualified exports is the full name of exporting to a specific module.
+  - The contains means that there is a package in the module that is not exported at all. This is true, because our module has two packages and one is 
+  available only to code inside the module (details).
+
+  2. Listing Available Modules
+  - The simplest form lists all the modules that are part of the JDK and their version numbers:
+    - `java --list-modules` // Result has a lot of lines and they look like this: java.base@11.0.2
+  - You can print all the modules of the JDK plus some custom modules:
+    - `java -p mods --list-modules` // Will print the same result as before plus our coded modules (zoo, talks...)
+  - This command just print the observable modules and exits, it does not run the program.
+
+  3. Showing Module Resolution:
+  - Using the --show-module-resolution option its kind of a way of debugging modules. It spits out a lot of output when the program starts up. Then it 
+  runs the program. Example:
+    - `java --show-module-resolution -p feeding -m zoo.animal.feeding/zoo.animal.feeding.task` 
+  - The output starts out by listing the root module you choose to run. Then it lists many lines of packages included bu the mandatory java.base module. 
+  Then after a while, it lists modules that have dependencies. Finally, it outputs the result of the program.
+  
+* The jar Command:
+  - Can describe a module too. Both of these commands are equivalent:
+    - `jar -f mods/zoo.animal.feeding.jar -d`
+    - `jar --file mods/zoo.animal.feeding.jar --describe-module`
+  - The output is slightly different from when we used the java command. It prints a `/!module-info.class` on the ending of the first line.
+
+* The jdeps Command:
+  - Gives you info about dependencies within a module. Unlike describing a module, it looks at the code in addition to the module-file. this tells you 
+  what dependencies are actually used rather than simply declared.
+  - Asking for a summary of the dependencies in zoo.animal.feeding. Both of these commands give the same output:
+    - `jdeps -s mods/zoo.animal.feeding.jar`
+    - `jdeps -summary mods/zoo.animal.feeding.jar`
+  - Notice that the is one dash (-) before the -summary rather than two.
+  - The output tells you that there is only one package and it depends on the built-in java.base module.
+    `zoo.animal.feeding -> java.base`
+  - Alternatively you can ask for the dependencies in zoo.animal.feeding without summary and get the long form of output:
+    - `jdeps mods/zoo.animal.feeding.jar` // Outputs shows the module filename and path, lists the required java.base dependency and version number, 
+                                          // then finally prints the specific packages within the java.base modules that are used by feeding.
+  - If you want to print modules that have dependencies on other custom modules, you need to specify the module path so jdeps knows where to find the info 
+  about the dependent module. We don't need to do this for modules built into the JDK like java.base. Syntax examples:
+    - `jdeps -s --module-path mods mods/zoo.animal.care.jar`
+    - `jdeps -summary --module-path mods mods/zoo.animal.care.jar`
+    - `jdeps --module-path mods mods/zoo.animal.care.jar`
+    * There is no short form of --module-path in the jdeps command.
+  - Presenting the result of the last one in order of appearance, without -summary:
+    1. Filename and required dependencies.
+    2. Summary showing the two module dependencies with an arrow.
+    3. Package-level dependencies.
+
+* The jmod Command:
+  - You might think a JMOD file is a Java module file, but not quite. Oracle recommends using JAR files for most modules. JMOD files are recommended only 
+  when you have native libraries or something that can't go inside a JAR file. This is unlikely to affect you in the real world.
+  - The most important thing to remember is that jmod is only for working with the JMOD files. You don't need to memorize the syntax for jmod.
+  - Some common modes using jmod:
+    - create: Creates a JMOD file.
+    - extract: Extracts all files from the JMOD. Works like unzipping.
+    - describe: Prints the module details such as requires.
+    - list: Lists all files in the JMOD file.
+    - hash: Shows a long string that goes with the file.
+  
