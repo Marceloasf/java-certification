@@ -111,11 +111,12 @@
     * Default (package-private) access: Only classes in the same package may call these methods or access these fields.
       `String name;` or `String getName() { ... }`
 
-    * protected: Allows everything that package-private allows, plus adds the ability to access members of a parent class (subclasses).
-    We are not allowed to refer to protected members of a parent class if we are not in the same package and the reference type of
-    an object is not a subclass of the parent class. You can only access the protected members with the reference of the subclass
-    from inside the subclass.
-      `protected String name;` or `protected String getName() { ... }`
+    * protected: 
+      - Allows everything that package-private allows, plus adds the ability to access members of a parent class (subclasses).
+      - Not allowed to refer to protected members of a parent class if they are not in the same package and the reference type used is an object 
+      that is not a subclass of the parent class.
+      -You can only access the protected members with the reference of the subclass from inside the subclass.
+        `protected String name;` or `protected String getName() { ... }`
 
     * public: Anyone can access the member from anywhere.
       `public String name;` or `public String getName() { ... }`
