@@ -55,7 +55,7 @@
     - The module name follows the naming rules for package names. It often includes periods (.) in its name. Regular class and package 
     names are not allowed to have dashes (-) and module names follows the same rule.
   - A module-info.java file can be empty. The compiler sees there isn't a class in there and exits without creating a .class file.
-  - An empty module-info.java file can be omitted in a module since there are no dependencies. 
+  - A module-info file can be empty (zero-bytes), but its required to be created
   - You can think of module-path as replacing the classpath option when you are working on a modular program.
   - Some valid commands that can be used to compile a module (using package eleven or single_module_c11 as the 'root' directory to 
   execute and feeding as the module root): 
@@ -100,6 +100,7 @@ your module with others.
   - Now we can run the program using the mods directory instead of the loose classes:
     - `java -p mods -m zoo.animal.feeding/zoo.animal.feeding.Task`
       * Since a module path is used, a module JAR is being run.
+* Note: Some commands can have their order inverted, like the 'java' command (java -m ... -p ...)
 
 ** p.465-472
 ** Updating Our Example for Multiple Module:
@@ -183,7 +184,7 @@ to use the single_module_c11 folder as the 'root'. The multiple module example i
     - Module zoo.animal.care cannot be compiled or executed without access to the zoo.animal.feeding module.
     - Module zoo.animal.talks cannot be compiled or executed without access to the zoo.animal.feeding module.
   - Remember that without the transitive modifier, all modules would need to explicitly use requires in order to reference any other packages.
-  - Java doesn't allow you to repeat the same module in a requires clause (requires and requires transitive). It's reduntant.
+  - Java doesn't allow you to repeat the same module in a requires clause at the same module (requires and requires transitive). It's reduntant.
 
 * provides, uses and opens:
   - For 1Z0-815 exam you only need to be aware of them, on 1Z0-816 chapters will be more content about them.
@@ -208,10 +209,10 @@ to use the single_module_c11 folder as the 'root'. The multiple module example i
 
 * The java Command:
   - Has three module-related options. One describes a module, another lists the available modules, and the third shows the module resolution logic.
-  - It is also possible to add modules, exports and more at the command line, but don't do that, is confusing and hard to maintain.
+  - It is also possible to add modules, exports and more at the command line with java command, but don't do that, is confusing and hard to maintain.
   
   1. Describing a Module
-  - If you want to to know about a module structure, you can "unjar" it and open the module-info file. But you can use the 'java' command to describe 
+  - If you want to to know about a module structure, you can "unjar" it and open the module-info file. But you can also use the 'java' command to describe 
   the module. The following two commands are equivalent:"
     - `java -p mods -d zoo.animal.feeding`
     - `java -p mods -describe-module zoo.animal.feeding`
@@ -223,7 +224,7 @@ to use the single_module_c11 folder as the 'root'. The multiple module example i
      `
   - The java.base module is special. It is automatically added as a dependency to all modules. This module has frequently used packages like java.util.
   Works like the java.lang package, that is automatically imported on classes whether you type it or not.
-  When printing information about a module that is structured like this:
+  - When printing information about a module that is structured like this:
     `
     module zoo.animal.care {
       exports zoo.animal.care.medical to zoo.staff;
@@ -247,14 +248,14 @@ to use the single_module_c11 folder as the 'root'. The multiple module example i
     - `java --list-modules` // Result has a lot of lines and they look like this: java.base@11.0.2
   - You can print all the modules of the JDK plus some custom modules:
     - `java -p mods --list-modules` // Will print the same result as before plus our coded modules (zoo, talks...)
-  - This command just print the observable modules and exits, it does not run the program.
+  - This command just prints the observable modules and exits, it does not run the program.
 
   3. Showing Module Resolution:
   - Using the --show-module-resolution option its kind of a way of debugging modules. It spits out a lot of output when the program starts up. Then it 
   runs the program. Example:
-    - `java --show-module-resolution -p feeding -m zoo.animal.feeding/zoo.animal.feeding.task` 
-  - The output starts out by listing the root module you choose to run. Then it lists many lines of packages included bu the mandatory java.base module. 
-  Then after a while, it lists modules that have dependencies. Finally, it outputs the result of the program.
+    - `java --show-module-resolution -p feeding -m zoo.animal.feeding/zoo.animal.feeding.Task` 
+  - The output starts out by listing the root module you choose to run. Then it lists many lines of packages included by the mandatory java.base module. 
+  Then after a while, it lists modules that have dependencies. Finally, it outputs the result of the program (class Task).
   
 * The jar Command:
   - Can describe a module too. Both of these commands are equivalent:
@@ -318,7 +319,7 @@ to use the single_module_c11 folder as the 'root'. The multiple module example i
   |_______________________________________________________________________________________________________________________________________|
   |  Describe a module           java -p moduleFolderName -d moduleName                                                                   |
   |                              java --module-path moduleFolderName --describe-module moduleName                                         |
-  |                              jar --file jarName --descibre-module                                                                     |
+  |                              jar --file jarName --describe-module                                                                     |
   |                              jar -f jarName -d                                                                                        |
   |_______________________________________________________________________________________________________________________________________|
   |  List available modules      java --module-path moduleFolderName --list-modules                                                       |
@@ -362,7 +363,7 @@ to use the single_module_c11 folder as the 'root'. The multiple module example i
   |____________________________________________________________________________________|
   | --list-modules                  Lists observable modules without running a program |
   |____________________________________________________________________________________|
-  | -show-module-resolution         Shows modules when running a program               |
+  | --show-module-resolution         Shows modules when running a program              |
   |____________________________________________________________________________________|
 
   * 'jar' options:
@@ -380,7 +381,7 @@ to use the single_module_c11 folder as the 'root'. The multiple module example i
   |_______________________________________________________________________________________|
   | -C                             Directory containing files to be used to create the JAR|
   |_______________________________________________________________________________________|
-  | -directory                     Describes the dails of a module                        |
+  | -d                             Describes the details of a module                      |
   | --describe-module                                                                     |
   |_______________________________________________________________________________________|
 
