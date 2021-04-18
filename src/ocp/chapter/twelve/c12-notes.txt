@@ -148,3 +148,18 @@
     `
   - Good practices reminder, try to keep your enums simple. If it has more than one page or two, its too long.
   - The compiler requires that the list of values in enums always be declared first, wheter the enum is simple or contains a ton of members.
+
+** p.506
+** Creating Nested Classes
+  - A nested class is a class that is defined within another class.
+  - Types of nested class:
+    - Inner class: A non-static type defined at the member level of a class.
+    - Static nested class: A static type defined at the member level of a class.
+    - Local class: A class defined within a method body.
+    - Anonymous class: A special case of a local class that does not have a name.
+  - Nested classes can ecanpsulate helper classes byu restricting them to the containing class, can make it easy to create a class that will be used in only one place, 
+  and can make the code cleaner and easier to read.
+  - By convention, the term inner or nested class is used to apply to other Java types, including interfaces and enums. Because interfaces and enums can be declared as 
+  both inner clases and static nested classes, but not as local or anonymous classes.
+  - Inner classes can have inner classes, its not a good coding practice, but it may appear on the exam.
+  
