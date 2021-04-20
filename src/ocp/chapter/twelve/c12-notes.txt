@@ -149,7 +149,7 @@
   - Good practices reminder, try to keep your enums simple. If it has more than one page or two, its too long.
   - The compiler requires that the list of values in enums always be declared first, wheter the enum is simple or contains a ton of members.
 
-** p.506
+** p.506-514
 ** Creating Nested Classes
   - A nested class is a class that is defined within another class.
   - Types of nested class:
@@ -162,4 +162,238 @@
   - By convention, the term inner or nested class is used to apply to other Java types, including interfaces and enums. Because interfaces and enums can be declared as 
   both inner clases and static nested classes, but not as local or anonymous classes.
   - Inner classes can have inner classes, its not a good coding practice, but it may appear on the exam.
+
+* Declaring an Inner Class:
+  - Also known as a member inner class, is a non-static type defined at the member level of a class.
+  - Inner classes have the following properties:
+    - Can be declared public, protected, package-private (default) or private.
+    - Can extend any class and implement interfaces.
+    - Can be marked abstract or final.
+    - Cannot declare static fields or methods, except for static final fields (constants).
+    - Can access members of the outer class, including private members (even constructors).
+  - You can instantiate an inner class from the parent class where its located, from a method for example. 
+  - There is another way to instantiate it, for example:
+    `
+    public static void main(String[] args) {
+      Outer outer = new Outer();
+      Inner inner = outer.new Inner(); // create the inner class
+      inner.go();
+    }
+    `
+  - Basically, we need an instance of Outer to create Inner, we can't just call new Inner() because Java won't know with which insatnce of Outer it is associated. Java 
+  solves this by calling new as if it were a method on the outer variable.
+  - When a inner class is compiled, two files are created, one for the outer class and another for the inner class. Like this: Outer.class - Outer$Inner.class
+  - Inner classes can have the same variable names as outer classes, making scope a little tricky. There is a special way of calling 'this' to say which variable you want:
+    `
+    public class A {
+      private int x = 10;
+
+      class B {
+        private int x = 20;
+
+        class C {
+          private int x = 30;
+
+          public void allTheX() {
+            System.out.println(x); // 30
+            System.out.println(this.x); // 30
+            System.out.println(B.this.x); // 20
+            System.out.println(A.this.x); // 10
+          }
+        }
+      }
+      public static void main(String... args) {
+        A a = new A();
+        A.B b = a.new B();
+        A.B.C c = b.new C();
+        c.allTheX(); 
+      }
+    }
+    `
+  - In fact, you are not limited to just one inner class. Please never do this in your code. But yes, you can nest multiple classes and access a variable with the same 
+  name in each.
+  - If we wanted, we could use B directly to instantiate because it is on the member level of the outer class, but C can't be used directly to instantiate, because C is 
+  too deep for Java to know where to look.
+  - Inner classes require an instance. Static methods can't access them, unless you're using an instance explicitly.
+  - private inner classes can only be instantiated and accessed from within their outer class.
+
+* Creating a static Nested Class:
+  - A static nested class is a static type defined at the member level. 
+  - Unlike an inner class, a static nested class can be instantiated without an instance of the enclosing class.
+  - The trade-off is it can't access instance variables or methods in the outer class directly. It can be done, but requires an explicit reference to an outer class var.
+  - In other words, it is like a top-level class, except for the following:
+    - The nesting creates a namespace because the enclosing class name must be used to refer to it.
+    - It can be made private or use one of the other access modifiers to ecanpsulate it.
+    - The enclosing class can refer to the fields and methods of the static nested class.
+  - Example of a static nested class:
+    `
+    public class Enclosing {
+      static class Nested {
+        private int price = 6;
+      }
+
+      public static void main(String[] args) {
+        Nested nested = new Nested();
+        System.out.println(nested.price); // You don't need an instance of Enclosing to use the Nested class, since the class is static.  
+      }
+    }
+    `
+  - You are allowed to access private instance variables from the static nested class.
+  - Importing a static nested class has two ways of doing it, first you can import it using a regular import, and the other way is using a static import:
+    - `import bird.Toucan.Beak;` 
+    - `import static bird.Toucan.Beak;` 
+      * Toucan is the enclosing class and Beak is the static inner class.
+  - Remember that Java treats the enclosing class as if it were a namespace.
+
+* Writing a Local Class:
+  - A local class is a nested class defined within a METHOD. Like local variables, a local class declaration does not exist until the method is invoked, and it goes 
+  out of scope when the method returns (ends).
+  - You can create instance only from within the method, those instances can still be returned from the method.
+  - They are not limited to being declared only inside methods. They can be declared inside constructors and initializers too.
+  - They can be marked as final. 
+  - Local classes have the folowing properties:
+    - They do not have an access modifier.
+    - They cannot be declared static and cannot declare static fields or methods, except for static final fields (constants).
+    - They have access to all fields and methods of the enclosing class (when defined in an instance method).
+    - They can access local variables if the variables are final or effectively final. *
+      * As we saw earlier in lambdas, effectively final refers to a local variable whose value does not change after it is set (even if not marked final).
+  - Why local variables need to be final or effectively final? Because the compiler is generating a .class file from your local class. A separate class has no way to 
+  refer to local variables, so if the local variable is final, Java can handle it by passing it to the constructor of the local class or by storing it in the .class 
+  file, if it weren't effectively final, these tricks wouldn't work because the value could change after the copy was made. An example of this:
+    `
+    public void processData() {
+      final int length = 5;
+      int width = 10;
+      int height = 2;
+
+      class VolumeCalculator {
+        public int multiply() {
+          return length * width * height; // DOES NOT COMPILE, because width value changes after is set.
+        }
+      } // Semicolon is optional for Local classes...
+
+      width = 2;
+    }
+    `
+* Defining an Anonymous Class:
+  - An anonymous class is a specialized form of a local class that does not have a name. 
+  - It is declared and instantiated all in one statement using the new keyword, a type name with parentheses and a set of braces {}.
+  - Are required to extend an existing class or implement an existing interface.
+  - They are useful when you have a short implementation that will not be used anywhere else.
+  - Example of anonymous class extending a class:
+    `
+    public class ZooGiftShop {
+      abstract class SaleTodayOnly {
+        abstract int dollarsOff();
+      }
+
+      public int admission(int basePrice) {
+        SaleTodayOnly sale = new SaleTodayOnly() {
+          int dollarsOff() { return 3; }
+        }; // Semicolon is required!
+
+        return basePrice - sale.dollarsOff();
+      }
+    }
+    ` 
+  - Even SaleTodayOnly being abstract, we can instantiate her, because we are declaring the anonymous class body that extends her inside the braces.
+  - Example of anonymous class implementing an interface:
+    `
+    public class ZooGiftShop {
+      interface SaleTodayOnly {
+        int dollarsOff();
+      }
+
+      public int admission(int basePrice) {
+        SaleTodayOnly sale = new SaleTodayOnly() {
+          public int dollarsOff() { return 3; }
+        }; // Semicolon is required!
+
+        return basePrice - sale.dollarsOff();
+      }
+    }
+    `
+  - You can notice how little it changed, the main difference is that the method dollarsOff() is required to be declared with public on the anonymous 
+  class implementation. Since interfaces require public instead of default access.
+  - Just remember that `SaleTodayOnly sale` that has been created is always an instance of a class instead of an interface.
+  - You can't implement both an interface and extend a class with anonymous classes. 
+  - So remember that an anonymous class is just an unnamed local class, you can write a local class and give it a name if you want to extend a class and implement 
+  many interfaces.
+  - You can define them right where they are needed, even if that is an argument to another method. Example:
+    `
+    public class ZooGiftShop {
+      interface SaleTodayOnly {
+        int dollarsOff();
+      }
+
+      public int pay() {
+        return admission(5, new SaleTodayOnly() {
+          public int dollarsOff() { return 3; }
+        }); 
+      }
+
+      public int admission(int basePrice, SaleTodayOnly sale) {
+        return basePrice - sale.dollarsOff();
+      }
+    }
+    `
+  - You can even define anonymous classes outside a method body. 
+    `
+    public class Gorilla {
+      interface Climb {}
+      Climb climbing = new Climb() { }; // Remember, we are not creating a reference to an interface instance, the { } indicates that we are creating a anonymous 
+                                        // inner class that implements Climb interface.
+    }
+    `
+  - Prior to Java 8, anonymous classes were frequently used for asynchronmous tasks and event handlers. For example an anonymous class being used as an event handler 
+  in a JavaFX application:
+    `
+    Button redButton = new Button();
+    redButton.setOnAction(new EventHandler<ActionEvent>() {
+      public void handle(ActionEvent e) {
+        System.out.println("Red button pressed!");
+      }
+    });
+    `
+  - Since Java 8, lambda expressions are a much more concise way of expressing the same thing:
+    `
+    Button redButton = new Button();
+    redButton.setOnAction(e -> System.out.println("Red button pressed!"));
+    `
+  - The only restrictions when using anonymous classes and lambda expressions, is that the variable type must be a functional interface.
+
+** p.515-516
+** Reviewing Nested Classes
+  - For the exam, you'll need to know about which syntax and access rules are permitted in Java on nested classes.
+  - Modifiers in nested classes:
+     ______________________________________________________________________________________________________
+    |Permitted Modifiers    Inner class     static nested class        Local class         Anonymous class |
+    |______________________________________________________________________________________________________|
+    | Access modifiers      All             All                        None                None            |
+    | abstract              Yes             Yes                        Yes                 No              |
+    | final                 Yes             Yes                        Yes                 No              |
+    |______________________________________________________________________________________________________|
   
+  - Members in nested classes:
+     _______________________________________________________________________________________________________
+    |Permitted Members      Inner class     static nested class        Local class          Anonymous class |
+    |_______________________________________________________________________________________________________|
+    | Instance methods      Yes             Yes                        Yes                  Yes             |
+    | Instance variables    Yes             Yes                        Yes                  Yes             |
+    | static methods        No              Yes                        No                   No              |
+    | static variables      Yes (if final)  Yes                        Yes (if final)       Yes (if final)  |
+    |_______________________________________________________________________________________________________|
+  
+  - Nested class access rules:
+     _______________________________________________________________________________________________________________________________________________________
+    |Permitted Modifiers                    Inner class     static nested class        Local class                   Anonymous class                        |
+    |_______________________________________________________________________________________________________________________________________________________|
+    | Can extend any class or implement     Yes             Yes                        Yes                           No, must have exactly one superclass   |
+    | any number of interfaces                                                                                       or one interface                       | 
+    |_______________________________________________________________________________________________________________________________________________________|    
+    | Can access instance members of        Yes             No                         Yes (if declared in an        Yes (if declared in an instance method)|     
+    | enclosing class without a ref                                                    instance method)                                                     | 
+    |_______________________________________________________________________________________________________________________________________________________|    
+    | Can access local variables of         N/A             N/A                        Yes (if final or              Yes (if final or effectively final)    |
+    | enclosing method                                                                 effectively final)                                                   |
+    |_______________________________________________________________________________________________________________________________________________________|
