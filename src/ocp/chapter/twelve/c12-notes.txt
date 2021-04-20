@@ -397,3 +397,51 @@
     | Can access local variables of         N/A             N/A                        Yes (if final or              Yes (if final or effectively final)    |
     | enclosing method                                                                 effectively final)                                                   |
     |_______________________________________________________________________________________________________________________________________________________|
+
+** p.516-526
+** Understanding Interface Members
+  - When Java first release, there were only two types of members an interface declaration could include: abstract methods and constant (static final) variables.
+  Since Java 8 and 9, four new method types have been added that will be covered in this section.
+     _______________________________________________________________________________________________________________________________________________
+    |                         Since Java version      Membership type            Required modifiers     Implicit modifiers      Has value or body?  |
+    |_______________________________________________________________________________________________________________________________________________|                                      |
+    | Constant variable       1.0                     Class                      -                      public static final     Yes                 |                      
+    | Abstract method         1.0                     Instance                   -                      public abstract         No                  |                     
+    | Default method          8                       Instance                   default                public                  Yes                 |                      
+    | Static method           8                       Class                      static                 public                  Yes                 |                      
+    | Private method          9                       Instance                   private                -                       Yes                 |                      
+    | Private static method   9                       Class                      private static         -                       Yes                 |                      
+    |_______________________________________________________________________________________________________________________________________________|
+  
+  - This section will cover the newer interface member types, because the constant variables and abstract methods were covered before.
+
+* Relying on a default Interface Method
+  - A default method is a method defined in an interface with the default keyword and includes a method body.
+  - May be overriden by a class implementing the interface. The class has the option of overriding the default method, but if it does not, then the default 
+  implementation will be used.
+  - The modifier name 'default' comes from the concept that it is viewed as an abstract interface method with a default implementation (has no relation with both the switch 
+  default and default (package-private) access modifier).
+  - Must be overriden using the public access modifier (is implicitly added on the interface), a different access modifier is not allowed. 
+  - Default method implementation example:
+    `
+    public interface IsWarmBlooded {
+      boolean hasScales(); // abstract method - concrete class must implement
+      default double getTemperature() { // default method - concrete class may implement
+        return 10.0;
+      }
+    }
+    `
+  - Default Interface Method Definition Rules:
+    1. A default method may be declared only within an interface.
+    2. A default method must be marked with the default keyword and include a method body.
+    3. A default method is assumed to be public.
+    4. A default method cannot be marked abstract, final or static.
+    5. A default method may be overriden by a class that implements the interface.
+    6. If a class inherits two or more default methods with the same method signature, then the class must override the method.
+* Rule six discussion (duplicate inherited methods):
+  - Rule six will make the compiler report an error on the class declaration line, unless the method has been overriden.
+  - This rule holds true even for abstract classes because the duplicate method could be called within a concrete method within the abstract class.
+  - These rules also apply to methods with the same signature but different return types or declared exceptions.
+  - By overriding the conflicting method, the ambiguity about which version of the method to call is removed.
+  - If a default method is overridden in the concrete class, then it must use a declaration that is compatible, following the rules for overriding methods.
+  
