@@ -416,11 +416,11 @@
 
 ** Relying on a default Interface Method
   - A default method is a method defined in an interface with the default keyword and includes a method body.
-  - May be overriden by a class implementing the interface. The class has the option of overriding the default method, but if it does not, then the default 
+  - May be overridden by a class implementing the interface. The class has the option of overriding the default method, but if it does not, then the default 
   implementation will be used.
   - The modifier name 'default' comes from the concept that it is viewed as an abstract interface method with a default implementation (has no relation with both the switch 
   default and default (package-private) access modifier).
-  - Must be overriden using the public access modifier (is implicitly added on the interface), a different access modifier is not allowed. 
+  - Must be overridden using the public access modifier (is implicitly added on the interface), a different access modifier is not allowed. 
   - Default method implementation example:
     `
     public interface IsWarmBlooded {
@@ -435,10 +435,10 @@
     2. A default method must be marked with the default keyword and include a method body.
     3. A default method is assumed to be public.
     4. A default method cannot be marked abstract, final or static.
-    5. A default method may be overriden by a class that implements the interface.
+    5. A default method may be overridden by a class that implements the interface.
     6. If a class inherits two or more default methods with the same method signature, then the class must override the method.
 * Rule six discussion (duplicate inherited default methods):
-  - Rule six will make the compiler report an error on the class declaration line, unless the method has been overriden.
+  - Rule six will make the compiler report an error on the class declaration line, unless the method has been overridden.
   - This rule holds true even for abstract classes because the duplicate method could be called within a concrete method within the abstract class.
   - These rules also apply to methods with the same signature but different return types or declared exceptions.
   - By overriding the conflicting method, the ambiguity about which version of the method to call is removed.
@@ -497,7 +497,7 @@
   - This applies to both subinterfaces and classes that implement that interface! No one inherits the static methods. For example, a class that implements two 
   interfaces containing static methods with the same signature will still compile.
 
-* New Java 9 inteface methods bellow (p.522-524)
+* New Java 9 interface methods bellow (p.522-524)
 ** Introducing private Interface Methods
   - They cannot be used outside the interface definition.
   - They also cannot be used in static interface methods without a static method modifier.
@@ -578,3 +578,188 @@
 ** Abstract classes vs. Interfaces
   - A key distinction is that interfaces do not implement constructors and are not part of the class hierarchy. While a class can implement multiple interfaces, it can 
   only directly extend a single class.
+
+
+** p.526-537
+** Introducing Functional Programming
+  - Functional interfaces are used as the basis for lambda expressions in functional programming. 
+  - A functional interface is an interface that contains a single abstract method (SAM rule).
+  - A lambda expression is a block of code that gets passed around, sort of like an anonymous class that defines one method. There is a variety of short and long forms.
+
+** Defining a Functional Interface
+  - Example of a functional interface and a class that implements it:  
+  `
+  @FunctionalInterface // This annotation is optional
+  public interface Sprint {
+    public void sprint(int speed);
+  }
+
+  public interface Dash extends Sprint { }
+
+  public class Tiger implements Dash {
+    public void sprint(int speed) {
+      System.out.println(speed);
+    }
+  }
+  `
+  - Sprint and Dash are functional interfaces because they contain exactly one abstract method and the Tiger class is a valid class that implements the interface Dash.
+  - Interfaces that have only one abstract method, even if the method is inherited, are functional interfaces. Functional interfaces can define a lot of other methods and 
+  still be considered a functional interface, since there is only one abstract method defined.
+  - If a interface has already one abstract method and extends another interface that has one or more abstract methods, then the interface is not a functional interface.
+  - Even though default methods on interfaces function like abstract methods, in that they can be overridden by a concrete class implementing the interface, they are 
+  insufficient for satisfying the single abstract method requirement.
+
+** Declaring a Functional Interface with Object Methods
+  - All classes inherit certain methods from Object. For the exam, you should be familiar with the following Object method declarations:
+    - String toString()
+    - boolean equals(Object)
+    - int hashCode()
+  - This methods are brought here now because there is one exception to the SAM rule that you should be familiar with. The exception is that if a functional interface 
+  includes an abstract method with the same signature as a public method found in Object, then those methods do not count toward the SAM test. The motivation behind 
+  this rule is that any class that implements the interface will inherit from Object, as all classes do, and therefore always implements these methods. 
+  - Since Java assumes all classes extend from Object, you also cannot declare an interface method that is incompatible with Object. For example, declaring an abstract 
+  method `int toString()` in an interface would not compile since Object's version of the method returns a String. **
+  - Example of this rule:
+    `
+    public interface Soar { // This is not considered a functional interface, since toString is a public method of Object.
+      abstract String toString(); // Remember, if we change this return type the code will not compile.
+    }
+    `
+  - On the other hand, this example is considered a functional interface:
+    `
+    public interface Dive {
+      String toString(); // Doesn't count toward the SAM test.
+      public boolean equals(Object o); // Doesn't count toward the SAM test.
+      public abstract int hashCode(); // Doesn't count toward the SAM test.
+      public void dive(); // It counts toward the SAM test as the single abstract method of this interface.
+    }
+    `
+  - Changing only the signature of those methods listed before will make them count on the SAM test, since they don't match the signature of Object's public methods.
+  This can be looked at as a overload of those methods, making them individual methods that have no relation whatsoever. For example:
+    `String toString(Boolean b);`
+    `int toString(Boolean b);`
+    `Integer hashCode(String hash);`
+    `
+    public interface Hibernate { // Not considered a functional interface.
+      String toString(); // Doesn't count toward the SAM test.
+      public boolean equals(Hibernate h); // It counts toward the SAM test.
+      public abstract int hashCode(); // Doesn't count toward the SAM test.
+      public void rest(); // It counts toward the SAM test.
+    }
+    `
+
+** p.529
+** Notes on Overriding toString(), equals(Object) and hashCode():
+  - While knowing how to properly override this methods was part of Java certification exams prior to Java 11, this requirement was removed on all of the Java 11 exams.
+  - As a professional Java developer, it is important for you to know at least the basic rules for overriding each of these methods:
+    - toString(): Is called when you try to print an object or concatenate the object with a String. It is commonly overridden with a version that prints a unique 
+    description of the instance using its instance fields.
+    - equals(Object): Is used to compare objects, with the default implementation just using the == operator. You should override the equals(Object) method anytime 
+    you want to conveniently compare elements for equality, especially if this requires checking numerous fields.
+    - hashCode(): Any time you override equals(Object), you must override hashCode() to be consistent. This means that for any two objects, if a.equals(b) is true, then 
+    a.hashCode() == b.hashCode() must also be true. If they are not consistent, then this could lead to invalid data and side effects in hash-based collections such as 
+    HashMap and HashSet. 
+  - All of these methods provide a default implementation in Object, but to make intelligent use out of them, you should override them.
+
+** Implementing Functional Interfaces with Lambdas
+  - Remember that <T> allows the interface to take an object of a specified type.
+  - The relationship between functional interfaces and lambda expressions is as follows:
+    - `Any functional interface can be implemented as a lambda expression`. *
+  - Even older Java interfaces that pass the SAM test are functional interfaces, which can be implemented with lambda expressions.
+  - Code example on TraditionalSearch.java, this code has the goal to print out all animals in a list according to some criteria.
+  - Lambda expressions rely on the notion of deferred execution. 
+  - Deferred Execution means that code is specified now but runs later. In the case of TraditionalSearch, later is when the print() method calls it. Even though the 
+  execution is deferred, the compiler will still validate that the code syntax is correct.
+
+** Writing Lambda Expressions
+  - The syntax of lambda expressions is tricky because many parts are optional.
+  - The left side of the lambda expression lists the variables, it must be compatible with the type and number of input parameters of the functional interface's SAM.
+  - The right side of the lambda expression represents the body of the expression, it must be compatible with the return type of the functional interface's SAM. For 
+  example, if the abstract method returns int, then the lambda expression MUST return an int, a value that can be implicitly cast to an int or throw an exception.
+  - The short form of our interface (Predicate) has three parts omitting optional parts:
+    `a -> a.canHop()`
+      - From left to right:
+        1. A single parameter specified with the name a.
+        2. The arrow operator to separate the parameter and body.
+        3. A body that calls a SINGLE method and returns the result of that method.
+  - Now let's look at a more verbose version of this lambda expression, it also contain three parts including optional parts:
+    `(Animal a) -> { return a.canHop(); }`
+        1. A single parameter specified with the name a and stating the type is Animal (parentheses in this case are required).
+        2. The arrow operator to separate the parameter and body.
+        3. A body that has one or more lines of code inside braces, that includes a semicolon and a return statement.
+  - The parentheses can be omitted only if there is a single parameter and its type is not explicitly stated.
+  - The braces can be omitted when we have only a single statement. When no braces are used, Java doesn't require you to type return or use a semicolon.
+  - Remember this for the exam, `s -> {}` is a valid lambda. If the return type of the functional interface is void, then you don't need the semicolon or return statement.
+  - Some examples of valid lambda expressions, assuming that there are functional interfaces that can consume them:
+    `() -> new Duck()`
+    `d -> {return d.quack();}`
+    `(Duck d) -> d.quack()`
+    `(Animal a, Duck d) -> d.quack()`
+  - Now some examples of invalid lambda expressions and the explanation why they aren't valid:
+    `a, b -> a.startsWith("test")`
+      - This lambda require the parentheses around the parameter list.  
+    `Duck d -> d.canQuack();`
+      - This lambda require the parentheses around the parameter list. Since the parentheses are only optional when there is one parameter and no type declared.
+    `a -> { a.startsWith("test"); }` 
+      - Is missing the return keyword, which is required since we said the lambda must return a boolean. 
+    `a -> { return a.startsWith("test") }` 
+      - Is missing the semicolon inside of the braces ({ }).
+    `(Swan s, t) -> s.compareTo(t) != 0` 
+      - Is missing the parameter type for t. If the parameter type is specified for one of the parameters, then it MUST be specified for all of them.
+  
+** Working with Lambda variables
+  - Variables can appear in three places with respect to lambdas:
+    - The parameter list.
+    - Local variables declared inside the lambda body.
+    - Variables referenced from the lambda body.
+
+* Parameter List
+  - Since specifying the type of parameters is optional, var can be used in a lambda parameter list. All three of these statements are interchangeable:
+    `Predicate<String> p = x -> true;`
+    `Predicate<String> p = (var x) -> true;`
+    `Predicate<String> p = (String x) -> true;`
+  - A lambda infers the types from the surrounding context. That means that you need to do the same on the exam. In this case, the lambda is being assigned to a Predicate 
+  that takes a String. Another place to look for the type is in a method signature, for example: 
+    `
+    public void whatAmI() {
+      test((var x) -> x > 2, 123); // the lambda `var x` inferred type is Integer, since the test method signature requires a Predicate<Integer>.
+    }
+
+    public void test(Predicate<Integer> c, int num) {
+      c.test(num);
+    }
+    `
+  - There are some cases where you don't even need the method signature to determine the type:
+    `
+    public void counts(List<Integer> list) {
+      list.sort((var x, var y) -> x.compareTo(y)); // The answer is Integer, since we are sorting a list, we can use the type of the list to determine the lambda params types. 
+    }
+    ` 
+* Restrictions on Using var in the Parameter List
+  - While you can use var inside a lambda parameter list, there is a rule you need to be aware of.
+  - If var is used for one of the types in the parameter list, then it must be used for all parameters in the list.
+  - Examples of lambda expressions that compiles and doesn't compile:
+    `var w -> 99` // DOES NOT COMPILE, because the parentheses are missing.
+    `(var x, y) -> "goodbye"` // DOES NOT COMPILE, because even when using var for all the parameter types, each parameter type must be written out.
+    `(var a, Integer B) -> true` // DOES NOT COMPILE, because the parameter types include a mix of var and type names.
+    `(String x, var y, Integer z) -> true` // DOES NOT COMPILE, because of the same reason of the last example.
+    `(var num) -> 1` // COMPILES
+    `(var a, var b) -> "Hello"` // COMPILES
+    `(var b, var k, var m) -> 3.14159` // COMPILES
+
+** Local Variables Inside the Lambda Body
+  - While it is most common for a lambda body to be a single expression, it is legal to define a block. That block can have anything that is valid in a normal Java block, 
+  including local variable declarations.
+  - The following code does just that:
+    `(a, b) -> { int c = 0; return 5; }`
+    * Note: When writing your own code, a lambda block with a local variable is a good hint that you should extract that code into a method.
+  - Java doesn't allow you to create a local variable with the same name as one already declared in that scope, this applies to lambdas too, for example:
+    `(a, b) -> { int a = 0; return 5; }` // DOES NOT COMPILE, a is already declared in the parameter list.
+  - Remember when declaring a lambda variable inside a method for example, that the semicolon on the end of the statement is required:
+    `Predicate<Integer> p1 = a => {return true;}` // DOES NOT COMPILE
+    `Predicate<Integer> p1 = a => {return true;};` // COMPILES
+
+** Variables Referenced from the Lambda Body
+  - Lambda bodies are allowed to use static variables, instance variables and local variables if they are FINAL or EFFECTIVELY FINAL. If not, the code does not compiles on the 
+  line of the lambda expression that use the variables.
+  - Lambdas follow the same rules for access as local and anonymous classes! This is not a coincidence, as behind the scenes, anonymous classes are used for lambda expressions.
