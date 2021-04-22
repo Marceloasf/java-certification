@@ -258,16 +258,16 @@
   - Remember that Java treats the enclosing class as if it were a namespace.
 
 * Writing a Local Class:
-  - A local class is a nested class defined within a METHOD. Like local variables, a local class declaration does not exist until the method is invoked, and it goes 
-  out of scope when the method returns (ends).
-  - You can create instance only from within the method, those instances can still be returned from the method.
-  - They are not limited to being declared only inside methods. They can be declared inside constructors and initializers too.
-  - They can be marked as final. 
+  - A local class is a nested class defined within a METHOD, CONSTRUCTOR or INITIALIZER. Like local variables, a local class declaration does not exist until the block
+  is invoked, and it goes out of scope when the block ends.
+  - You can create an instance only from within the method, those instances can still be returned from the method.
+  - Remember that they are not limited to being declared only inside methods. They can be declared inside constructors and initializers too.
+  - They can be marked as final or abstract. 
   - Local classes have the folowing properties:
     - They do not have an access modifier.
     - They cannot be declared static and cannot declare static fields or methods, except for static final fields (constants).
     - They have access to all fields and methods of the enclosing class (when defined in an instance method).
-    - They can access local variables if the variables are final or effectively final. *
+    - They can access local variables if the variables are final or effectively final.
       * As we saw earlier in lambdas, effectively final refers to a local variable whose value does not change after it is set (even if not marked final).
   - Why local variables need to be final or effectively final? Because the compiler is generating a .class file from your local class. A separate class has no way to 
   refer to local variables, so if the local variable is final, Java can handle it by passing it to the constructor of the local class or by storing it in the .class 
@@ -292,7 +292,7 @@
   - It is declared and instantiated all in one statement using the new keyword, a type name with parentheses and a set of braces {}.
   - Are required to extend an existing class or implement an existing interface.
   - They are useful when you have a short implementation that will not be used anywhere else.
-  - Example of anonymous class extending a class:
+  - Example of an anonymous class extending a class:
     `
     public class ZooGiftShop {
       abstract class SaleTodayOnly {
@@ -309,7 +309,7 @@
     }
     ` 
   - Even SaleTodayOnly being abstract, we can instantiate her, because we are declaring the anonymous class body that extends her inside the braces.
-  - Example of anonymous class implementing an interface:
+  - Example of an anonymous class implementing an interface:
     `
     public class ZooGiftShop {
       interface SaleTodayOnly {
@@ -325,13 +325,13 @@
       }
     }
     `
-  - You can notice how little it changed, the main difference is that the method dollarsOff() is required to be declared with public on the anonymous 
-  class implementation. Since interfaces require public instead of default access.
+  - You can notice how little it changed, the main difference is that the method dollarsOff() is required to be declared public on the anonymous 
+  class implementation. Since interface abstract methods require public instead of default access.
   - Just remember that `SaleTodayOnly sale` that has been created is always an instance of a class instead of an interface.
   - You can't implement both an interface and extend a class with anonymous classes. 
   - So remember that an anonymous class is just an unnamed local class, you can write a local class and give it a name if you want to extend a class and implement 
   many interfaces.
-  - You can define them right where they are needed, even if that is an argument to another method. Example:
+  - You can define them right where they are needed, even if that is an argument to another method. For example:
     `
     public class ZooGiftShop {
       interface SaleTodayOnly {
@@ -353,11 +353,11 @@
     `
     public class Gorilla {
       interface Climb {}
-      Climb climbing = new Climb() { }; // Remember, we are not creating a reference to an interface instance, the { } indicates that we are creating a anonymous 
-                                        // inner class that implements Climb interface.
+      Climb climbing = new Climb() { }; // Remember, we are not creating a reference to an interface instance, the { } indicates that we are creating an anonymous 
+                                        // class that implements the Climb interface.
     }
     `
-  - Prior to Java 8, anonymous classes were frequently used for asynchronmous tasks and event handlers. For example an anonymous class being used as an event handler 
+  - Prior to Java 8, anonymous classes were frequently used for asynchronous tasks and event handlers. For example an anonymous class being used as an event handler 
   in a JavaFX application:
     `
     Button redButton = new Button();
@@ -475,14 +475,14 @@
     }
     `
   - First we use the interface name, followed by the super keyword, followed by the default method we want to call.
-  - super call to the default method is placed inside a instance method, as super is not accessible in the main method.
+  - super call to the default method is placed inside an instance method, as super is not accessible in the main method.
   - Remember for the exam, default methods may only be declared within interfaces.
 
 ** Using static Interface Methods
   - These methods are defined EXPLICITLY with the static keyword and for the most part behave just like static methods defined in classes.
   - Static Interface Method Definition Rules:
     1. A static method must be marked with the static keyword and include a method body.
-    2. A static method without an access modifier is assumed to be public.
+    2. A static method is assumed to be public.
     3. A static method cannot be marked abstract or final.
     4. A static method is not inherited and cannot be accessed in a class implementing the interface without a reference to the interface name.
   - Static interface method example:
@@ -494,8 +494,8 @@
     }
     `
   - Works just like a static method as defined in a class. So it can be accessed without an instance of a class using the Hop.getJumpHeight() syntax.
-  - Remember that since the method was defined without an access modifier, the compiler will automatically insert the public access modifier.
-  - Without an explicit reference to the name of the interface, the code will not compile (getJumpHeight()), even if you to call it from a class that implements Hop.
+  - Remember that since the method is defined without an access modifier, the compiler will automatically insert the public access modifier.
+  - Without an explicit reference to the name of the interface (getJumpHeight()), the code will not compile, even if you to call it from a class that implements Hop.
   - The static methods are not inherited by a class implementing the interface! As they would if the method were defined in a parent class (extends).
   - Compiling code example:
     `
@@ -533,11 +533,11 @@
     ` 
   - Private Interface Method Definition Rules:
     1. A private interface method must be marked with the private modifier and include a method body.
-    2. A private interface method may be called only by default and private (non-static) methods within the interface definition.
+    2. A private interface method may be called only by default and private (all non-static) methods within the interface definition.
   - They look a lot like instance methods within a class. Like private methods in a class, they cannot be declared abstract since they are not inherited.
 
 ** Introducing private static Interface Methods
-  - Has the same purpose as private methods, to reduce duplication, but this time is meant to reduce duplication inside static methods within the interface declaration.
+  - Has the same purpose as private methods, to reduce duplication. But this time is meant to reduce duplication inside static methods within the interface declaration.
   - But remember, private static interface methods can also be accessed by default and private methods that are non-static.
   - Example of working code:
     `
@@ -559,8 +559,9 @@
   - They can be called by any methods from within the interface definition. On the other hand, private static methods cannot call default or private methods, this would 
   be like trying to access an instance method from a static method in a class.
   - Why mark these methods with private?
-    - The answer is to improve encapsulation and reducing duplication, as we might not want these methods exposed outside the interface declaration.
+    - The answer is to improve encapsulation and reduce duplication, as we might not want these methods exposed outside the interface declaration and duplicated all around her.
     - Encapsulation and security work best when the outside caller knows as little as possible about the internal implementation of a class or an interface.
+    - Maintaining code is much more effective and efficient when you need to fix a problem only on one place.
 
 ** Reviewing Interface Members
   - Interface Member Access:
@@ -582,26 +583,26 @@
   |  private static method   Yes                           Yes                                No                                 No                                |
   |________________________________________________________________________________________________________________________________________________________________|
   
-  - The first two collumns are about accessing from within the interface definition, the last two are about accessing from outside the interface.
+  - The first two columns are about accessing from within the interface definition, the last two are about accessing from outside the interface.
   - Recall what you know about class access modifiers and private members, instance methods can access static members within the class, but static members cannot access 
-  intance methods without a reference to the instance. Also, private and static members are never inherited, so they are never accessible directly by a class 
-  implementing an interface.
+  instance methods without a reference to the instance. Also, private and static interface members are never inherited, so they are never accessible directly by a class 
+  implementing the interface or a interface extending the interface.
+  - When an interface X extends another interface Y that contains an abstract method, X can override this method to be a default method.
 
 ** Abstract classes vs. Interfaces
   - A key distinction is that interfaces do not implement constructors and are not part of the class hierarchy. While a class can implement multiple interfaces, it can 
-  only directly extend a single class.
-
+  only directly extend a single class, and an interface can extends multiple interfaces.
 
 ** p.526-537
 ** Introducing Functional Programming
   - Functional interfaces are used as the basis for lambda expressions in functional programming. 
-  - A functional interface is an interface that contains a single abstract method (SAM rule).
-  - A lambda expression is a block of code that gets passed around, sort of like an anonymous class that defines one method. There is a variety of short and long forms.
+  - A functional interface is an interface that contains a single abstract method (SAM).
+  - A lambda expression is a block of code that gets passed around, sort of like an anonymous class that defines one method. There is a variety of short and long forms to it.
 
 ** Defining a Functional Interface
   - Example of a functional interface and a class that implements it:  
   `
-  @FunctionalInterface // This annotation is optional
+  @FunctionalInterface // This annotation is optional, just states that this interface is intended to be a functional interface.
   public interface Sprint {
     public void sprint(int speed);
   }
@@ -621,16 +622,16 @@
   - Even though default methods on interfaces function like abstract methods, in that they can be overridden by a concrete class implementing the interface, they are 
   insufficient for satisfying the single abstract method requirement.
 
-** Declaring a Functional Interface with Object Methods
+** Declaring a Functional Interface with Object Methods (Object.java)
   - All classes inherit certain methods from Object. For the exam, you should be familiar with the following Object method declarations:
     - String toString()
     - boolean equals(Object)
     - int hashCode()
   - This methods are brought here now because there is one exception to the SAM rule that you should be familiar with. The exception is that if a functional interface 
   includes an abstract method with the same signature as a public method found in Object, then those methods do not count toward the SAM test. The motivation behind 
-  this rule is that any class that implements the interface will inherit from Object, as all classes do, and therefore always implements these methods. 
+  this rule is that any class that implements the interface will extend Object, as all classes do, and therefore always implements these methods. 
   - Since Java assumes all classes extend from Object, you also cannot declare an interface method that is incompatible with Object. For example, declaring an abstract 
-  method `int toString()` in an interface would not compile since Object's version of the method returns a String. **
+  method `int toString()` in an interface would not compile since Object's version of the method returns a String.
   - Example of this rule:
     `
     public interface Soar { // This is not considered a functional interface, since toString is a public method of Object.
@@ -647,7 +648,7 @@
     }
     `
   - Changing only the signature of those methods listed before will make them count on the SAM test, since they don't match the signature of Object's public methods.
-  This can be looked at as a overload of those methods, making them individual methods that have no relation whatsoever. For example:
+  This can be looked at as redeclaring those methods, making them individual methods that have no relation with Object's methods. For example:
     `String toString(Boolean b);`
     `int toString(Boolean b);`
     `Integer hashCode(String hash);`
@@ -659,6 +660,8 @@
       public void rest(); // It counts toward the SAM test.
     }
     `
+  - It's not an override of the methods, so the signatures must be the same, any change on the signature will have the effect shown before. If the return type is different, 
+  then the code will not compile. You can't override the methods from Object in default interface methods.
 
 ** p.529
 ** Notes on Overriding toString(), equals(Object) and hashCode():
@@ -674,13 +677,13 @@
   - All of these methods provide a default implementation in Object, but to make intelligent use out of them, you should override them.
 
 ** Implementing Functional Interfaces with Lambdas
-  - Remember that <T> allows the interface to take an object of a specified type.
+  - Remember that <T> (generics) allows the interface to take an object of a specified type.
   - The relationship between functional interfaces and lambda expressions is as follows:
-    - `Any functional interface can be implemented as a lambda expression`. *
+    - `Any functional interface can be implemented as a lambda expression`. 
   - Even older Java interfaces that pass the SAM test are functional interfaces, which can be implemented with lambda expressions.
   - Code example on TraditionalSearch.java, this code has the goal to print out all animals in a list according to some criteria.
   - Lambda expressions rely on the notion of deferred execution. 
-  - Deferred Execution means that code is specified now but runs later. In the case of TraditionalSearch, later is when the print() method calls it. Even though the 
+  - Deferred Execution means that the code is specified now but runs later. In the case of TraditionalSearch, later is when the print() method calls it. Even though the 
   execution is deferred, the compiler will still validate that the code syntax is correct.
 
 ** Writing Lambda Expressions
@@ -730,6 +733,7 @@
     `Predicate<String> p = x -> true;`
     `Predicate<String> p = (var x) -> true;`
     `Predicate<String> p = (String x) -> true;`
+  - If a functional interface var, that takes a generic type, is declared without a diamond operator (<T>), then the default type is always Object.
   - A lambda infers the types from the surrounding context. That means that you need to do the same on the exam. In this case, the lambda is being assigned to a Predicate 
   that takes a String. Another place to look for the type is in a method signature, for example: 
     `
@@ -748,16 +752,16 @@
     }
     ` 
 * Restrictions on Using var in the Parameter List
-  - While you can use var inside a lambda parameter list, there is a rule you need to be aware of.
+  - While you can use var inside a lambda parameter list, there is one rule you need to be aware of.
   - If var is used for one of the types in the parameter list, then it must be used for all parameters in the list.
   - Examples of lambda expressions that compiles and doesn't compile:
-    `var w -> 99` // DOES NOT COMPILE, because the parentheses are missing.
-    `(var x, y) -> "goodbye"` // DOES NOT COMPILE, because even when using var for all the parameter types, each parameter type must be written out.
-    `(var a, Integer B) -> true` // DOES NOT COMPILE, because the parameter types include a mix of var and type names.
-    `(String x, var y, Integer z) -> true` // DOES NOT COMPILE, because of the same reason of the last example.
     `(var num) -> 1` // COMPILES
     `(var a, var b) -> "Hello"` // COMPILES
     `(var b, var k, var m) -> 3.14159` // COMPILES
+    `var w -> 99` // DOES NOT COMPILE, because the parentheses are missing.
+    `(var x, y) -> "goodbye"` // DOES NOT COMPILE, because even when using var for all the parameter types, each parameter type must be written out.
+    `(var a, Integer B) -> true` // DOES NOT COMPILE, because the parameter types include a mix of var and type names.
+    `(String x, var y, Integer z) -> true` // DOES NOT COMPILE, because of the same reason of the last example. All the params must be var or another types.
 
 ** Local Variables Inside the Lambda Body
   - While it is most common for a lambda body to be a single expression, it is legal to define a block. That block can have anything that is valid in a normal Java block, 
@@ -773,5 +777,5 @@
 
 ** Variables Referenced from the Lambda Body
   - Lambda bodies are allowed to use static variables, instance variables and local variables if they are FINAL or EFFECTIVELY FINAL. If not, the code does not compiles on the 
-  line of the lambda expression that use the variables.
-  - Lambdas follow the same rules for access as local and anonymous classes! This is not a coincidence, as behind the scenes, anonymous classes are used for lambda expressions.
+  line of the lambda expression that uses the variables. Lambdas follow the same rules for vars access as local and anonymous classes! This is not a coincidence, as behind the 
+  scenes, anonymous classes are used for lambda expressions.
