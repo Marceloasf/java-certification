@@ -21,15 +21,17 @@
   - An enumeration (enum) is like a fixed set of constants. In Java, an enum, short for "enumerated type", can be a top-level type like 
   a class or interface, as well as a nested type like an inner class.
   - Using an enum is much better than using a bunch of constants because it provides type-safe checking. It is impossible to create an 
-  invalid enum alue without introducing a compiler error.
+  invalid enum value without introducing a compiler error.
   - To create a simple enum, just use the enum keyword instead of the class or interface keyword. Then list all the valid types for him:
     `
     public enum Season {
       WINTER, SPRING, SUMMER, FALL
     }
     `
-  - Enum values are considered constans and are commonly written using snake case, often stylized as snake_case, using underscore to separate 
+  - Enum declarations don't support optional modifiers such as abstract and final (public abstract/final enum...).
+  - Enum values are considered constants and are commonly written using snake case, often stylized as snake_case, using underscore to separate 
   words, like VANILLA, ROCKY_ROAD, MINT_CHOCOLATE...
+  - Inner enums are implicitly static.
   - Behind the scenes, an enum is a type of class that mainly contains static members. It also includes some helper methods like name(). 
     `
     Season s = Season.SUMMER;
@@ -49,51 +51,55 @@
   - Note that the first line isn't creating an enum value, at least not directly. Each enum value is created once when the enum is first loaded. Once it has 
   been loaded, it retrieves the single enum value with the matching name.
   - The second example will throw an IllegalArgumentException since there is no enum value with the lowercase name summer.
-  - Two important rules about working with enums are:
+  - Two important rules about working with enums:
     - Enums can't be extended by other enums, classes or interfaces.
     - Only the values in an enum are allowed, because you can't add more by extending an enum.
+  - Enums can't extends other enums/classes/interfaces. But they can implements interfaces and use their methods, all you have to do is use a enum value as the object 
+  to call the inherited methods (Season.Summer.interfaceMethod();).
 
 * Using Enums in Switch Statements
   - Remember that enum values can be used in switch statements.
-  - The compiler already knows that the only possible matches can be enum values. So Java treats the enum type as implicit. In fact, if you try to type case 
-  Season.WINTER or a primitive int, it would not compile. Example:
+  - The compiler already knows that the only possible matches can be enum values in this case. So Java treats the enum type as implicit. In fact, if you try to type case 
+  Season.WINTER, literal string or a primitive int, it does not compile. Example:
     `
-    Season s = Season.SUMMER;
+    Season summer = Season.SUMMER;
     switch(summer) {
-      CASE SUMMER: 
+      case SUMMER: 
         System.out.println("Time for the pool!");
         break;
-      CASE SPRING: 
+      case "SPRING":                            // DOES NOT COMPILE
         System.out.println("Spring time!");
         break;
-      CASE Season.WINTER:                       // DOES NOT COMPILE
+      case Season.WINTER:                       // DOES NOT COMPILE
         System.out.println("Rake some leaves!");
         break;
-      CASE 0:                                   // DOES NOT COMPILE
+      case 0:                                   // DOES NOT COMPILE
         System.out.println("Get out the sled!");
       default:
         System.out.println("Is it summer yet?");
     }
     `
-  - The first case statement that does not compile, is because Season is used in the case value, if we changed it to WINTER, then it would compile.
-  - The second statement doesn't compile because you can't compare enums with int values, and you cannot use them in a switch case statement either.
-  - So remember for the exam, enums can only be used with enums.
+  - The first case statement does not compile, because a literal string is used in the case value.
+  - The second case statement that does not compile, is because Season is used in the case value, if we changed it to WINTER, then it would compile.
+  - The third case statement doesn't compile because you can't compare enums with int values, and you cannot use them in a switch case statement either.
+  - So remember for the exam, enums can only be used with enums in switch statements.
 
-* Adding Constructors Fields and Methods
+* Adding Constructors, Fields and Methods
   - Enums can have more in them than just a list of values.
     * (Coded example on file Season.java)
-  - A semicolon (;) is optional when our enum is composed solely of a list of values, but it is required if there is anything in the enum besides the values.
-  - Marking instance variables of an enum with 'final' to make sure he is immutable is not required, but its considered a good coding practice to do so.
+  - A semicolon (;) is optional when your enum is composed solely of a list of values, but it is required if there is anything in the enum besides the values.
+  - Marking instance variables from an enum with 'final' to make sure they are immutable is not required, but its considered a good coding practice to do so.
 
 * Real World Scenario Notes:
   - The immutable objects pattern is an object-oriented design pattern in which an object cannot be modified after it is created. Instead of modifying an 
   immutable object, you create a new object that contains any properties from the original object you want copied over.
   - Immutable objects are invaluable in concurrent application since the state of the object cannot change or be corrupted by a rogue thread.
+  - String is an example of a Java immutable object.
 
-* Continuing Enums:
-  - All enum constructors are implicitly private, with the modifier being optional.* This is reasonable since you can't extend an enum and the construtors 
-  can be called only within the enum itself. An enum constrcutor will not compile if it contains a public or protected modifier.
-  - To call a method inside an enum you just need to ask for the value and call the method, like `Season.SUMMER.printExpectedVisitors();`.
+* Continuing Enums Constructors, Fields and Methods:
+  - All enum constructors are implicitly private, with the modifier being optional. This is reasonable since you can't extend an enum and the constructors 
+  can be called only within the enum itself. An enum constructor will not compile if it contains a public or protected modifier.
+  - To call a method inside an enum you just need to ask for a enum value and call the method, like `Season.SUMMER.printExpectedVisitors();`.
   - Notice how we don't appear to call the constructor. We just ask for the enum value. Because the first time that we ask for any of the enum values, Java 
   constructs all of the enum values. After that, Java just returns the already constructed enum values.
   - So remember that the constructor on an enum is called only once. Example:
@@ -105,7 +111,7 @@
       }
     }
     (...)
-    public statinc void main(String[] args) {
+    public static void main(String[] args) {
       System.out.println("begin,");
       OnlyOne firstCall = OnlyOne.ONCE; // prints constructing,
       OnlyOne secondCall = OnlyOne.ONCE; // doesn't print anything
@@ -113,6 +119,8 @@
     } // This main() method prints 'begin,constructing,end'
     `
   - If the OnlyOne enum was used earlier, and therefore initialized sooner, then the line that declares the firstCall variable would not print anything.
+  - If the constructor on an enum has no parameters, then the values don't need to have parentheses. On the other hand, they are required if there is one 
+  or more parameters to the list.
   - We can let each enum value manage itself, like if they were a bunch of tiny subclasses.
     `
     public enum Season {
@@ -129,10 +137,10 @@
       public abstract String getHours();
     }
     `
-  - On this example, the enum itself has abstract method, which means that each and every enum value is required to implement this method. If we forget to 
-  implement the mnethod for one of the values, then we get a compiler error.
+  - On this example, the enum itself has an abstract method, which means that each and every enum value is required to implement this method. If we forget to 
+  implement the method for one of the values, then we get a compiler error.
   - Another way of implementing this is creating a default implementation and override it only for the special cases.
-      `
+    `
     public enum Season {
       WINTER {
         public String getHours() { return "9am-3pm"; }
@@ -148,6 +156,8 @@
     `
   - Good practices reminder, try to keep your enums simple. If it has more than one page or two, its too long.
   - The compiler requires that the list of values in enums always be declared first, wheter the enum is simple or contains a ton of members.
+  - When overriding abstract methods from implemented interfaces in enums, we can handle them in the same manner, overriding the abstract method for all the values or for
+  some/none of the values. For the second case, we need to override the abstract method for the enum like getHours in Season for the code to compile. 
 
 ** p.506-514
 ** Creating Nested Classes
@@ -157,10 +167,11 @@
     - Static nested class: A static type defined at the member level of a class.
     - Local class: A class defined within a method body.
     - Anonymous class: A special case of a local class that does not have a name.
-  - Nested classes can ecanpsulate helper classes byu restricting them to the containing class, can make it easy to create a class that will be used in only one place, 
+  - Nested classes can encapsulate helper classes by restricting them to the containing class, can make it easier to create a class that will be used in only one place, 
   and can make the code cleaner and easier to read.
   - By convention, the term inner or nested class is used to apply to other Java types, including interfaces and enums. Because interfaces and enums can be declared as 
-  both inner clases and static nested classes, but not as local or anonymous classes.
+  both inner classes and static nested classes, but not as local or anonymous classes.
+  - Inner enums are implicitly static and inner interfaces are implicitly abstract and static. Both can have all access modifier options. Watch out for conflicting modifiers.
   - Inner classes can have inner classes, its not a good coding practice, but it may appear on the exam.
 
 * Declaring an Inner Class:
@@ -180,7 +191,7 @@
       inner.go();
     }
     `
-  - Basically, we need an instance of Outer to create Inner, we can't just call new Inner() because Java won't know with which insatnce of Outer it is associated. Java 
+  - Basically, we need an instance of Outer to create Inner, we can't just call new Inner() because Java won't know with which instance of Outer it is associated. Java 
   solves this by calling new as if it were a method on the outer variable.
   - When a inner class is compiled, two files are created, one for the outer class and another for the inner class. Like this: Outer.class - Outer$Inner.class
   - Inner classes can have the same variable names as outer classes, making scope a little tricky. There is a special way of calling 'this' to say which variable you want:
@@ -216,6 +227,7 @@
   too deep for Java to know where to look.
   - Inner classes require an instance. Static methods can't access them, unless you're using an instance explicitly.
   - private inner classes can only be instantiated and accessed from within their outer class.
+  - Inner interfaces and enums can contain all their usual members.
 
 * Creating a static Nested Class:
   - A static nested class is a static type defined at the member level. 
