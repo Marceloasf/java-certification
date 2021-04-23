@@ -262,9 +262,9 @@
   |_____________________________________________________________________________________________|
   - You can see that for both of these try statements, two or more programmer-defined finally blocks are not allowed. The implicit one is not count here.
 
-* AutoCloseable:
+* AutoCloseable and Closeable:
   - You can't just put any random class in a try-with-resources statement. 
-  - Java requires classes used in a try-with-resources implement the AutoCloseable interface, which includes a void close() method.
+  - Java requires classes used in a try-with-resources implement the AutoCloseable or Closeable interfaces, which includes a void close() method.
 
 * Declaring Resources:
   - try-with-resources statement does not support multiple variable declarations, so each variable must be declared in a separate statement. For example 

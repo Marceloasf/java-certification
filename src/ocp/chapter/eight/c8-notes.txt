@@ -357,7 +357,7 @@ use the member (p.339).
 
 ** p.348
 ** Summary:
-  - All instance methods, contructors and instance initializers have access to this and super.'
+  - All instance methods, contructors and instance initializers have access to this and super.
   - this() and super() can only be used in constructors, following the rules of constructors.
   - A method is overloaded if it has the same name but a different signature as another accessible method.
   - A method is overridden if it has the same signature as an inherited method and has access modifiers, exceptions and a return type that are compatible.

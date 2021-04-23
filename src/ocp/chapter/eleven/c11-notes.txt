@@ -363,7 +363,7 @@ to use the single_module_c11 folder as the 'root'. The multiple module example i
   |____________________________________________________________________________________|
   | --list-modules                  Lists observable modules without running a program |
   |____________________________________________________________________________________|
-  | --show-module-resolution         Shows modules when running a program              |
+  | --show-module-resolution        Shows modules when running a program               |
   |____________________________________________________________________________________|
 
   * 'jar' options:
