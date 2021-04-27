@@ -1,0 +1,9 @@
+** Chapter 13 - Annotations
+
+* Annotations
+  - Describe the purpose of annotations and typical usage patterns 
+  - Apply annotations to classes and methods
+  - Describe commonly used annotations in the JDK
+  - Declare custom annotations
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
