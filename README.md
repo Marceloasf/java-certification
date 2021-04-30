@@ -4,10 +4,11 @@ Repository dedicated to the study of the needed content to obtain a Java certifi
 
 - Certification exam: Oracle Certified Professional Java SE 11 Developer (1Z0-819).
 
-# OCA-BOOK
+# [OCA-BOOK](./src/oca/chapter)
 
 Oracle Certified Associate Java SE 8 Programmer 1 Study Guide
 
-# OCP-BOOK
+# [OCP-BOOK](./src/ocp/chapter)
 
 Oracle Certified Professional Java SE 11 Developer Complete Study Guide
+
