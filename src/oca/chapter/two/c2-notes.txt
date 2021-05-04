@@ -7,7 +7,7 @@
 
 * Using Loop Constructs (repetion control structures)
 - Create and use while loops;
-- Create and use for loops, including the enchanced for loop;
+- Create and use for loops, including the enhanced for loop;
 - Create and use do/while loops;
 - Compare loop constructs;
 - Use break and continue;
@@ -190,7 +190,7 @@ Ps.: This chapter covers the same subjects as the Chapters 3 and 4 of the OCP-11
     System.out.println(x); // DOES NOT COMPILE`
 
 ** p.83
-** The for-each Statement (enchanced for):
+** The for-each Statement (enhanced for):
   - Curly braces are required for block of multiple statements and optional for single statement. 
   - The for-each loop declaration is composed of an initialization section and an object to be iterated over.
   - The right-hand side of the loop (iterable collection of objects) must be a built-in Java array or an
