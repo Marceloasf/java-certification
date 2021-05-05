@@ -5,5 +5,170 @@
   - Apply annotations to classes and methods
   - Describe commonly used annotations in the JDK
   - Declare custom annotations
-
+  
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+** p.554-557
+** Introducing Annotations
+  - Annotations are all about METADATA. 
+  - Metadata is data that provides information about other data. For example, 'attribute data' is the type of data that includes transactional info 
+  that makes up the object and its content. On the other hand, 'metadata' includes the rules, properties or relationships surrounding the object.
+  - These metadata rules describe information about the object, but are not part of him.
+  - While annotations allow you to insert rules around data, it does not mean the values for these rules need to be defined in the code, aka 'hard coded',
+  you can define the rules and relationships in the code but read the values from elsewhere, such as from a config file or database.
+
+* Purpose of Annotations
+  - The purpose of an annotation is to assign metada attributes to classes, methods, variables and other Java types. 
+  - Annotations start with the at (@) symbol and can contain attribute/value pairs called 'elements'.
+  - Example of an annotation: `@ZooAnimal public class Peacock extends Bird { }`
+  - This example brings us to the first rule about annotations: `annotations function a lot like interfaces.`
+  - Because in this example, annotations allow us to mark a class as a ZooAnimal without changing its inheritance structure.
+  - If they are similar to interfaces, why we just don't use them? While interfaces can be applied only to classes, annotations can be applied to any 
+  declaration including classes, methods, expressions and even other annotation. Also, unlike interfaces, annotations allow us to pass a set of values 
+  where they are applied.
+  - Consider the following example:
+    `
+    public class Veterinarian {
+      @ZooAnimal(habitat="Infirmary") private Lion sickLion;
+
+      @ZooAnimal(habitat="Safari") private Lion healthyLion;
+
+      @ZooAnimal(habitat="Special Enclosure") private Lion blindLion;
+    }
+    `
+  - The habitat value is part of the type declaration of each variable, not an individual object. This class defines an habitat for each Lion, even if a  
+  Lion variable points to another object, it would still have the same habitat value.
+  - This example brings us to the second rule about annotations: `annotations establish relationships that make it easier to manage data about our application.`
+  - The third rule about annotations is: `an annotation ascribes custom information on the declaration where it is defined.`. The same annotation can often be 
+  applied to completely unrelated classes or variables.
+  - There is one final rule about annotations you should be familiar with: `annotations are optional metadata and by themselves do not do anything.`. This means 
+  that you can take a project filled with thousand of annotations and remove all of them, and it will still compile and run, albeit with potetially different 
+  behavior at runtime.
+  - This last rule might seem a little counterintuitive at first, but it refers to the fact that annotations aren't utilized where they are defined. It's up to the 
+  rest of the application, or more likely the underlying framework, to enforce or use annotations to accomplish tasks.
+  - While an annotation can be removed from a class and it will still compile, the opposite is not true; adding an annotation can trigger a compiler error. As we 
+  will see in this chapter, the compiler validates that annotations are properly used and include all required fields.
+
+* Note for the exam: You need to know how to define your own custom annotations, how to apply annotations properly and how to use common annotations. Writing code 
+that processes or enforces annotations is not required for the exam.
+
+** p.558-562
+** Creating Custom Annotations
+  - We use the `@interface` annotation (all lowercase) to declare an annotation. Yes, we use an annotation to create an annotation.
+  - Like classes and interfaces, they are commonly defined in their own file as a top-level type, although they can be defined inside a class declaration like an 
+  inner class.
+  - Example of an interface declaration: `public @interface Exercise { }`
+  - This annotation example defined above, is referred as a 'marker annotation', since it does not contain any elements.
+  - To apply this interface, you just need to use the at symbol (@):
+    `
+    @Exercise() public class Cheetah { }
+
+    @Exercise
+    public class ZooEmployee { }
+    `
+  - When using a marker annotation, the parentheses are optional, because they don't contain any values.
+  - If an annotation is declared on a line by itself, then it applies to the next nonannotation type found on the proceeding lines. This applies even when there are 
+  multiple annotations present. For example:
+    `
+    @Scaley       @Flexible
+      @Food("insect") @Food("rodent")     @FriendlyPet
+    @Limbless public class Snake { }
+    `
+  - Regardless of where they are, all of the annotations apply to Snake. As with other declarations in Java, spaces and tabs between elements are ignored.
+  - Whether you put annotations on the same line as the type they apply to or on separate lines is a matter of style, either is acceptable.
+  - Annotations are case sensitive, like classes and interfaces names, it is common practice to have them start with an uppercase letter, although is not required.
+  - There are some annotations that can be applied more than once, like @Food, we will cover them later in this chapter.
+
+* Specifying a Required Element
+  - An annotation element is an attribute that stores values about the particular usage of an annotation. For example, lets make @Exercise more useful:
+    `
+    public @interface Exercise {
+      int hoursPerDay();
+    }
+    ` 
+  - hoursPerDay may look a lot like an abstract method, although we're calling it an element (or attribute). Remember, annotations have their roots in interfaces, so 
+  behind the scenes, the JVM is creating elements as interface methods and annotations as implementations of these interfaces, you don't need to worry about this 
+  details for the exam. The compiler does it all for you too.
+  - Adding elements on an annotation changes our usage:
+    `
+    @Exercise(hoursPerDay=3) public class Cheetah { } // COMPILES
+
+    @Exercise hoursPerDay=3 public class Cheetah { } // DOES NOT COMPILE. Remember, parentheses are optional only if no required values are included.  
+
+    @Exercise public class Cheetah { } // DOES NOT COMPILE. The hoursPerDay is a required value. While the annotation itself is optional,
+                                       //                    the compiler still cares that they are used correctly.
+    `
+  - When declaring an annotation, any element without a default value is considered required.
+
+* Providing an Optional Element
+  - For an element to be optional, rather than required, it must include a default value. For example:
+  `
+    public @interface Exercise {
+      int hoursPerDay();
+      int startHour() default 6;
+    }
+  `
+  - Next, let's apply the updated annotation to our classes:
+    `
+    @Exercise(hoursPerDay=3, startHour=5) public class Cheetah { } // COMPILES
+
+    @Exercise(hoursPerDay=3) public class Cheetah { } // COMPILES. It will be instantiated with the default value of 6.
+
+    @Exercise(hoursPerDay=3, startHour="5") public class Cheetah { } // DOES NOT COMPILE. It defines a value that is incompatible with the int type of startHour.
+    `
+  - When we have more than one element value within an annotation, we separate them by a comma (,).
+  - Each element is written using the syntax elementName=elementValue. It's like a shorthand for a Map.
+  - The order of each element does not matter. 
+
+* Defining a Default Element Value
+  - The default value of an annotation element cannot be just any value. Similar to case statement values, the default value of an annotation must be a non-null 
+  constant expression. Example: 
+    `
+    public @interface BadAnnotation {
+      String name() default new String(""); // DOES NOT COMPILE. It does not defines a constant expression.
+      String address() default ""; // COMPILES
+      String title() default null; // DOES NOT COMPILE. Is null..
+    }
+    `
+  
+* Selecting an Element Type
+  - An annotation element cannot be declared with just any type, similar to a default element value.
+  - It must be a primitive type, a String, a Class (type Class), an enum, another annotation or an array of any of these types.
+  - For example:
+    `
+    public class Bear { }
+
+    public enum Size { SMALL, MEDIUM, LARGE }
+
+    public @interface Panda {
+      Integer height();   // DOES NOT COMPILE. While primitives types like int and long are supported, wrapper classes like Integer and Long are not.
+      String[][] generalInfo();   // DOES NOT COMPILE. The type String[] is supported, as it is an array of String values, but String[][] is not.
+      Bear friendlyBear();    // DOES NOT COMPILE. The type of this element is Bear (not Class). Even if Bear were changed to an interface, would still not compile.
+      Size size() default Size.SMALL;   // COMPILES
+      Exercise exercise() default @Exercise(hoursPerDay=2);   // COMPILES
+    }
+    `
+
+* Applying Element Modifiers
+  - Like abstract methods, annotation elements are implicitly abstract and public, whether you declare them that way or not. Example:
+    `
+    public @interface Fluffy {
+      int cuteness();   // COMPILES
+      public abstract int softness() default 11;   // COMPILES
+      protected String material();   // DOES NOT COMPILE. 
+      private String friendly();   // DOES NOT COMPILE. The access modifier on both material() and friendly() conflicts with the elements being implicitly public.
+      final boolean isBunny();   // DOES NOT COMPILE. Like abstract methods, it cannot be marked final.
+    }
+    ` 
+
+* Adding a Constant variable
+  - Annotations can include constant variables that can be accessed by other classes without actually creating the annotation. Example of an annotation constant:
+    `
+    public @interface ElectricitySource { // This @interface compiles normally.
+      public int voltage();
+      int MIN_VOLTAGE = 2;
+      public static final int MAX_VOLTAGE = 18;
+    } 
+    ` 
+  - Just like interface variables, annotation variables are implicitly public, static and final. These constant variables are not considered elements. For example, 
+  marker annotations can contain constants.
