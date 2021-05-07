@@ -48,6 +48,8 @@
   rest of the application, or more likely the underlying framework, to enforce or use annotations to accomplish tasks.
   - While an annotation can be removed from a class and it will still compile, the opposite is not true; adding an annotation can trigger a compiler error. As we 
   will see in this chapter, the compiler validates that annotations are properly used and include all required fields.
+  - Annotations, just like methods or fields, can be inherited between class hierarchies. The annotation can be overridden in case the child class has the annotation. 
+  Because there is no multiple inheritance in Java, annotations on interfaces cannot be inherited.
 
 * Note for the exam: You need to know how to define your own custom annotations, how to apply annotations properly and how to use common annotations. Writing code 
 that processes or enforces annotations is not required for the exam.
