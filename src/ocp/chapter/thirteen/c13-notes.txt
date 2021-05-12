@@ -18,13 +18,13 @@
   you can define the rules and relationships in the code but read the values from elsewhere, such as from a config file or database.
 
 * Purpose of Annotations
-  - The purpose of an annotation is to assign metada attributes to classes, methods, variables and other Java types. 
+  - The purpose of an annotation is to assign metadata attributes to classes, methods, variables and other Java types. 
   - Annotations start with the at (@) symbol and can contain attribute/value pairs called 'elements'.
   - Example of an annotation: `@ZooAnimal public class Peacock extends Bird { }`
   - This example brings us to the first rule about annotations: `annotations function a lot like interfaces.`
-  - Because in this example, annotations allow us to mark a class as a ZooAnimal without changing its inheritance structure.
+  - Because in this example annotations allow us to mark a class as a ZooAnimal without changing its inheritance structure.
   - If they are similar to interfaces, why we just don't use them? While interfaces can be applied only to classes, annotations can be applied to any 
-  declaration including classes, methods, expressions and even other annotation. Also, unlike interfaces, annotations allow us to pass a set of values 
+  declaration including classes, methods, expressions and even other annotations. Also, unlike interfaces, annotations allow us to pass a set of values 
   where they are applied.
   - Consider the following example:
     `
@@ -47,7 +47,7 @@
   - This last rule might seem a little counterintuitive at first, but it refers to the fact that annotations aren't utilized where they are defined. It's up to the 
   rest of the application, or more likely the underlying framework, to enforce or use annotations to accomplish tasks.
   - While an annotation can be removed from a class and it will still compile, the opposite is not true; adding an annotation can trigger a compiler error. As we 
-  will see in this chapter, the compiler validates that annotations are properly used and include all required fields.
+  will see in this chapter, the compiler validates that annotations are properly used and include all required fields, like @FunctionalClass or @SafeVarargs.
   - Annotations, just like methods or fields, can be inherited between class hierarchies. The annotation can be overridden in case the child class has the annotation. 
   Because there is no multiple inheritance in Java, annotations on interfaces cannot be inherited.
 
@@ -69,7 +69,7 @@ that processes or enforces annotations is not required for the exam.
     public class ZooEmployee { }
     `
   - When using a marker annotation, the parentheses are optional, because they don't contain any values.
-  - If an annotation is declared on a line by itself, then it applies to the next nonannotation type found on the proceeding lines. This applies even when there are 
+  - If an annotation is declared on a line by itself, then it applies to the next non-annotation type found on the proceeding lines. This applies even when there are 
   multiple annotations present. For example:
     `
     @Scaley       @Flexible
@@ -78,7 +78,7 @@ that processes or enforces annotations is not required for the exam.
     `
   - Regardless of where they are, all of the annotations apply to Snake. As with other declarations in Java, spaces and tabs between elements are ignored.
   - Whether you put annotations on the same line as the type they apply to or on separate lines is a matter of style, either is acceptable.
-  - Annotations are case sensitive, like classes and interfaces names, it is common practice to have them start with an uppercase letter, although is not required.
+  - Annotations are case sensitive, like classes and interfaces names, it is a common practice to have them start with an uppercase letter, although is not required.
   - There are some annotations that can be applied more than once, like @Food, we will cover them later in this chapter.
 
 * Specifying a Required Element
@@ -98,7 +98,7 @@ that processes or enforces annotations is not required for the exam.
     @Exercise hoursPerDay=3 public class Cheetah { } // DOES NOT COMPILE. Remember, parentheses are optional only if no required values are included.  
 
     @Exercise public class Cheetah { } // DOES NOT COMPILE. The hoursPerDay is a required value. While the annotation itself is optional,
-                                       //                    the compiler still cares that they are used correctly.
+                                       //                   the compiler still cares that they are used correctly.
     `
   - When declaring an annotation, any element without a default value is considered required.
 
@@ -152,7 +152,7 @@ that processes or enforces annotations is not required for the exam.
     `
 
 * Applying Element Modifiers
-  - Like abstract methods, annotation elements are implicitly abstract and public, whether you declare them that way or not. Example:
+  - Like interface abstract methods, annotation elements are implicitly abstract and public, whether you declare them that way or not. Example:
     `
     public @interface Fluffy {
       int cuteness();   // COMPILES
