@@ -174,3 +174,124 @@ that processes or enforces annotations is not required for the exam.
     ` 
   - Just like interface variables, annotation variables are implicitly public, static and final. These constant variables are not considered elements. For example, 
   marker annotations can contain constants.
+
+** p.563-568
+** Applying annotations
+  - Let's discuss other ways of applying annotations.
+  - Annotations can be applied to any Java declaration including the following:
+    - Classes, interfaces, enums and modules
+    - Variables (static, instance and local)
+    - Methods and constructors
+    - Method, constructor and lambda parameters
+    - Cast expressions
+    - Other annotations
+  - The following example compiles, assuming the annotations referenced in it exist:
+    `
+    @FunctionalInterface interface Speedster {
+      void go(String name);
+    }
+
+    @LongEars
+    @Soft @Cuddly public class Rabbit {
+      @Deprecated public Rabbit(@NotNull Integer size) { }
+
+      @Speed(velocity="fast") public void eat(@Edible String input) {
+        @Food(vegetarian=true) String m = (@Tasty String) "carrots";
+
+        Speedster s1 = new @Racer Speedster() {
+          public void go(@FirstName @NotEmpty String name) {
+            System.out.print("Start!" + name);
+          }
+        };
+
+        Speedster s2 = (@Valid String n) -> System.out.print(n);
+      }
+    }
+    `
+  - When applying an annotation to an expression, a cast operation including the Java type is required. On the line of declaration of the local variable 'String m', 
+  the expression was cast to String and the annotation @Tasty was applied to the type.
+  - Remember when mixing required and optional elements: `to use an annotation, all required values must be provided`. While an annotation may have many elements, values 
+  are required only for ones without default values.
+    `
+    public @interface Swimmer {
+      int armLength = 10; // CONSTANT, it cannot be included in an annotation (when applying her).
+      String stroke(); // REQUIRED
+      String name(); // REQUIRED
+      String favoriteStroke() default "Backstroke"; // OPTIONAL
+    }
+    `
+* Creating a value() Element
+  - You may have seen an annotation with a value, written without the elementName. The following syntax is valid under the right condition:
+    `@Injured("Broken Tail") public class Monkey { }`
+  - This is considered a shorthand or abbreviated annotation notation. An annotation must adhere to the following rules to be used without a name:
+    1. The annotation declaration must contain an element named value(), which may be optional or required.
+    2. The annotation declaration must not contain any other elements that are required.
+    3. The annotation usage must not provide values for any other elements.
+  - For example:
+    `
+    public @interface Injured {
+      String veterinarian() default "unassigned";
+      String value() default "foot"; // VALID
+      int age() default 1;
+    }
+
+    public abstract class Elephant {
+      @Injured("Legs") public void fallDown() { } // Annotation value goes to the element value()
+      @Injured(value = "Legs") public abstract int trip();
+      @Injured String injuries[];
+    }
+    `
+  - The usage in the first two annotation usages are equivalent, as the compiler will convert the shorthand form to the long form with the value() element name.
+  * Good coding practice note: Typically, the value() of an annotation should be related to the name of the annotation. In our previous example, @Injured was the 
+  annotation name and the value() referred to the item that was impacted. This is especially important since all shorthand elements use the same element name.
+  - For the exam, make sure that if the shorthand notation is used, then there is an element named value(). Also, check if there are no other required elements. 
+  For example the following declarations cannot be used with a shorthand annotation:
+    `
+    public @interface Sleep {
+      int value();
+      String hours(); // Even with a value() element, it cannot be used, since there are two required elements declared. 
+    }
+
+    public @interface Wake {
+      String hours(); // Not named value()
+    }
+    `
+  - Likewise, the following annotation is not valid as it provides more than one value:
+    `@Injured("Fur", age=2) public class Bear {} // DOES NOT COMPILE!`
+  
+* Passing an Array of Values
+  - Annotations support a shorthand notation for providing an array that contains a single element. For example:
+    `
+    public @interface Music {
+      String[] genres();
+    }'
+    `
+  - If we want to provide only one value to the array, we have a choice of two ways to write the annotation. Either of the following is correct:
+    `
+    public class Giraffe {
+      @Music(genres={"Rock and roll"}) String mostDisliked;
+      @Music(genres="Classical") String favorite;
+    }
+    `
+  - The first usage is considered the regular form. The second annotation is the shorthand notation.
+  - Keep in mind that this is still providing a value for an array element; the compiler is just inserting the missing array braces for you.
+  - This notation can be used only if the array is composed of a single element. For example, only one of the following compiles:
+    `
+    public class Reindeer {
+      @Music(genres="Blues", "Jazz") String favorite; // DOES NOT COMPILE, more than one value
+      @Music(genres=) String mostDisliked; // DOES NOT COMPILE, array without any values
+      @Music(genres=null) String other; // DOES NOT COMPILE, array without any values
+      @Music(genres={}) String alternative; // COMPILES, an array with no elements is still a valid array
+    }
+    `
+  - Remember that List or Collection are not in the list of supported element types for annotations.
+  - We can combine shorthand notations! For example, combine a shorthand notation value() and an array notation. For example, the following annotations are valid:
+    `
+    // Rhythm single element is String[] value();
+    public class Capybara {
+      @Rhythm(value={"Swing"}) String favorite;
+      @Rhythm(value="R&B") String secondFavorite;
+      @Rhythm({"Classical"}) String mostDisliked;
+      @Rhythm("Country") String lastDisliked;
+    }
+    `  
