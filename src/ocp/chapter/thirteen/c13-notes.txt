@@ -15,7 +15,7 @@
   that makes up the object and its content. On the other hand, 'metadata' includes the rules, properties or relationships surrounding the object.
   - These metadata rules describe information about the object, but are not part of him.
   - While annotations allow you to insert rules around data, it does not mean the values for these rules need to be defined in the code, aka 'hard coded',
-  you can define the rules and relationships in the code but read the values from elsewhere, such as from a config file or database.
+  you can define the rules and relationships in the code but read the values from elsewhere, such as from a configuration file or database.
 
 * Purpose of Annotations
   - The purpose of an annotation is to assign metadata attributes to classes, methods, variables and other Java types. 
@@ -264,7 +264,7 @@ that processes or enforces annotations is not required for the exam.
     `
     public @interface Music {
       String[] genres();
-    }'
+    }
     `
   - If we want to provide only one value to the array, we have a choice of two ways to write the annotation. Either of the following is correct:
     `
