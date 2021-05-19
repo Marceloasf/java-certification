@@ -337,6 +337,164 @@ that processes or enforces annotations is not required for the exam.
       @ZooAttraction int numPassengers; // DOES NOT COMPILE, fields or variables are not permitted on this annotation.
     }
     `
-  * Note on importing these annotations: Even though the java.lang package is imported automatically by the compile, the java.lang.annotation package is not. 
+  * Note on importing these annotations elements: Even though the java.lang package is imported automatically by the compile, the java.lang.annotation package is not. 
   Therefore, import statements are required for many of the examples in the remainder of this chapter.
-  
+
+* Understanding the TYPE_USE Value
+  - The TYPE_USE is the most complex of those listed types. The TYPE_USE parameter can be used anywhere there is a Java type.
+  - By including it in @Target, it actually includes nearly all the values listed before, included classes, interfaces, constructors, parameters and more.
+  - There are a few exceptions, for example: 
+    - It can be used only on a method that returns a value. Methods that return void would still need the METHOD value defined.
+    - It also allows annotations in places where types are used, such as cast operations, object creation with new, inside type declarations, etc.
+  - The following are valid TYPE_USE applications:
+    `
+    // Technical.java
+    import java.lang.annotation.ElementType;
+    import java.lang.annotation.Target;
+    
+    @Target(ElementType.TYPE_USE)
+    @interface Technical { }
+
+    // NetworkRepair.java
+    import java.util.function.predicate;
+
+    public class NetworkRepair {
+
+      class OutSrc extends @Technical NetworkRepair { }
+
+      public void repair() {
+        var repairSubclass = new @Technical NetworkRepair() { };
+
+        var o = new @Technical NetworkRepair().new @Technical OutSrc();
+
+        int remaining = (@Technical int)10.0;
+      }
+    }
+    `
+  - For the exam, you don't need to know all of the places and what applyting it to these locations actually does. But you do need to recognize that they can be 
+  applied in this manner if TYPE_USE is one of the @Target options.
+
+* Storing Annotations with @Retention
+  - As you saw in Chapter 7, "Methods and Encapsulation", the compiler discard certain types of information when converting your source code into a .class file. With 
+  generics, this is known as type erasure.
+  - In a similar vein, annotations MAY be discarded by the compiler or at runtime. We say "may", because we can actually specify how they are handled using the 
+  @Retention annotation.
+  - This annotation takes a value() of the enum RetentionPolicy. The following are the RetentionPolicy values in increasing order of retention:
+    - SOURCE: Used only in the source file, discarded by the compiler.
+    - CLASS: Stored in the .class file but not available at runtime (default compiler behavior).
+    - RUNTIME: Stored in the .class file and available at runtime.
+  - Examples of @Retention application:
+    `
+    import java.lang.annotation.Retention;
+    import java.lang.annotation.RetentionPolicy;
+
+    @Retention(RetentionPolicy.CLASS) @interface Flier { }
+    @Retention(RetentionPolicy.RUNTIME) @interface Swimmer { }
+    `
+  - In this example, both annotation will retain the annotation info in their .class file, although only Swimmer will be available (via reflection) at runtime.
+
+* Generating Javadoc with @Documented
+  - Remember, Javadoc is a built-in standard within Java that generates documentation for a class or API.
+  - You can generate Javadoc files for any class you write. You can add additional metadata, including comments and annotations, that have no impact on your code but 
+  provide more detailed and user-friendly Javadoc files.
+  - You should be familiar with the @Documented 'marker annotation'. If present, then the generated Javadoc will include annotation information defined on Java types.
+  - Because it is a marker annotation, it doesn't take any values; therefore, using it is pretty easy:
+    `
+    // Hunter.java
+    import java.lang.annotation.Documented;
+    @Documented public @interface Hunter { }
+
+    //Lion.java
+    @Hunter public class Lion { }
+    `
+  - The @Hunter annotation would be published with the Lion Javadoc information because it's marked with the @Documented annotation.
+
+* Java vs. Javadoc Annotations
+  - Javadoc has its own annotations that are used solely in generating data within a Javadoc file.
+    `
+    public class ZooLightShow { 
+
+      /**
+       *  Performs a light show at the zoo.
+       *
+       *  @param  distance  length the light needs to travel.
+       *  @return   the result of the light show operation. 
+       *  @author   Grace Hopper
+       *  @since    1.5
+       *  @deprecated Use EnchancedZooLightShow.lights() instead.
+       */
+       @Deprecated(since="1.5") public static String perform(int distance) {
+         return "Beginning light show!";
+       } 
+    }
+    `
+  - Be careful not to confuse Javadoc annotations with the Java annotations. Take a look at the @deprecated and @Deprecated annotations in this example. 
+  The first, @deprecated, is a Javadoc annotation used inside a comment, while @Deprecated is a Java annotation applied to a class.
+  - Traditionally, Javadoc annotations are all lowercase, while Java annotations start with an uppercase letter.
+
+* Inheriting Annotations with @Inherited
+  - Another 'marker annotation' you should know for the exam is @Inherited.
+  - When this annotation is applied to a class, subclasses will inherit the annotation information found in the parent class.
+  - For example:
+    `
+    // Vertebrate.java
+    import java.lang.annotation.Inherited;
+    @Inherited public @interface Vertebrate { }
+
+    // Mammal.java
+    @Vertebrate public class Mammal { }
+
+    // Dolphin.java
+    public class Dolphin extends Mammal { }
+    `
+  - In this example, the @Vertebrate annotation will be applied to both Mammal and Dolphin objects (because of the @Inhertied annotation). 
+
+* Supporting Duplicates with @Repeatable
+  - The @Repeatable annotations is used when you want to specify an annotation more than once on a Java type. Is arguably the most complicated to use, 
+  as it actually requires creating two annotations to work.
+  - Generally, you use repeatable annotations when you want to apply the same annotation with different values in the same type.
+  - We need to follow this rules when creating repeatable annotations:
+    1. Without the @Repeatable annotation, an annotation can be applied only once.
+    2. The repeatable annotation must be declared with @Repeatable and contain a value that refers to the containing type annotation.
+    3. The containing type annotation must include an element named value(), which is a primitive array of the repeatable annotation type.
+  - A 'containing annotation type' is a separate annotation that defines a value() array element. The type of this array is the particular annotation you want 
+  to repeat. By convention, the name of the annotation is often the plural form of the repeatable annotation.
+  - The following is the right/best way to declare and apply an annotation that is annotated with @Repeatable:
+    `
+    // Risks.java - Containing annotation type
+    public @interface Risks { 
+      Risk[] value();
+    }
+
+    // Risk.java
+    @Repeatable(Risks.class)
+    public @interface Risk {
+      String danger();
+      int level() default 1;
+    }
+
+    // Zoo.java
+    public class Zoo {
+      public static class Monkey { }
+
+      @Risk(danger="Silly")
+      @Risk(danger="Agressive", level=5)
+      @Risk(danger="Violent", level=10)
+      private Monkey monkey;
+    }
+    `
+  - Notice that we never really use the @Risks in our Zoo class, but given the declaration of the Risk and Risks annotations, the compiler takes care of applying 
+  the annotations for us.
+
+* Repeatable Annotations vs. an Array of Annotations
+  - Repeatable annotations were added in Java 8. Prior to this, you would have to use the @Risks containing annotation type directly:
+    `
+    @Risks({
+      @Risk(danger="Silly")
+      @Risk(danger="Agressive", level=5)
+      @Risk(danger="Violent", level=10)
+    })
+    private Monkey monkey;
+    `
+  - With this implementation, the @Repeatable is not required in the Risk annotation declaration. But using the @Repeatable annotation is the preferred approach now,
+  as it is easier than working with multiple nested statements.
