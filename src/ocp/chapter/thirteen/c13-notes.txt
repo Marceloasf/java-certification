@@ -295,3 +295,48 @@ that processes or enforces annotations is not required for the exam.
       @Rhythm("Country") String lastDisliked;
     }
     `  
+** p.568-576
+** Declaring Annotation-Specific Annotations
+  - Now we'll cover built-in annotations applied to other annotations. Yes, metadata about metadata.
+  - Since these annotations re built into Java, they primarily impact the compiler.
+
+* Limiting Usage with @Target 
+  - Many annotation declarations include @Target annotation, which limits the types the annotation can be applied to.
+  - More specifically, the @Target annotation takes an array of ElementType enuim values as its value() element.
+  - Values for the @Target annotations, ElementType value followed by what they apply to:
+    - TYPE: Classes, interfaces, enums, annotations.
+    - FIELD: Instance and static variables, enum values.
+    - METHOD: Method declarations.
+    - PARAMETER: Constructor, method and lambda parameters.
+    - CONSTRUCTOR: Constructor declarations.
+    - LOCAL_VARIABLE: Local variables.
+    - ANNOTATION_TYPE: Annotations.
+    - PACKAGE: Packages declared in package-info.java (out of scope for the exam, but is good to know).
+    - TYPE_PARAMETER: Parameterized types, generic declarations.
+    - TYPE_USE: Able to be applied anywhere there is a Java type declared or used.
+    - MODULE: Modules (out of scope for the exam, but is good to know).
+  * Note on PACKAGE ElementType: You can't add a package annotation to just any package declaration, only those defined in a special file, which must be named 
+  package-info.java. This file stores documentation metadata about a package. This isn't on the exam.
+  - You might notice that some of the ElementType applications overlap. For example, you could declare an @Target with ANNOTATION_TYPE or TYPE. Either will 
+  work for annotations, although the second option opens the annotation usage to other types like classes and interfaces.
+  - Example of application:
+    `
+    @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
+    public @interface ZooAttraction { }
+
+    @ZooAttraction class RollerCoaster { } // DOES NOT COMPILE, can't be applied to a class type.
+    class Events {
+      @ZooAttraction String rideTrain() { // COMPILES, method declaration is permitted.
+        return (@ZooAttraction String) "Fun!"; // DOES NOT COMPILE, It's not permitted on a cast operation.
+      }
+
+      @ZooAttraction // COMPILES, contructor declaration is permitted.
+      Events(@ZooAttraction String description) { // DOES NOT COMPILE ANYMORE, since constructor parameters are not permitted.
+        super();
+      }
+      @ZooAttraction int numPassengers; // DOES NOT COMPILE, fields or variables are not permitted on this annotation.
+    }
+    `
+  * Note on importing these annotations: Even though the java.lang package is imported automatically by the compile, the java.lang.annotation package is not. 
+  Therefore, import statements are required for many of the examples in the remainder of this chapter.
+  
