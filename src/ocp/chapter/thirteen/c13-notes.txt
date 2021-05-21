@@ -498,3 +498,28 @@ that processes or enforces annotations is not required for the exam.
     `
   - With this implementation, the @Repeatable is not required in the Risk annotation declaration. But using the @Repeatable annotation is the preferred approach now,
   as it is easier than working with multiple nested statements.
+
+* Reviewing Annotation-Specific Annotations
+  - Annotations that can be applied to other annotation that might appear on the exam (they are common in real world scenarios too):
+   _______________________________________________________________________________________________________________________________________________
+  |Annotation    Marker Annotation    Type of value()          Default compiler behavior (if annnotation not present)                             |
+  |@Target       No                   Array of ElementType     Annotation able to be applied to all locations except TYPE_USE and TYPE_PARAMETER  |
+  |@Retention    No                   RetentionPolicy          RetentionPolicy.CLASS                                                              |
+  |@Documented   Yes                   -                       Annotation are not included in the generated Javadoc                               |
+  |@Inherited    Yes                   -                       Annotations in supertypes are not inherited                                        |
+  |@Repeatable   No                   Annotation               Annotation cannot be repeated                                                      |
+  |_______________________________________________________________________________________________________________________________________________|
+
+  - Prior to this section, we created numerous annotations and we never used any of the annotation listed in the table. So, what did the compiler do? Like implicit 
+  modifiers and default no-arg constructors, the compiler auto-inserted information based on the lack of data.
+  - The default behavior for most of the annotations in the table is often intuitive. For example, without the @Documented or @Inherited annotation, these features 
+  are not supported.
+  - If you try to use an annotation more than once without the @Repeatable annotation, the compiler will report an error.
+  - @Target is a bit of a special case, here's why:
+    - When @Target is not present, an annotation can be used in any place except TYPE_USE or TYPE_PARAMETER scenarios (cast operations, object creation, generic 
+    declarations, etc). So to use an annotation in a type use or type parameter, like lambdas or generic declaration, you must explicitly set the @Target to include 
+    these values. If an annotation is declared without the @Target annotation that includes these values, then these locations are prohibited.
+    - One possible explanation for this behavior is backward compatibility. When these values were added in Java 8, it was decided that they would have to be explicitly 
+    declared to be used in these locations.
+    - With that said, when the authors of Java added the MODULE value in Java 9, they didn't make the this same decision. So if @Target is absent, the annotation is 
+    permitted in amodule declaration by default.
