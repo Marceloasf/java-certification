@@ -18,12 +18,12 @@ Computers are capable of reading and writing data to external resources, unfortu
 
 Luckily, all modern operating systems support what is known as multithreaded processing. The idea behind multithreaded processing is to allow an application or group of applications to execute multiple tasks at the same time. This allows tasks waiting for other resources to give way to other processing requests.
 
-Since its early days, Java has supported multithreaded programming using the Thread class. More recently, the Concurrency API was introduced. It included numerous classes for performing complex thread-based tasks. The idea was simple: managing complex thread interactions is quite difficult for even the most skilled developers; therefore, a set of reusable features was created. The Concurrency API has grown over the years to include numerous classes and frameworks to assist you in developing complex, multithreaded applications.
+Since its early days, Java has supported multithreaded programming using the Thread class. More recently, the Concurrency API was introduced, it included numerous classes for performing complex thread-based tasks. The idea was simple: managing complex thread interactions is quite difficult for even the most skilled developers; therefore, a set of reusable features was created. The Concurrency API has grown over the years to include numerous classes and frameworks to assist you in developing complex, multithreaded applications.
 
 > **Note:** Previous Java certifications exams expected you to know details about threads, such as thread life cycles. But now the exam instead covers the basics of threads but focuses more on your knowledge of the Concurrency API.
 
 The start of this chapter is about reviewing common terminology associated with threads:
-  - thread: Is the smallest unit of execution that can be scheduled by the operating system
+  - thread: Is the smallest unit of execution that can be scheduled by the operating system.
   - process: Is a group of associated threads that execute in the same, shared environment.
   - single-threaded process: Is one that contains exactly one thread.
   - multithreaded process: Is one that contains one or more threads.
@@ -31,25 +31,25 @@ The start of this chapter is about reviewing common terminology associated with 
 
 In this chapter, we will talk a lot about tasks and their relationship to threads. A task is a single unit of work performed by a thread. Throughout this chapter, a *task* will commonly be implemented as a lambda expression. A thread can complete multiple independent tasks, but **only one** task at a time.
 
-When we refer to shared memory, we are generally referring to static variables, as well as instance and local variables passed to a thread. On this chapter, you'll see how static variables can be useful for performing complex multithreaded tasks. For example, if one thread updates the value of a static object, the this information is immediately available for other threads within the process to read.
+When we refer to shared memory, we are generally referring to static variables, as well as instance and local variables passed to a thread. On this chapter, you'll see how static variables can be useful for performing complex multithreaded tasks. For example, if one thread updates the value of a static object, this information is immediately available for other threads within the process to read.
 
-> **Remember** from Chapter 7, "Methods and Encapsulations" that static methods and variables are defined on a single class object that **all** insatnces share. 
+> **Remember** from Chapter 7, "Methods and Encapsulations", that static methods and variables are defined on a single class object that **all** instances share. 
 
 ### Distinguishing Thread Types
 
-All the Java applications, including all of the ones that are presented in the book, are all multithreaded. Even a simples Java application that prints `Hello World` to the screen is multithreaded. To understand this, we need to be familiar with concepts of system threads and user-defined threads. 
+All the Java applications, including all of the ones that are presented in the book, are all multithreaded. Even a simple Java application that prints `Hello World` to the screen is multithreaded. To understand this, we need to be familiar with concepts of system threads and user-defined threads. 
 
-A *system thread* is created by the JVM and runs in the background of the application. For example, the garbage collection is managed by a system thread that is created by the JVM and runs in the background, helping to free memory that is no longer in used. For the most part, the execution of system-defined threads is invisible to the application developer. When a system-defined thread encounters a problem and cannot recover, such as running out of memory, it generates a Java **Error**, as opposed to an **Exception**.
+A *system thread* is created by the JVM and runs in the background of the application. For example, the garbage collection is managed by a system thread that is created by the JVM and runs in the background, helping to free memory that is no longer in use. For the most part, the execution of system-defined threads is invisible to the application developer. When a system-defined thread encounters a problem and cannot recover, such as running out of memory, it generates a Java **Error**, as opposed to an **Exception**.
 
 > **Note:** Even though it's possible to catch an **Error**, it is considered a poor practice to do so, since it is rare that an application can recover from a system-level failure.
 
 A *user-defined thread* is one created by the application dev to accomplish a specific task. With the exception of parallel streams, all of the applications that we created up to this point have been multithreaded, but they contained only one user-defined thread, which calls the `main()` method. Applications that contain only a single user-defined thread are referred to as single-threaded applications.
 
-> **Note:** Although not required knowledge for the exam, a *daemon thread* is one that will not prevent the JVM from exiting when the program finishes, a Java application terminates when the only threads that are running are daemon threads. For example, if garbage collection is the only thread left running, the JVM will automatically shut down. Both system and user defined can be marked as daemon threads.
+> **Note:** Although not required knowledge for the exam, a *daemon thread* is one that will not prevent the JVM from exiting when the program finishes, a Java application terminates when the only threads that are running are daemon threads. For example, if garbage collection is the only thread left running, the JVM will automatically shut down. Both system and user defined threads can be marked as daemon threads.
 
 ### Understanding Thread Concurrency
 
-Before we mentioned that multithreaded processing allows the operating system (OS) to execute threads at the same time. The property of executing multiple threads and processes at the same time is referred to as *concurrency*. But with a single-core CPU system, only one task is actually executing at a given time. Even in multicore of multi-CPU systems, there are often far more threads than CPU processors available.
+Before we mentioned that multithreaded processing allows the operating system (OS) to execute threads at the same time. The property of executing multiple threads and processes at the same time is referred to as *concurrency*. But with a single-core CPU system, only one task is actually executing at a given time. Even in multicore or multi-CPU systems, there are often far more threads than CPU processors available.
 
 The OS use a thread schedular to determine which threads should be currently executing. For example, a thread schedular may employ a `round-robin schedule` in which each available thread receives an equal number of CPU cycles with which to execute, with threads visited in a circular order (1 -> 2 -> 3 -> 1 -> 2 ...).
 
@@ -108,7 +108,7 @@ It is also useful if you need to pass information to your Runnable object to be 
       }
     }
 
-In this chapter, you'll se alot of lambda expressions that implicitly implement the Runnable interface, so just be aware that it's commonly used in class definitions.
+In this chapter, you'll se a lot of lambda expressions that implicitly implement the Runnable interface, so just be aware that it's commonly used in class definitions.
 
 ### Creating a Thread
 
@@ -118,7 +118,7 @@ Java does not provide any guarantees about the order in which a thread will be p
 
 > **Note:** Remember that order of thread execution is not often guaranteed. The exam commonly presents questions in which multiple tasks are started at the same time, and you must determine the result.
 
-Defining the task that a Thread instasnce will execute can be done two ways in Java:
+Defining the task that a Thread instance will execute can be done two ways in Java:
   - Provide a Runnable object or lambda expression to the Thread constructor.
   - Create a class that extends Thread and overrides the `run()` method.
 
@@ -167,7 +167,7 @@ The answer is that is unkown until runtime. A possible output is:
 
 This example uses a total of four threads, them `main()` user thread and three additional threads created on the block. Each thread created on these lines is executed as an asynchronous task. By asynchronous, it's meant that the thread executing the `main()` method does not wait for the results of each newly created thread before continuing. The opposite of this behavior is a synchronous task in which the program waits (or blocks) for the thread to finish executing before moving on to the next line. The vast majority of method calls used in this book have been synchronous up until now.
 
-While the order of thread execution once the threads have benen started is indeterminate, the order within a single thread is still linear. In particular, the for loop in PrintData is still ordered. Also, `begin` appears before `end` in the main() method.
+While the order of thread execution once the threads have been started is indeterminate, the order within a single thread is still linear. In particular, the for loop in PrintData is still ordered. Also, `begin` appears before `end` in the main() method.
 
 You can call `run()` instead of `start()`, but be careful using `run()`. Calling `run()` on a Thread or a Runnable does not actually start a new thread. While the following code snippets will compile, none will actually execute a task on a separate thread:
 
@@ -226,7 +226,7 @@ We can improve this by using the `Thread.sleep()` method to implement polling. T
 	
 Just by delaying on the end of the loop, we have now prevented a possibly infinite loop from executing and locking up our program. Notice that we also changed the signature of the main() method, since Thread.sleep() throws the **checked exception InterruptedException**. Alternatively, we could have wrapped the call to Thread.sleep() method in a try/catch block.
 
-But know that we changed the implementation, how many times does the while() loop execute in this class? Still unknown! While polling does prevent the CPU from being overwhelmed with a potentially infinite loop, it does not guarantee when the loop will terminate. For example, the separate thread could be losing CPU time to a higher-priority process, resulting in multiple executions of the while() loop before it finishes.
+But now that we changed the implementation, how many times does the while() loop execute in this class? Still unknown! While polling does prevent the CPU from being overwhelmed with a potentially infinite loop, it does not guarantee when the loop will terminate. For example, the separate thread could be losing CPU time to a higher-priority process, resulting in multiple executions of the while() loop before it finishes.
 
 Another issue is the shared counter variable. What if one thread is reading the counter variable while another thread is writing it? The thread reading the shared variable may end up with an invalid or incorrect value. We will discuss these issues in detail in the upcoming section on writing thread-safe code.
 
