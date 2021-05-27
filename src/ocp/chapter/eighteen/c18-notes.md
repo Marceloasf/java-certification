@@ -231,3 +231,75 @@ But know that we changed the implementation, how many times does the while() loo
 Another issue is the shared counter variable. What if one thread is reading the counter variable while another thread is writing it? The thread reading the shared variable may end up with an invalid or incorrect value. We will discuss these issues in detail in the upcoming section on writing thread-safe code.
 
 ## Creating Threads with the Concurrency API (p.849-860)
+
+Java includes the Concurrency API to handle the complicated work of managing threads for you. This API includes the ExecutorService interface, which defines services that create and manage threads for you. It is recommended that you use this framework anytime you need to create and execute a separate task, even if you need only a single thread.
+
+### Introducing the Single-Thread Executor
+
+To get an instance of the interface ExecutorService, you'll use the Concurrency API, which includes the Executors factory class and that can be used to create instances of the ExecutorService object. 
+
+> **Note:** As you may rember from previous chaptes, the factory pattern is a creational pattern in which the underlying implementation details of the object creation are hidden from us. 
+
+This is a simple example using the `newSingleThreadExecutor()` method to obtain an ExecutorService instance and the `execute()` method to perform asynchronous tasks.
+
+	import java.util.concurrent.*;
+	public class ZooInfo {
+		public static void main(String[] args) {
+			ExecutorService service = null;
+
+			Runnable task1 = () -> System.out.println("Printing zoo inventory");
+			Runnable task2 = () -> { for(int i = 0; i < 3; i++)
+				 		System.out.println("Printing record: "+i);};
+		
+			try {
+				service = Executors.newSingleThreadExecutor(); // Calls factory class to get an instance of ExecutorService (single-thread)
+				service.execute("task1");
+				service.execute("task2");
+				service.execute("task1");
+				System.out.println("end");
+			} finally {
+				if (service != null) service.shutdown();
+			}
+		}
+	}
+
+> **Note:** This code snippet is a rewrite of our earlier PrintData and ReadInventoryThread classes to use lambda expressions and an ExecutorService instance.
+
+In this example, we use the `Executors.newSingleThreadExecutor()` method to create the service. Unlike our earlier example, in which we had three extra threads for newly created tasks, this example uses only one, which means that the threads will order their results. The following is a possible output for this code snippet:
+
+	begin
+	Printing zoo inventory
+	Printing record: 0
+	Printing record: 1
+	end
+	Printing record: 2
+	Printing zoo inventory
+
+With a single-thread executor, results are **guaranteed** to be executed sequentially. Notice that the end text is output while our thread executor tasks are still running. This is because the main() method is still an independent thread from the ExecutorService.
+
+### Shutting Down a Thread Executor
+
+Once you have finished using a thread executor, remember to call the `shutdown()` method, because a thread executor creates a non-daemon thread on the first task that is executed, so not calling the `shutdown()` method will result in your application never terminating! 
+
+The shutdown process for a thread executor involves first rejecting any new tasks submitted to the thread executor while continuing to execute any previously submitted tasks. During this time, calling `isShutdown()` will return true, while `isTerminated()` will return false. If a new task is submitted to the thread executor while it is shutting down, a RejectedExecutionException will be thrown. Once all active tasks have been completed, `isShutdown()` and `isTerminated()` will both return true. 
+  - Active: Accepts new tasks, executes tasks and `isShutdown()` and `isTerminated()` are both false.
+  - Shutting Down: After calling the `shutdown()` method, it'll reject new tasks, still execute tasks, `isShutdown()` return true and `isTerminated()` return false.
+  - Shutdown: Reject new tasks, no tasks running and `isShutdown()` and `isTerminated()` are both true.
+
+For the exam, you should be aware that `shutdown()` does not actually stop any tasks that have already been submitted to the thread executor. 
+
+If you want to cancel all running and upcoming tasks, the ExecutorService provides a method called `shutdownNow()`, which *attempts* to stop all running tasks and discards any that have not been started yet. The `shutdownNow()` method returns a List<Runnable> of tasks that were submitted to the thread executor but that were never started. 
+
+> **Note:** It is possible to create a thread that will never terminate, so any attempt to interrupt it may be ignored.
+
+As you learned in previous chapters, resources such as thread executors should be properly closed to prevent memory leaks. The ExecutorService interface does not extend the AutoCloseable/Closeable interface, so you cannot use a try-with-resources statement, but you can still use a finally block. While not required, it's considered a good practice to do so.
+
+### Submitting Tasks
+
+You can submit tasks to an ExecutorService instance many ways. The first that was presented, using the `execute()` method, is inherited from the Executor interface, which ExecutorService interface extends. The `execute()` method takes a Runnable lambnda expression or instance and completes the task asynchronously. Because the return type of the method is void, it does not tell us anything about the result of the task. 
+
+> **Note:** The `execute()` method is considered a "fire-and-forget" method, as once it's submitted, the results are not directly available to the calling thread.
+
+But fortunately, we have the `submit()` methods on the ExecutorService interface too, which like `execute()`, can be used to complete tasks asynchronously. Unlike `execute()`, `submit()` returns a **Future** instance that can be used to determine wheter the task is complete. It can also be used to return a generic result object after the task has been completed.
+
+> **Note:** Don't worry if you haven't seen Future or Callable before; we will discuss them shortly.
