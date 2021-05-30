@@ -230,7 +230,7 @@ But now that we changed the implementation, how many times does the while() loop
 
 Another issue is the shared counter variable. What if one thread is reading the counter variable while another thread is writing it? The thread reading the shared variable may end up with an invalid or incorrect value. We will discuss these issues in detail in the upcoming section on writing thread-safe code.
 
-## Creating Threads with the Concurrency API (p.849-860)
+## Creating Threads with the Concurrency API (p.849-861)
 
 Java includes the Concurrency API to handle the complicated work of managing threads for you. This API includes the ExecutorService interface, which defines services that create and manage threads for you. It is recommended that you use this framework anytime you need to create and execute a separate task, even if you need only a single thread.
 
@@ -482,3 +482,112 @@ The `scheduleWithFixedDelay()` method creates a new task only after the previous
 	service.scheduleWithFixedDelay(command, 0, 2, TimeUnite.MINUTES);
 
 This method is useful for processes that you want to happen repeatedly but whose specific time is unimportant. 
+
+### Increasing Concurrency with Pools 
+
+All the content with the Concurrency API were implemented with signle-thread executors, which, weren't particularly useful. After all, the chapter is about concurrency, and you can't do a lot of that with a single-thread executor.
+
+In this section, its presented three additional factory methods in the Executors class that act on a pool of threads, rather than on a single thread. A *thread pool* is a group of pre-instantiated reusable threads that are available to perform a set of arbitrary tasks. The next table, includes the two previous single-thread executor methods, along with the new ones that you should be familiar with for the exam:
+
+| Method    				  		 		    				|    Description   									  |
+| :------------------------------------------------------------ | :-------------------------------------------------- |
+| ExecutorService newSingleThreadExecutor() 					| Creates a single-threaded executor that uses a single worker thread operating off an unbounded queue, the results are processed sequentially in the order in which they are submitted |
+| ScheduledExecutorService newSingleThreadScheduledExecutor() 	| Creates a single-threaded executor that can schedule commands to run after a given delay or to execute periodically |
+| ExecutorService newCachedThreadPool() 						| Creates a thread pool that creates new threads as needed, but will reuse previously consctructed threads when they are available |
+| ExecutorService newFixedThreadPool(int) 						| Creates a thread pool that reuses a fixed number of threads operating off a shared unbounded queue |
+| ScheduledExecutorService newScheduledThreadPool(int) 			| Creates a thread pool that can schedule commands to run after a given delay or to execute periodically |
+
+These methods return the same instance types, ExecutorService and ScheduledExecutorService. In other words, all of our previous examples are compatible with these new pooled-thread executors.
+
+The difference between a single-thread and a pooled-thread executor is what happens when a task is already running. While a single-thread executor will wait for a thread to become available before running the next task, a pooled-thread executor can execute the next task concurrently. If the pool runs out of available threads, the task will be queued by the thread executor and wait to be completed.
+
+The `newCachedThreadPool()` method will create a thread pool of unbounded size, which allocates a new thread anytime one is required or all existing threads are busy. This is commonly used for pools that require executing many short-lived asynchronous tasks, but for long-lived processes, the usage of this executor is strongly discourage, as it could grow to encompass a large number of threads over the application life cycle.
+
+The `newFixedThreadPool(int)` method takes a number of threads and allocates them all upon creation. As long as our number of tasks is less or equal than our number of threads, all tasks will be executed concurrently, if at any point the number of tasks exceeds the number of threads in the fixed pool, they will wait in the queue in a simmilar manner as we saw in a single-thread executor. Actually, calling `newFixedThreadPool(int)` with a value of **1** is equivalent to calling `newSingleThreadExecutor()`.
+
+The `newScheduledThreadPool(int)` method is identical to the `newFixedThreadPool(int)` method, except that it returns an instance of ScheduledExecutorService, therefore is compatible with scheduling tasks. 
+
+> **Real World Scenario:** When choosing an appropriate pool size, you want at least a handful more threads than you think you will ever possibly need, on the other hamd, you don't want to choose so many threads that your application uses up too many resources or to much CPU processing power. It is a common practice to allocate threads based on the number of CPUs. Oftentimes, the command used to determine the thread pool size with the number of CPUs available is this one: `Runtime.getRuntime.availableProcessors()`
+
+## Writing Thread-Safe Code (p.861-876)
+
+*Thread-safety* is the property of an object that guarantees safe execution by multiple threads at the same time. Since threads run in a shared environment and memory space, we must organize access to data to prevent two ore more threads interfering with each other, which if not handled can end up in invalid or unexpected results.
+
+In this section of the chapter, we are going to discuss a variety of techniques to protect data, including: atomic classes, synchronized blocks, the Lock framework and cyclic barriers.
+
+### Understanding Thread-safety
+
+Imagine that we have a program in our zoo that counts sheep. Each zoo worker runs out to a field, adds a new sheep to the flock, counts the total number of sheep and runs back to us to report the results. The following code snippet is the conceptual representation of this example, choosing a thread pool size so that all tasks can be run concurrently: 
+
+	import java.util.concurrent.*;
+	public class SheepManager {
+		private int sheepCount = 0;
+
+		private void incrementAndReport() {
+			System.out.println((++sheepCount)+" ");
+		}
+
+		public static void main(String[] args) {
+			ExecutorService service = null;
+
+			try {
+				service = Executors.newFixedThreadPool(20);
+				SheepManager manager = new SheepManager();
+
+				for (int i = 0; i < 10; i++)
+					service.submit(() -> manager.incrementAndReport()); 
+			} finally {
+				if (service != null) service.shutdown();
+			} 
+		}
+	}
+
+What does this program output? Reading it as a synchronous code, we think that it will output numbers from 1 to 10 in order, but that is far from guaranteed in this case. It may output in a different order, it may print duplicate numbers and even worse, not print some numbers at all! The following are some possible outputs of this program:
+
+	1 2 3 4 5 6 7 8 9 10
+	1 9 8 7 3 6 6 2 4 5
+	1 8 7 3 2 6 5 4 2 8
+	6 8 5 3 2 1 9 7 4 10
+
+In this example we used the pre-increment (++) operator to update the sheepCount variable. A problem occurs when two threads both execute the right side of the expression, reading the "old" value before either thread writes the "new" value of the variable. In the end, the two assignments become redundant; they both assign the same new value, with two threads, assuming that sheepCount has a starting value of 1. Both threads read and write the same value, causing one of the two ++sheepCount operations to be lost. Therefore, the increment operator ++ is not thread-safe.
+
+Later in the chapter, will se that the unexpected result of two tasks executing at the same time is referred to as *race condition*. The ideia is that some threads may be faster on their way to do the task but are slower on their way finishing it, on the other hand, others may be slower on their way to do the task, but somehow be the first ones finishing the task.
+
+### Protecting Data with Atomic Classes
+
+One way to improve our sheep counting example is to use the java.util.concurrent.atomic package. As with many of the classes in the Concurrency API, these classes exist to make our lifes easier.
+
+As demonstrated in the previous section, the increment operator ++ is not thread-safe, but the resason that is not thread-safe is that the operation is not atomic, carrying out two tasks, read and write, that can be interrupted by other thread.
+
+*Atomic* is the property of an operation to be carried out as a single unit of execution without any interference by another thread. A thread-safe atomic version of the increment operator would be one that performed the read and write of the variable as a single operation, not allowing any other threads to access the variable during the operation.
+
+Implementing this concept in the sheepCount variable, any thread trying to access the sheepCount variable while an atomic operation is in process would need to wait until the atomic operation on the variable is complete. Conceptually, this is like setting a rule for our workers that there can be only one employee in the field at a time, although they may not each report their result in order.
+
+The Concurrency API inclides numerous useful classes that are conceptually the same as our primitive classes but that support atomic operations. The next table lists the atomic classes with which you should be familiar for the exam:
+
+| Class Name    				  		 		| Description   									  |
+| :-------------------------------------------- | :-------------------------------------------------- |
+| AtomicBoolean									| A boolean value that may be updated atomically     |
+| AtomicInteger									| An int value that may be updated atomically         |
+| AtomicLong									| A long value that may be updated atomically         |
+
+Each atomic class includes numerous methods that are equivalent to many of the primitive built-in operators that we use on primitives, such as the assignment operator (=) and the increment operators (++). In the following example, we update our SheepManager class with an AtomicInteger:
+
+	private AtomicInteger sheepCount = new AtomicInteger(0);
+	private void incrementAndReport() {
+		System.out.print(sheepCount.incrementAndGet()+" ");
+	}
+
+With this implementation, we get some different outputs, the numbers 1 through 10 will always be printed, without duplicates or missing numbers, but the order is still not guaranteed. This last issue will be adressed shortly. The key in this section is that using the atomic classes ensures that the data is consistent between threads and that no values are lost due to concurrent modifications.
+
+The following is a table that lists some common atomic methods:
+
+| Method Name    				  		 		| Description   									  			             |
+| :-------------------------------------------- | :------------------------------------------------------------------------- |
+| get()											| Retrieves the current value						  			             |
+| set()											| Sets the given value, equivalent to the assignment operator (=)            |
+| getAndSet()									| Atomically sets the new value and returns the old value  			         |
+| incrementAndGet()								| For numeric classes, atomic pre-increment operation equivalent to ++value  |
+| getAndIncrement()								| For numeric classes, atomic post-increment operation equivalent to value++ |
+| decrementAndGet()								| For numeric classes, atomic pre-decrement operation equivalent to --value  |
+| getAndDecrement()								| For numeric classes, atomic post-decrement operation equivalent to value-- |
