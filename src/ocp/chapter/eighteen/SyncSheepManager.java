@@ -2,19 +2,21 @@ package ocp.chapter.eighteen;
 
 import java.util.concurrent.*;
 
-// Non thread-safe code example, discussed on line 518 further.
-public class SheepManager {
+// Thread-safe code example using the synchronized block, discussed on line 595 further.
+public class SyncSheepManager {
 	private int sheepCount = 0;
 
-	private void incrementAndReport() {
-		System.out.println((++sheepCount)+" ");
+	public void incrementAndReport() {
+		synchronized(this) {
+			System.out.println((++sheepCount)+" ");
+		}
 	}
     
 	public static void main(String[] args) {
 		ExecutorService service = null;
 		try {
 			service = Executors.newFixedThreadPool(20);
-			SheepManager manager = new SheepManager();
+			SyncSheepManager manager = new SyncSheepManager();
 			for (int i = 0; i < 10; i++)
 				service.submit(() -> manager.incrementAndReport()); 
 		} finally {

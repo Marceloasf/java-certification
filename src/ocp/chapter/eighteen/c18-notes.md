@@ -591,3 +591,67 @@ The following is a table that lists some common atomic methods:
 | getAndIncrement()								| For numeric classes, atomic post-increment operation equivalent to value++ |
 | decrementAndGet()								| For numeric classes, atomic pre-decrement operation equivalent to --value  |
 | getAndDecrement()								| For numeric classes, atomic post-decrement operation equivalent to value-- |
+
+### Improving Access with Synchronized Blocks
+
+Atomic classes are great at protecting single variables, but not if you need to execute a series of commands or call a method. For that, you may use a monitor, also called a *lock*, which is commonly used to synchronize access. A *monitor* is a structure that supports *mutual exclusion*, which is the property that at most one thread is executing a particular segment of code at a given time. In Java, any **Object** can be used as a monitor, along with the `synchronized` keyword, as hown in the following example:
+
+	SheepManager manager = new SheepManager();
+	synchronized(manager) {
+		// Work to be completed by one thread at a time
+	}
+
+This example is referred to as a *synchronized block*. Each thread that arrives will first check if any threads are in the block. A thread "acquires the lock" for the monitor, if the lock is available, one thread will enter the block and acquire the lock, preventing all other threads from entering. While the thread is executing the block, the other threads that arrive will attempt to acquire the same lock and wait for the first thread to finish. Once a thread finishes executing the block, it will release the lock, allowing one of the waiting threads to proceed.
+
+> **Note:** To synchronize access across multiple threads, each thread must have access to the same object. For example, synchronizing on different objects wouldn't actually order the results.
+
+We can revisit our SheepManager example and try to improve the results. What if we replaced the our for() loop with the following:
+
+	for(int i = 0; i < 10; i++) {
+		synchronized(manager) {
+			service.submit(() -> manager.incrementAndReport()); 
+		}
+	}
+
+Does this solution fix the problem? No, it doesn't. We've *synchronized* the *creation* of the threads, but not the *execution* of the threads. They would be created one at a time, but they may all still execute and perform their work at the same time, resulting in the same outputs presented earlier. Threading problems are often the most difficult to diagnose and resolve in any programming language.
+
+The following code is the corrected version of the SheepManager class, which does order the workers correctly:
+
+	import java.util.concurrent.*;
+
+	public class SyncSheepManager {
+		private int sheepCount = 0;
+
+		public void incrementAndReport() {
+			synchronized(this) {
+				System.out.println((++sheepCount)+" ");
+			}
+		}
+	
+		public static void main(String[] args) {
+			ExecutorService service = null;
+			try {
+				service = Executors.newFixedThreadPool(20);
+				SyncSheepManager manager = new SyncSheepManager();
+				for (int i = 0; i < 10; i++)
+					service.submit(() -> manager.incrementAndReport()); 
+			} finally {
+				if (service != null) service.shutdown();
+			} 
+		}
+	}
+
+This code will consistently output from 1 to 10 in order. Although all threads are still created and executed at the same time, they each wait at the synchronized block for the worker to increment and report the result before entering. While it's random which thread will enter the block next, it is guaranteed that there will be at most one on the block and that the results will be reported in order. 
+
+We could have synchronized on any object, so long as it was the same object. For example, this would work too:
+
+	private final Object herd = new Object();
+	private void incrementAndReport() {
+		synchronized(herd) {
+			System.out.println((++sheepCount)+" ");
+		}
+	}
+
+We didn't need to make the herd variable **final**, doing so ensures that it is not reassinged after threads start using it.
+
+> **Note:** We could have used an atomic variable along with the synchronized block in this example, although it is unnecessary. Since synchronized blocks allow only one thread to enter at a time, we are not gaining any improvement by using an atomic variable if the only time that we access the variable is within a synchronized block.
