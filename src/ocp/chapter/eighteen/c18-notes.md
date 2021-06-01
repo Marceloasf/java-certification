@@ -300,7 +300,7 @@ You can submit tasks to an ExecutorService instance many ways. The first that wa
 
 > **Note:** The `execute()` method is considered a "fire-and-forget" method, as once it's submitted, the results are not directly available to the calling thread.
 
-But fortunately, we have the `submit()` methods on the ExecutorService interface too, which like `execute()`, can be used to complete tasks asynchronously. Unlike `execute()`, `submit()` returns a **Future** instance that can be used to determine wheter the task is complete. It can also be used to return a generic result object after the task has been completed.
+But fortunately, we have the `submit()` methods on the ExecutorService interface too, which like `execute()`, can be used to complete tasks asynchronously. Unlike `execute()`, `submit()` returns a **Future** instance that can be used to determine whether the task is complete. It can also be used to return a generic result object after the task has been completed.
 
 > **Note:** Don't worry if you haven't seen Future or Callable before, we will discuss them shortly.
 
@@ -655,3 +655,81 @@ We could have synchronized on any object, so long as it was the same object. For
 We didn't need to make the herd variable **final**, doing so ensures that it is not reassinged after threads start using it.
 
 > **Note:** We could have used an atomic variable along with the synchronized block in this example, although it is unnecessary. Since synchronized blocks allow only one thread to enter at a time, we are not gaining any improvement by using an atomic variable if the only time that we access the variable is within a synchronized block.
+
+### Synchronizing on Methods
+
+On our previous example, we established our monitor using synchronized(this) around the method's body. Java actually provides a more convenient compiler enhancement for doing so. We can add the synchronized modifier to any instance method to synchronize automatically on the object itself. For example, the following two method definitions are equivalent: 
+
+	private void incrementAndReport() {
+		synchronized(this) {
+			System.out.println((++sheepCount)+" ");
+		}
+	}
+
+	private synchronized void incrementAndReport() {
+		System.out.println((++sheepCount)+" ");
+	}
+	
+The first uses a *synchronized block* and the second uses the *synchronized method modifier*. Which one to use is completely up to you. 
+
+We can also apply the synchronized modifier to static methods. When using it on static methods, the object used as the monitor is the class object. For example, the following two methods are equivalent for static synchronization inside our SheepManager class:
+
+	public static void printDaysWork() {
+		synchronized(SheepManager.class) { // USES THE CLASS OBJECT AS THE MONITOR.
+			System.out.print("Finished work!");
+		}
+	}
+
+	public static synchronized void printDaysWork() {
+		System.out.print("Finished work!");
+	}
+
+As before, the first uses a synchronized block, with the second example using the synchronized modifier. You can use static synchronization if you need to order thread access across all instances, rather than a single instance.
+
+#### Avoid Synchronization Whenever Possible
+
+Correctly using the synchronized keyword can be quite challenging, especially if the data you are trying to protect is available to dozens of methods. Even when the data is protected, though, the perforance cost for using it can be high.
+
+There are many classes within the Concurrency API that are a lot easier to use and more performant than synchronization. Some were already presented, like the atomic classes, and other will be covered shortly, including the Lock framework, concurrent collections and cyclic barriers.
+
+You may not be familiar with all of the classes in the Concurrency API, you should study them carefully if you are writing a lot of multithreaded applications. They contain a wealth of methods that manage complex processes for you in a thread-safe and performant manner.
+
+### Understanding the *Lock* Framework
+
+The Concurrency API includes the Lock interface that is conceptually similar to using the synchronized keyword. Instead of synchronizing on any Object, we can "lock" only on an object that implements the Lock interface.
+
+#### Applying a *ReentrantLock* Interface
+
+When you need to protect a piece of code from multithreaded processing, create an instance of Lock that all threads have access to. Each thread then calls lock() before it enters the protected code and calls unlock() before it exits the protected code. The following example shows two implementations, one with a synchronized block and the other with a Lock instance:
+
+	Object object = new Object();
+	synchronized(object) {
+		// Protected code
+	}
+
+	Lock lock = new ReentrantLock();
+	try {
+		lock.lock(); 
+	} finnaly {
+		lock.unlock();
+	}
+
+> **Note:** Altough similar, the Lock solution has a number of features not available to the synchronized block. While certainly not required, it is a good practice to use a try/finnaly block with Lock instances. This ensures any acquired locks are properly released.
+
+These two implementations are conceptually equivalent. The ReentrantLock class is a simple monitor that implements the Lock interface and supports mutual exclusion. In other words, at most one thread is allowed to hold a lock at any given time.
+
+The ReentrantLock class ensures that once a thread has called lock() and obtained the lock, all the other threads that call lock() will wait until the first thread calls unlock(). Besides making sure to release a lock, you also need to make sure that you only release a lock that it's actually locked. If you attempt to release a lock that you do not have, an exception will be thrown at runtime:
+
+	Lock lock = new ReentrantLock();
+	lock.unlock(); // throws IllegalMonitorStateException at runtime
+
+> **Note:** The ReentrantLock class contains a constructor that can be used to send a boolean "fairness" parameter. If set to true, then the lock will usually be granted to each thread in the order it was requested. It is false by default when using the no-argument constructor. In practice, you should enable fairness only when ordering is absolutely required, as it could lead to a significant slowdown.
+
+The Lock interface includes four methods that you should know for the exam:
+
+| Method	    				  		 		| Description   									  			             |
+| :-------------------------------------------- | :------------------------------------------------------------------------- |
+| void lock() 									| Requests a lock and blocks until lock is acquired 						 |
+| void unlock() 								| Releases a lock  |
+| boolean tryLock() 							| Requests a lock and and returns immediately a boolean indicating whether the lock was successfully acquired  |
+| boolean tryLock(long, TimeUnit) 				| Requests a lock and blocks up to the specified time until lock is required, it returns a boolean indicating whether the lock was successfully acquired  |

@@ -2,7 +2,7 @@ package ocp.chapter.eighteen;
 
 import java.util.concurrent.*;
 
-// Thread-safe code example using the synchronized block, discussed on line 595 further.
+// Thread-safe code example using the synchronized block, discussed about from line 595.
 public class SyncSheepManager {
 	private int sheepCount = 0;
 

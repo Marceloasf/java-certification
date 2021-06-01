@@ -4,6 +4,7 @@ import java.util.concurrent.*;
 
 // Using ExecutorService methods (submit()) to do polling on a class.
 // Thus example is the essence of the Concurrency API: to do complex things with threads without having to manage them directly.
+// Non thread-safe example, but its using a single-thread executor.
 public class CheckResults {
 
     private static int counter = 0;
