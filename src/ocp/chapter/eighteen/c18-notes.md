@@ -594,7 +594,7 @@ The following is a table that lists some common atomic methods:
 
 ### Improving Access with Synchronized Blocks
 
-Atomic classes are great at protecting single variables, but not if you need to execute a series of commands or call a method. For that, you may use a monitor, also called a *lock*, which is commonly used to synchronize access. A *monitor* is a structure that supports *mutual exclusion*, which is the property that at most one thread is executing a particular segment of code at a given time. In Java, any **Object** can be used as a monitor, along with the `synchronized` keyword, as hown in the following example:
+Atomic classes are great at protecting single variables, but not if you need to execute a series of commands or call a method. For that, you may use a monitor, also called a *lock*, which is commonly used to synchronize access. A *monitor* is a structure that supports *mutual exclusion*, which is the property that at most one thread is executing a particular segment of code at a given time. In Java, any **Object** can be used as a monitor, along with the `synchronized` keyword, as shown in the following example:
 
 	SheepManager manager = new SheepManager();
 	synchronized(manager) {
