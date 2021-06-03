@@ -316,7 +316,7 @@ But fortunately, we have the `submit()` methods on the ExecutorService interface
 
 The `execute()` and `submit()` methods are nearly identical when applied to Runnable expressions. The obvious advantage of `submit()` is that he does the same thing `execute()` does, but with a return object that can be used to track the result. Because of this advantage and the fact that `execute()` does not support Callable expressions, we tend to prefer `submit()` over execute, even if you don't store the Future reference.
 
-For the exam, you need to be familiar with both `execute()` and `submit()`, but in your own code, its recommended that you use `execute()` over `submit()` whenever possible.
+For the exam, you need to be familiar with both `execute()` and `submit()`, but in your own code, it's recommended that you use `execute()` over `submit()` whenever possible.
 
 ### Waiting for Results
 
@@ -487,7 +487,7 @@ This method is useful for processes that you want to happen repeatedly but whose
 
 All the content with the Concurrency API were implemented with signle-thread executors, which, weren't particularly useful. After all, the chapter is about concurrency, and you can't do a lot of that with a single-thread executor.
 
-In this section, its presented three additional factory methods in the Executors class that act on a pool of threads, rather than on a single thread. A *thread pool* is a group of pre-instantiated reusable threads that are available to perform a set of arbitrary tasks. The next table, includes the two previous single-thread executor methods, along with the new ones that you should be familiar with for the exam:
+In this section, it's presented three additional factory methods in the Executors class that act on a pool of threads, rather than on a single thread. A *thread pool* is a group of pre-instantiated reusable threads that are available to perform a set of arbitrary tasks. The next table, includes the two previous single-thread executor methods, along with the new ones that you should be familiar with for the exam:
 
 | Method    				  		 		    				|    Description   									  |
 | :------------------------------------------------------------ | :-------------------------------------------------- |
@@ -732,4 +732,71 @@ The Lock interface includes four methods that you should know for the exam:
 | void lock() 									| Requests a lock and blocks until lock is acquired 						 |
 | void unlock() 								| Releases a lock  |
 | boolean tryLock() 							| Requests a lock and and returns immediately a boolean indicating whether the lock was successfully acquired  |
-| boolean tryLock(long, TimeUnit) 				| Requests a lock and blocks up to the specified time until lock is required, it returns a boolean indicating whether the lock was successfully acquired  |
+| boolean tryLock(long, TimeUnit) 				| Requests a lock and blocks up to the specified time until lock is required, it returns a boolean indicating whether the lock was successfully acquired  | 
+
+#### Attempting to Acquire a Lock
+
+While the ReentrantLock class allows you to wait for a lock, it so far suffers from the same problem as synchronized blocks, a thread could end up waiting forever to obtain a lock. But as shown in the table above, there are two additional methods that make the Lock interface a lot safer than a synchronized block.
+
+The `tryLock()` method will try to obtain a lock and immediatly return a boolean result indicating whether the lock was obtained. Unlike the `lock()` method, it does not wait if a thread already holds the lock. It returns immediatly, regardless of whether or not a lock is available. The followin is an example of the `tryLock()` method implementation:
+
+	Lock lock = new ReentrantLock();
+	new Thread(() -> printMessage(lock)).start();
+	if (lock.tryLock()) {
+		try {
+			System.out.println("Locked"); // Lock obtained
+		} finally {
+			lock.unlock(); // Unlock for other threads
+		}
+	} else {
+		System.out.println("Something else"); // Unable to acquired lock
+	}
+
+This code could produce either outputs, depending on the order of execution. Like `lock()`, the `tryLock()` method should be used with a try/finally block. Fortunately, with `tryLock()` you need to release the lock only if it was successfully acquired.
+
+The `tryLock(long, TimeUnit)` method is an overloaded version of the `tryLock()` method, it acts like an hybrid of `lock()` and `tryLock()`. Like the other two methods, if a lock is available, then it will immediately return with it. If a lock is unavailable, it will wait up to the specified time limit for the lock. The following example uses the overloaded version of `tryLock(long, TimeUnit)`:
+
+	Lock lock = new ReentrantLock();
+	new Thread(() -> printMessage(lock)).start();
+	if (lock.tryLock(10, TimeUnit.SECONDS)) {
+		try {
+			System.out.println("Lock obtained"); // Lock obtained
+		} finally {
+			lock.unlock();
+		}
+	} else {
+		System.out.println("Something else"); // Unable to acquired lock
+	}
+
+The code is the same as before, except this time on of the threads waits up to 10 seconds to acquire the lock.
+
+#### Duplicate Lock Requests
+
+The ReentrantLock class maintains a counter of the number of times a lock has been given to a thread. To release the lock for other threads to use, `unlock()` must be called the same number of times the lock was granted. The following code snippet contains an error, because of duplicate lock requests: 
+
+		Lock lock = new ReentrantLock();
+		if (lock.tryLock()) {
+			try {
+				lock.lock();
+			} finally {
+				lock.unlock();
+			}
+		}
+
+The thread obtains the lock twice but releases it only once. You can verify this by spawning a new thread after this code runs that attempts to obtain a lock. The following prints false:
+
+	new Thread(() -> System.out.println(lock.tryLock())).start();
+
+It's critical that you release a lock the same number of times it is acquired. For calls with `tryLock()`, you need to call `unlock()` only if the method returned true.
+
+#### Reviewing the Lock Framework
+
+To review, the ReentrantLock class supports the same features as a synchronized block, while adding a number of improvements.
+
+- Ability to request a lock without blocking
+- Ability to request a lock while blocking for a specified amount of time
+- A lock can be created with a fairness property, in which the lock is granted to threads in the order it was requested.
+
+The Concurrency API includes other lock-based classes, although ReentrantLock is the only one you need to know for the exam.
+
+> **Tip:** While not on the exam, ReentrantReadWriteLock is a really useful class, it includes separate locks for reading and writing data and is useful on data structures where reads are far more common than writes. For example, if you have a thousand threads reading data but only one thread writing data, this class can help you maximize concurrent access.
