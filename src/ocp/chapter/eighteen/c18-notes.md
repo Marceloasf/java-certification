@@ -800,4 +800,108 @@ To review, the ReentrantLock class supports the same features as a synchronized 
 The Concurrency API includes other lock-based classes, although ReentrantLock is the only one you need to know for the exam.
 
 > **Tip:** While not on the exam, ReentrantReadWriteLock is a really useful class, it includes separate locks for reading and writing data and is useful on data structures where reads are far more common than writes. For example, if you have a thousand threads reading data but only one thread writing data, this class can help you maximize concurrent access.
-| boolean tryLock(long, TimeUnit) 				| Requests a lock and blocks up to the specified time until lock is required, it returns a boolean indicating whether the lock was successfully acquired  |
+
+### Orchestrating Tasks with a *CyclicBarrier*
+
+We complete our discussion on thread-safety by discussing how to orchestrate complex tasks across many things.
+
+We have some tasks that need to be done and those need to be done concurrently, we can use the **CyclicBarrier** class to coordinate these tasks. For now, let's start with a code sample without a CyclicBarrier:
+
+	import java.util.concurrent.*;
+	public class LionPenManager {
+		private void removeLions() { System.out.println("Removing lions"); }
+		private void cleanPen() { System.out.println("Cleaning the pen"); }
+		private void addLions() { System.out.println("Adding lions"); }
+		public void performTask() {
+			removeLions();
+			cleanPen();
+			addLions();
+		}
+		public static void main(String... args) {
+			ExecutorService service = null;
+			try {
+				service = Executors.newFixedThreadPool(4);
+				var manager = new LionPenManager();
+				for (int i = 0; i < 4; i++) 
+					service.submit(() -> manager.performTask());
+			} finally {
+				if (service != null) service.shutdown();
+			}
+		}
+	}
+
+The following is sample output based on this implementation:
+
+	Removing lions
+	Removing lions
+	Cleaning the pen
+	Removing lions
+	Cleaning the pen
+	Adding lions
+	Removing lions
+	Cleaning the pen
+	Adding lions
+	Adding lions
+	Cleaning the pen
+	Adding lions
+
+Although within a single thread the results are ordered, among multiple works the output is entirely random. We can improve these results by using the CyclicBarrier class. This class takes in its constructors a limit value, indicating the number of threads to wait for. As each thread finishes, it calls the `await()` method on the cyclic barrier. Once the specified number of threads have each called `await()`, the barrier is released and all threads can continue. The following is a reimplementation of our LionPenManager class that uses CyclicBarrier objects to coordinate access:
+
+	import java.util.concurrent.*;
+	public class LionPenManager {
+		private void removeLions() { System.out.println("Removing lions"); }
+		private void cleanPen() { System.out.println("Cleaning the pen"); }
+		private void addLions() { System.out.println("Adding lions"); }
+		public void performTask(CyclicBarrier cb1, CyclicBarrier cb2) {
+			try {
+			removeLions();
+			cb1.await();
+			cleanPen();
+			cb2.await();
+			addLions();
+			} catch (InterruptedException | BrokenBarrierException e) {
+				// Handle checked exceptions here
+			}
+		}
+		public static void main(String... args) {
+			ExecutorService service = null;
+			try {
+				service = Executors.newFixedThreadPool(4);
+				var manager = new LionPenManager();
+				var cb1 = new CyclicBarrier(4);
+				var cb2 = new CyclicBarrier(4, () -> System.out.println("*** Pen Cleaned!"));
+				for (int i = 0; i < 4; i++) 
+					service.submit(() -> manager.performTask(c1, c2));
+			} finally {
+				if (service != null) service.shutdown();
+			}
+		}
+	}
+
+In this example, the updated `performTask()` method uses CyclicBarrier objects. Like synchronizing on the same object, coordinating a task with a CyclicBarrier requires the object to be static or passed to the thread performing the task. We also add a try/catch block in the `performTask()` method, as the `await()` method throws multiple checked exceptions. The following is sample output based on this revised implementation:
+
+	Removing lions
+	Removing lions
+	Removing lions
+	Removing lions
+	Cleaning the pen
+	Cleaning the pen
+	Cleaning the pen
+	Cleaning the pen
+	*** Pen Cleaned!
+	Adding lions
+	Adding lions
+	Adding lions
+	Adding lions
+
+As you can see, all of the results are now organized. In this example, two different constructors for our CyclicBarrier objects were used, the latter of which called a Runnable method upon completion.
+
+The CyclicBarrier class allows us to perform complex, multithreaded tasks, while all threads stop and wait at logical barriers. This solution is superior to a single-threaded solution, as the individual tasks such as removing the lion, can be completed in parallel by all threads. There is a slight loss in performance to be expected from using a CyclicBarrier. For example, one worker may be incredibly slow at removing lions, resulting in the other three workers waiting for him to finish, since we can't start cleaning the pen while it is full of lions, though, this solution is about as concurrent as we can make it. 
+
+About thread pool size and the cyclic barrier limit, make sure that you set the number of available threads to be at least as large as your CyclicBarrier limit value. For example, if we changed the code in the previous exaxmple to allocate only two threads (Executors.newFixedThreadPool(2)), the code would hang indefinitely. The barrier would never be reached as the only threads available in the pool are stuck waiting for the barrier to be complete. This would result in a *deadlock*.
+
+We may reuse our CyclicBarrier. After a CyclicBarrier is broken, all threads are released and the number of threads waiting on the CyclicBarrier goes back to zero. At this point, the CyclicBarrier may be used again for a new set of waiting threads. For example, if our CyclicBarrier limit is 5 and we have 15 threads that call `await()`, then the CyclicBarrier will be activated a total of three times.
+
+## Using Concurrent Collections (p.876-883)
+
+The Concurrency API also includes interfaces and classes that help you coordinate access to collections shared by multiple tasks. By collections, we are of course referring to the Java Collections Framework. This section demonstrates many of the concurrent classes available to you when using the Concurrency API. 
