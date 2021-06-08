@@ -238,7 +238,7 @@ Java includes the Concurrency API to handle the complicated work of managing thr
 
 To get an instance of the interface ExecutorService, you'll use the Concurrency API, which includes the Executors factory class and that can be used to create instances of the ExecutorService object. 
 
-> **Note:** As you may rember from previous chaptes, the factory pattern is a creational pattern in which the underlying implementation details of the object creation are hidden from us. 
+> **Note:** As you may remember from previous chapters, the factory pattern is a creational pattern in which the underlying implementation details of the object creation are hidden from us. 
 
 This is a simple example using the `newSingleThreadExecutor()` method to obtain an ExecutorService instance and the `execute()` method to perform asynchronous tasks.
 
