@@ -904,4 +904,184 @@ We may reuse our CyclicBarrier. After a CyclicBarrier is broken, all threads are
 
 ## Using Concurrent Collections (p.876-883)
 
-The Concurrency API also includes interfaces and classes that help you coordinate access to collections shared by multiple tasks. By collections, we are of course referring to the Java Collections Framework. This section demonstrates many of the concurrent classes available to you when using the Concurrency API. 
+The Concurrency API also includes interfaces and classes that help you coordinate access to collections shared by multiple tasks. By collections, we are of course referring to the Java Collections Framework. This section demonstrates many of the concurrent classes available to you when using the Concurrency API.
+
+### Understanding Memory Consistency Errors
+
+The purpose of concurrent collection classes is to solve common memory consistency errors. A *memory consistency error* occurs when two threads have inconsistent views of what should be the same data. They were created to avoid common issues in which multiple threads are adding and removing objects from the same collections. 
+
+When two threads try to modify the same nonconcurrent collection, the JVM may throw a **ConcurrentModificationException** at runtime. In fact, it can happen with a single thread. For example, take a look at the following code snippet:
+
+	var foodData = new HashMap<String, Integer>();
+	foodData.put("penguin", 1);
+	foodData.put("flamingo", 2);
+	for (String key: foodData.keySet()) 
+		foodData.remove(key);
+
+After the first iteration of the loop, this code will throw a **ConcurrentModificationException**, since the iterator on `keySet()` is not properly updated after the first element is removed. Changing the first line to a **ConcurrentHashMap** will prevent from throwing the exception at runtime:
+
+	var foodData = new ConcurrentHashMap<String, Integer>();
+	foodData.put("penguin", 1);
+	foodData.put("flamingo", 2);
+	for (String key: foodData.keySet()) 
+		foodData.remove(key);
+
+In this example the ConcurrentHashMap is ordering read and write access, such that all access to the class is consistent. The iterator created by `keySet()` is updated as soon as an object is removed from the Map. At any given instance, all threads should have the same consistent view of the structure of the collection.
+
+### Working with Concurrent Classes
+
+You should use a concurrent collection class anytime you are going to have multiple threads modify a collections object outside a synchronized block or method, even if you don't expect a concurrency problem. On the other hand, immutable or read-only objects can be accessed by any number of threads without a concurrent collection.
+
+> **Note:** Immutable objects can be accessed by any number of threads and do not require synchronization. By definition, they don't change, so there is no chance of a memory consistency error.
+
+As we do when instantiating an ArrayList object but passing a List reference, it's considered a good practice to instantiate a concurrent collection but pass it around using a nonconcurrent interface whenever possible. In some cases the callers need to know that is a concurrent collection, but in the majority of circumstances, that distinction is not necessary.
+
+The following table lists the common concurrent classes with which you should be familiar with for the exam:
+
+| Class name	| Java Collections Framework interfaces   | Elements Ordered?   | Sorted?   | Blocking?  |
+| :------------ | :-------------------------------------- | :------------ 		| :-------- | :--------- | 
+| ConcurrentHashMap		| ConcurrentMap							 | No			| No		| No		 | 
+| ConcurrentLinkedQueue	| Queue									 | Yes			| No		| No		 |
+| ConcurrentSkipListMap	| ConcurrentMap, SortedMap, NavigableMap | Yes			| Yes		| No		 |
+| ConcurrentSkipListSet	| SortedSet, NavigableSet				 | Yes			| Yes		| No		 |
+| CopyOnWriteArrayList	| List									 | Yes			| No		| No		 |
+| CopyOnWriteArraySet	| Set									 | No			| No		| No		 |
+| LinkedBlockingQueue	| BlockingQueue							 | Yes			| No		| Yes		 |
+
+Some of the most common classes listed above are ConcurrentHashMap and ConcurrentLinkedQueue, we often use an interface reference for the variable type of the newly created object and use it the same way as we would a nonconcurrent object. The main difference is that these objects are safe to pass to multiple threads. For example:
+
+	Map<String, Integer> map = new ConcurrentHashMap<>();
+	map.put("zebra", 52);
+	map.put("elephant", 10);
+	System.out.println(map.get("elephant")); // 10
+
+	Queue<Integer> queue = new ConcurrentLinkedQueue<>();
+	queue.offer(31);
+	System.out.println(queue.peek()); // 31
+	System.out.println(queue.poll()); // 31
+
+All of these classes implement multiple interfaces, for example, ConcurrentHashMap implements Map and ConcurrentMap. So it's up to us to decide which is the appropriate method parameter type. 
+
+#### Understanding *SkipList* Collections
+
+The SkipList classes, `ConcurrentSkipListMap` and `ConcurrentSkipListSet`, are concurrent versions of their sorted counterparts, `TreeMap` and `TreeSet`. They maintain their elements or keys in the natural ordering of their elements, in this manner, working with them is the same as working with their counterparts:
+
+	Set<String> gardenAnimals = new ConcurrentSkipListSet<>();
+	gardenAnimals.add("rabbit");
+	gardenAnimals.add("gopher");
+	System.out.println(gardenAnimals.stream().collect(Collectors.joining(","))); // gopher, rabbit
+
+	Map<String, String> rainForestAnimalDiet = new ConcurrentSkipListMap<>();
+	rainForestAnimalDiet.put("koala", "bamboo")
+	rainForestAnimalDiet.entrySet().stream().forEach(e -> System.out.println(e.getKey() + "-" + e.getValue())); // koala-bamboo
+
+When you see any of these two on the exam, just remember that they are "sorted" concurrent collections.
+
+#### Understanding *CopyOnWrite* Collections
+
+The CopyOnWrite classes, `CopyOnWriteArrayList` and `CopyOnWriteArraySet`, are a little different than the other examples that we've seen. These classes copy all of their elements to a new underlying structure anytime an element is added, modified or removed from the collection. By *modified* element, it's meant that the reference in the collection is changed, so changing the contents of objects within the collection will not cause a new structure to be allocated.
+
+Although the data is copied to a new underlying structure, our reference to te Collection object doesn't change. Any iterator established prior to a modification will not see the changes, but instead it will iterate over the original elements prior to the modification.
+
+> **Note:** The CopyOnWrite classes are similar to the immutable object pattern, as a new underlyin structure is created every time the collection is modified. Unlike a true immutable object, the reference to the object stays the same even while the underlying data is changed.
+
+To demonstrate a CopyOnWriteArrayList usage, we have the following code snippet:
+
+	List<Integer> favNumbers = new CopyOnWriteArrayList<>(List.of(4, 3, 42));
+	for(var n: favNumbers) {
+		System.out.print(n + " ");
+		favNumbers.add(9);
+	}
+	System.out.println();
+	System.out.println("Size: " + favNumbers.size()); 
+	// This code snippet outputs: 
+	// 4 3 42
+	// Size: 6
+	
+Despite adding elements to the array while iterating over it, the for loop only iterated on the ones created when the loop started. If we had used a regular ArrayList object, then a ConcurrentModificationException would have been thrown at runtime.
+
+The CopyOnWriteArraySet is used just like a HashSet and has similar properties as the CopyOnWriteArrayList class. For example:
+
+	Set<Character> favLetters = new CopyOnWriteArraySet<>(List.of('a', 't'));
+	for(char c: favLetters) {
+		System.out.print(c + " ");
+		favLetters.add('s');
+	}
+	System.out.println();
+	System.out.println("Size: " + favNumbers.size()); 
+	// This code snippet outputs: 
+	// a t
+	// Size: 3
+
+The same ideia as with the CopyOnWriteArrayList, except that we don't have duplicates of an element.
+
+The CopyOnWrite classes can use a lot of memory, since a new collection structure needs to be allocated anytime the collection is modified. They are most used in multi-threaded environment situtions where reads are far more common than writes.
+
+##### Revisiting Deleting While Looping
+
+As shown before, when we try to delete from an ArrayList while iterating over it, a ConcurrentModificationException is thrown. Here is presented a version that works using CopyOnWriteArrayList:
+
+	List<String> birds = new CopyOnWriteArrayList<>();
+	birds.add("hawk");
+	birds.add("hawk");
+	birds.add("hawk");
+	for (String bird: birds) birds.remove(bird);
+	System.out.print(birds.size()); // 0
+
+As mentioned, CopyOnWrite classes can use a lot of memory. Another approach would be to use the ArrayList class with an iterator, as shown next:
+
+	var iterator = birds.iterator();
+	while(iterator.hasNext()) {
+		iterator.next();
+		iterator.remove();
+	}
+	System.out.print(birds.size()); // 0
+
+#### Understanding Blocking Queues
+
+The last collection class that was listed on the table that you should know for the exam is the `LinkedBlockingQueue`, which implements the BlockingQueue interface. The BlockingQueue is just like a regular Queue, except that it includes methods that will wait a specific amount of time to complete an operation.
+
+The new methods included in BlockingQueue, apart from those inherited from Queue, are:
+
+- offer(E e, long timeout, TimeUnit unit): Adds an item to the queue, waiting the specified time and returning false if the time elapses before space is available.
+- poll(long timeout, TimeUnit unit): Retrieves and removes an item from the queue, waiting the specified time and returning null if the time elapses before the item is available.
+
+The implementation class LinkedBlockingQueue, maintains a linked list between elements. The following example is using a LinkedBlockingQueue to wait for the results of some of the operations, the methods presented before (from BlockingQueue) can each throw a checked InterruptedException, as they can be interrupted before they finish waiting for a result (they must be properly caught).
+
+	try {
+		var blockingQueue = new LinkedBlockingQueue<Integer>();
+		blockingQueue.offer(39);
+		blockingQueue.offer(3, 4, TimeUnit.SECONDS);
+		System.out.println(blockingQueue.poll()); // 39
+		System.out.println(blockingQueue.poll(10, TimeUnit.MILLISECONDS)); // 3
+	} catch (InterruptedException e) {
+		// Handle interruption
+	}
+
+As shown in this example, since LinkedBlockingQueue implements both Queue and BlockingQueue, we can use methods available to both.
+
+#### Obtaining Synchronized Collections
+
+Besides the concurrent collections covered in this chapter, the Concurrent API also includes methods for obtaining synchronized versions of existing nonconcurrent collection objects. These synchronized methods are defined in the Collections class. They operate on the inputted and return a reference that is the same type as the underlying collection. The methods are the following:
+
+- synchronizedCollection(Collection<*T*> c)
+- synchronizedList(List<*T*> list)
+- synchronizedMap(Map<*K,V*> m)
+- synchronizedNavigableMap(NavigableMap<*K,V*> m)
+- synchronizedNavigableSet(NavigableSet<*T*> s)
+- synchronizedSet(Set<*T*> s)
+- synchronizedSortedMap(SortedMap<*K,V*> m)
+- synchronizedSortedSet(SortedSet<*T*> s)
+
+If you are given an existing collection that is not a concurrent class and need to access it among multiple threads, then you could wrapt it using the methods listed above. Otherwise, if you know at the time of creation that your object requires synchronization, then you should use one of the concurrent collection classes listed before.
+
+Unlike the concurrent collections, the synchronized collections also throw an exception if they are modified within an iterator by a single thread. For example:
+
+	var foodData = new HashMap<String, Object>();
+	foodData.put("penguin", 1);
+	foodData.put("flamingo", 2);
+	var syncFoodData = Collections.synchronizedMap(foodData);
+	for(String key: synFoodData.keySet()) 
+		synFoodData.remove(key);
+
+This loop throws a ConcurrentModificationException, whereas our example that used ConcurrentHashMap did not. Other than iterating over the collection, the synchronized methods listed above return objects that are safe from memory consistency errors and can be used among multiple threads.  
