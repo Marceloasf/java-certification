@@ -45,7 +45,7 @@ A *system thread* is created by the JVM and runs in the background of the applic
 
 A *user-defined thread* is one created by the application dev to accomplish a specific task. With the exception of parallel streams, all of the applications that we created up to this point have been multithreaded, but they contained only one user-defined thread, which calls the `main()` method. Applications that contain only a single user-defined thread are referred to as single-threaded applications.
 
-> **Note:** Although not required knowledge for the exam, a *daemon thread* is one that will not prevent the JVM from exiting when the program finishes, a Java application terminates when the only threads that are running are daemon threads. For example, if garbage collection is the only thread left running, the JVM will automatically shut down. Both system and user defined threads can be marked as daemon threads.
+> **Note:** Although not required knowledge for the exam, a *daemon thread* is one that will not prevent the JVM from shutting down when the program finishes, a Java application terminates when the only threads that are running are daemon threads. For example, if garbage collection is the only thread left running, the JVM will automatically shut down. Both system and user defined threads can be marked as daemon threads.
 
 ### Understanding Thread Concurrency
 
@@ -125,7 +125,7 @@ Defining the task that a Thread instance will execute can be done two ways in Ja
 The following are examples of these techniques:
 
     public class PrintData implements Runnable {
-    	@Override public void run() { Overrides method in Runnable
+    	@Override public void run() { // Overrides method in Runnable
           for(int i = 0; i < 3; i++) 
 		  	  System.out.println("Printing record: " + i);
         }
@@ -149,13 +149,13 @@ Anytime you create a Thread instance, make sure to remember to start the task wi
 
 	public static void main(String[] args) {
 		System.out.println("begin");
-		(new ReadInventoryThread()).start;
-		(new Thread(new PrintData())).start;
-		(new ReadInventoryThread()).start;
+		(new ReadInventoryThread()).start();
+		(new Thread(new PrintData())).start();
+		(new ReadInventoryThread()).start();
 		System.out.println("end");
 	}
 
-The answer is that is unkown until runtime. A possible output is:
+The answer is that is unknown until runtime. A possible output is:
 
 	begin
 	Printing zoo inventory
@@ -165,7 +165,7 @@ The answer is that is unkown until runtime. A possible output is:
 	Printing record: 1
 	Printing record: 2
 
-This example uses a total of four threads, them `main()` user thread and three additional threads created on the block. Each thread created on these lines is executed as an asynchronous task. By asynchronous, it's meant that the thread executing the `main()` method does not wait for the results of each newly created thread before continuing. The opposite of this behavior is a synchronous task in which the program waits (or blocks) for the thread to finish executing before moving on to the next line. The vast majority of method calls used in this book have been synchronous up until now.
+This example uses a total of four threads, the `main()` user thread and three additional threads created on the block. Each thread created on these lines is executed as an asynchronous task. By asynchronous, it's meant that the thread executing the `main()` method does not wait for the results of each newly created thread before continuing. The opposite of this behavior is a synchronous task in which the program waits (or blocks) for the thread to finish executing before moving on to the next line. The vast majority of method calls used in this book have been synchronous up until now.
 
 While the order of thread execution once the threads have been started is indeterminate, the order within a single thread is still linear. In particular, the for loop in PrintData is still ordered. Also, `begin` appears before `end` in the main() method.
 
@@ -190,7 +190,7 @@ Now we conclude our discussion of the Thread class. While previous versions of t
 We know that multithreaded programming allows us to execute multiple tasks at the same time, but one thread often needs to wait for the results of another thread to proceed. One solution is to use polling. Polling is the process of intermittently checking data at some fixed interval. For example, imagine you have a thread that modifies a shared static counter value and your main() thread is waiting for the thread to increase the value to be greater than 100, as shown in the following class:
 
 	public class CheckResults {
-		private static int count = 0;
+		private static int counter = 0;
 		public static void main(String[] args) {
 			new Thread(() -> {
 				for(int i = 0; i < 500; i++) CheckResults.counter++;
@@ -209,7 +209,7 @@ This program can output "Not reached yet" zero, ten or even a million times! If 
 We can improve this by using the `Thread.sleep()` method to implement polling. This method requests the current thread of execution rest for a specified number of milliseconds. When used inside the body of the main() method, the thread associated with the main() method will pause, while the separate thread will continue to run. The following example uses the `Thread.sleep()` method:
 
 	public class CheckResults {
-		private static int count = 0;
+		private static int counter = 0;
 		public static void main(String[] args) throws InterruptedException { // CHANGED
 			new Thread(() -> {
 				for(int i = 0; i < 500; i++) CheckResults.counter++;
