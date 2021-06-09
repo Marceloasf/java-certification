@@ -1085,3 +1085,53 @@ Unlike the concurrent collections, the synchronized collections also throw an ex
 		synFoodData.remove(key);
 
 This loop throws a ConcurrentModificationException, whereas our example that used ConcurrentHashMap did not. Other than iterating over the collection, the synchronized methods listed above return objects that are safe from memory consistency errors and can be used among multiple threads.  
+
+### Identifying Threading Problems (p.883-888)
+
+A threading problem can occur when two or more threads interact in an unexpected and undesirable way. For example, two threads may block each other from accessing a particular segment of code or access a variable in a concurrent manner.
+
+The Concurrency API was created to help eliminate potential threading issues common to all devs. As we saw earlier, the Concurrency API creates and manages threads for you. But even with the usage of the Concurrency API, which reduces potencial threading issues, we can still have some issues.
+
+#### Understanding Liveness
+
+As we saw earlier in the chapter, many thread operations can be performed independently, but some require coordination. For example, synchronizing on a method requires all the threads that call the method to wait for other threads to finish before continuing, or using a CyclicBarrier, where each thread inside of it must wait for the barrier limit to be reached before continuing.
+
+In many of the cases, the waiting of the threads is so quick that the user has very little idea that any delay has ocurred, but there are some cases where the waiting can be extremely long and sometimes even infinite.
+
+**Liveness** is the ability of an application to be able to execute in a timely manner. Liveness problems are those in which the application becomes unresponsive or in some cases in some kind of stuck state. For the exam, there are three types of liveness issues that you should be familiar with: deadlock, starvation and livelock.
+
+#### Deadlock
+
+**Deadlock** happens when two or more threads threads are blocked forever, each waiting on the other.
+
+An ilustration of deadlock is the following one for example. Imagine that our zoo has two foxes: Foxy and Tails. Foxy likes to eat first and then drink water, while Tails like to drink water first and then eat. Furthermore, neither animal likes to share, and they will finish their meal only if they have exclusive access to both food and water. Then, the zookeeper places the food on one side of the environment and the water on the other side. Although our foxes are fast, it still takes them 100 milliseconds to run from one side of the environment to the other. If Foxy obtains the food and then moves to the other side of the environment to obtain the water, but Tails has already drank the water and is waiting the food to become available, the result would be them hanging indefinitely (coded example `Fox.java`). Basically this deadlock is caused because both participants are permanently blocked, waiting on resources that will never become available.
+
+How do you fix a deadlock? The answer is that you can't in most situations, what you can do is prevent them from happening. There are numerous strategies to help prevent deadlocks from happening. One common strategy to avoid them is for all threads to order their resource requests. For example, if both foxes have a rule that they need to obtain food before water, then the previous deadlock scenario will not happen again, because once one of the foxes obatined food, the second fox would wait, leaving the water resource available.
+
+#### Starvation
+
+**Starvation** occurs when a single thread is perpetually denied access to a shared resource or lock. The thread is still active, but it is unable to complete its work as a result of other threads constantly taking the resource that they are trying to access.
+
+Using the fox example again, imagine that we have a pack of very hungry and very competitive foxes in our environment. Every time Foxy stands up to go get food, one of the other foxes sees her and rushes to eat before her. Foxy is free to roam around the enclosure and do other things, but is never able to obtain access to the food. In this example, Foxy literally and figuratively experiences starvation.
+
+#### Livelock
+
+**Livelock** occurs when two or more threads are conceptually blocked forever, although they are each still active and trying to complete their task. Livelock is a special case of resource starvation in which two or more threads actively try to acquire a set of locks, are unable to do so, and restart part of the process. Is often a result of two threads trying to resolve a deadlock.
+
+Returning to our example, imagine that Foxy and Tails are both holding their food and water resources, respectively. They each realize that they cannot finish their meal in this state, so they both let go of their food and water, run to opposite side of the environment and pick up the other resource. Now Foxy has the water, Tails has the food, and neither is able to finish their meal. If they continue this process forever, it is referred to as livelock. Both are active, trying to restart the process, but neither is able to finnish their task. They are executing a form of failed deadlock recovery, where each one notices that they are potentially entering a deadlock state and responds by releasing all of its locked resources. Unfortunately, the lock and unlock process is cyclical, and the two foxes are conceptually deadlocked.
+
+In practive, livelock is often a difficult issue to detect. Threads in this state appear to be active and able to respond to requests, even when they are in fact stuck in an endless cycle.
+
+#### Managing Race Conditions
+
+A **race condition** is an undesirable result that occurs when two tasks, which should be completed sequentially, are completed at the same time. Earlier when we introduced synchronization, we discussed examples of race conditions.
+
+For example, if two users try to create an account at the same time with the same username, we can have three outcomes for this race condition:
+
+- Both users are able to create accounts with the same username.
+- Both users are unable to create accounts with the same username, returning an error message to both users.
+- One user is able to create the account with username, while the other user receives an error message.
+
+Looking at all the three possible outcomes, the first one can be considered the worst of them all, because when one of the users log in to the site, the application will return an error because it cannot tell them apart (duplicate users). The other two are far more acceptable than the first, because those two are not leading to invalid data being persisted.
+
+> **Note:** For the third scenario, it often doesn't matter which user gain access to the account, but is a common practice to choose whichever thread made the request first, whenever possible.
