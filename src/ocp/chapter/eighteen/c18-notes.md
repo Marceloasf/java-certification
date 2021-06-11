@@ -252,10 +252,11 @@ This is a simple example using the `newSingleThreadExecutor()` method to obtain 
 				 		System.out.println("Printing record: "+i);};
 		
 			try {
+				System.out.println("begin");
 				service = Executors.newSingleThreadExecutor(); // Calls factory class to get an instance of ExecutorService (single-thread)
-				service.execute("task1");
-				service.execute("task2");
-				service.execute("task1");
+				service.execute(task1);
+				service.execute(task2);
+				service.execute(task1);
 				System.out.println("end");
 			} finally {
 				if (service != null) service.shutdown();
@@ -296,11 +297,11 @@ As you learned in previous chapters, resources such as thread executors should b
 
 ### Submitting Tasks
 
-You can submit tasks to an ExecutorService instance many ways. The first that was presented, using the `execute()` method, is inherited from the Executor interface, which ExecutorService interface extends. The `execute()` method takes a Runnable lambnda expression or instance and completes the task asynchronously. Because the return type of the method is void, it does not tell us anything about the result of the task. 
+You can submit tasks to an ExecutorService instance many ways. The first that was presented, using the `execute()` method, is inherited from the Executor interface, which ExecutorService interface extends. The `execute()` method takes a Runnable lambda expression or instance and completes the task asynchronously. Because the return type of the method is void, it does not tell us anything about the result of the task.
 
 > **Note:** The `execute()` method is considered a "fire-and-forget" method, as once it's submitted, the results are not directly available to the calling thread.
 
-But fortunately, we have the `submit()` methods on the ExecutorService interface too, which like `execute()`, can be used to complete tasks asynchronously. Unlike `execute()`, `submit()` returns a **Future** instance that can be used to determine whether the task is complete. It can also be used to return a generic result object after the task has been completed.
+But fortunately, we have the `submit()` method on the ExecutorService interface too, which like `execute()`, can be used to complete tasks asynchronously. Unlike `execute()`, `submit()` returns a **Future** instance that can be used to determine whether the task is complete. It can also be used to return a generic result object after the task has been completed.
 
 > **Note:** Don't worry if you haven't seen Future or Callable before, we will discuss them shortly.
 
@@ -312,11 +313,11 @@ But fortunately, we have the `submit()` methods on the ExecutorService interface
 | Future<?> submit(Runnable task) 		 | Executes a Runnable task at some point in the future and returns a Future representing the task |
 | <*T*> Future<*T*> submit(Callable<*T*> task) | Executes a Callable task at some point in the future and returns a Future representing the pending results of the task |
 | <*T*> List<Future<*T*>> invokeAll(Collection<? extends Callable<*T*>> tasks) throws InterruptedException | Executes the given tasks and waits for all tasks to complete. Returns a List of Future instances, in the same order they were in the original collection |
-| <*T*> T invokeAll(Collection<? extends Callable<*T*>> tasks) throws InterruptedException, ExecutionException  | Executes the given tasks and waits for at least one to complete. Returns a Future instance for a complete task and cancels any unfinished tasks |
+| <*T*> T invokeAny(Collection<? extends Callable<*T*>> tasks) throws InterruptedException, ExecutionException  | Executes the given tasks and waits for at least one to complete. Returns a Future instance for a complete task and cancels any unfinished tasks |
 
 The `execute()` and `submit()` methods are nearly identical when applied to Runnable expressions. The obvious advantage of `submit()` is that he does the same thing `execute()` does, but with a return object that can be used to track the result. Because of this advantage and the fact that `execute()` does not support Callable expressions, we tend to prefer `submit()` over execute, even if you don't store the Future reference.
 
-For the exam, you need to be familiar with both `execute()` and `submit()`, but in your own code, it's recommended that you use `execute()` over `submit()` whenever possible.
+For the exam, you need to be familiar with both `execute()` and `submit()`, but in your own code, it's recommended that you use `submit()` over `execute()` whenever possible.
 
 ### Waiting for Results
 
@@ -422,7 +423,7 @@ The `invokeAll()` method executes all tasks in a provided collection and returns
 
 In this example, the JVM waits the `invokeAll()` tasks to finish before moving on to the next line. Unlike our earlier examples, in this one the 'end' will be printed last. Another thing is that even with `future.isDone()` returning true for each element of the returned list, a task could have completed normally or thrown an exception.
 
-The `invokeAny()` method executes a collection of tasks and returns the result of one of the tasks that successfully completes execution, **cancelling all unfinished tasks**. While the first task to finish is often retunred, this behavior is not guaranteed, as any completed task can be returned by this method.
+The `invokeAny()` method executes a collection of tasks and returns the result of one of the tasks that successfully completes execution, **cancelling all unfinished tasks**. While the first task to finish is often returned, this behavior is not guaranteed, as any completed task can be returned by this method.
 
 	Executor service = ...
 	System.out.println("begin");
@@ -445,7 +446,7 @@ Like ExecutorService, we obtain an instance of ScheduledExecutorService using a 
 
 	ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
-We could store an instance of ScheduledExecutorService in an ExecutorService variable, but doing so would mean that we'd have to cast tyhe object to call any scheduled methods. The following table is a summary of ScheduledExecutorService methods:
+We could store an instance of ScheduledExecutorService in an ExecutorService variable, but doing so would mean that we'd have to cast the object to call any scheduled methods. The following table is a summary of ScheduledExecutorService methods:
 
 | Method Name    				  		 						|    Description   									  |
 | :------------------------------------------------------------ | :-------------------------------------------------- |
@@ -485,7 +486,7 @@ This method is useful for processes that you want to happen repeatedly but whose
 
 ### Increasing Concurrency with Pools 
 
-All the content with the Concurrency API were implemented with signle-thread executors, which, weren't particularly useful. After all, the chapter is about concurrency, and you can't do a lot of that with a single-thread executor.
+All the content with the Concurrency API were implemented with single-thread executors, which, weren't particularly useful. After all, the chapter is about concurrency, and you can't do a lot of that with a single-thread executor.
 
 In this section, it's presented three additional factory methods in the Executors class that act on a pool of threads, rather than on a single thread. A *thread pool* is a group of pre-instantiated reusable threads that are available to perform a set of arbitrary tasks. The next table, includes the two previous single-thread executor methods, along with the new ones that you should be familiar with for the exam:
 
@@ -557,13 +558,13 @@ Later in the chapter, will se that the unexpected result of two tasks executing 
 
 One way to improve our sheep counting example is to use the java.util.concurrent.atomic package. As with many of the classes in the Concurrency API, these classes exist to make our lifes easier.
 
-As demonstrated in the previous section, the increment operator ++ is not thread-safe, but the resason that is not thread-safe is that the operation is not atomic, carrying out two tasks, read and write, that can be interrupted by other thread.
+As demonstrated in the previous section, the increment operator ++ is not thread-safe, but the reason that is not thread-safe is that the operation is not atomic, carrying out two tasks, read and write, that can be interrupted by other thread.
 
 *Atomic* is the property of an operation to be carried out as a single unit of execution without any interference by another thread. A thread-safe atomic version of the increment operator would be one that performed the read and write of the variable as a single operation, not allowing any other threads to access the variable during the operation.
 
 Implementing this concept in the sheepCount variable, any thread trying to access the sheepCount variable while an atomic operation is in process would need to wait until the atomic operation on the variable is complete. Conceptually, this is like setting a rule for our workers that there can be only one employee in the field at a time, although they may not each report their result in order.
 
-The Concurrency API inclides numerous useful classes that are conceptually the same as our primitive classes but that support atomic operations. The next table lists the atomic classes with which you should be familiar for the exam:
+The Concurrency API includes numerous useful classes that are conceptually the same as our primitive classes but that support atomic operations. The next table lists the atomic classes with which you should be familiar for the exam:
 
 | Class Name    				  		 		| Description   									  |
 | :-------------------------------------------- | :-------------------------------------------------- |
@@ -688,7 +689,7 @@ As before, the first uses a synchronized block, with the second example using th
 
 #### Avoid Synchronization Whenever Possible
 
-Correctly using the synchronized keyword can be quite challenging, especially if the data you are trying to protect is available to dozens of methods. Even when the data is protected, though, the perforance cost for using it can be high.
+Correctly using the synchronized keyword can be quite challenging, especially if the data you are trying to protect is available to dozens of methods. Even when the data is protected, though, the performance cost for using it can be high.
 
 There are many classes within the Concurrency API that are a lot easier to use and more performant than synchronization. Some were already presented, like the atomic classes, and other will be covered shortly, including the Lock framework, concurrent collections and cyclic barriers.
 
