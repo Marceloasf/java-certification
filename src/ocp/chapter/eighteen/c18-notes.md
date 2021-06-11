@@ -739,7 +739,7 @@ The Lock interface includes four methods that you should know for the exam:
 
 While the ReentrantLock class allows you to wait for a lock, it so far suffers from the same problem as synchronized blocks, a thread could end up waiting forever to obtain a lock. But as shown in the table above, there are two additional methods that make the Lock interface a lot safer than a synchronized block.
 
-The `tryLock()` method will try to obtain a lock and immediatly return a boolean result indicating whether the lock was obtained. Unlike the `lock()` method, it does not wait if a thread already holds the lock. It returns immediatly, regardless of whether or not a lock is available. The followin is an example of the `tryLock()` method implementation:
+The `tryLock()` method will try to obtain a lock and immediatly return a boolean result indicating whether the lock was obtained. Unlike the `lock()` method, it does not wait if a thread already holds the lock. It returns immediatly, regardless of whether or not a lock is available. The following is an example of the `tryLock()` method implementation:
 
 	Lock lock = new ReentrantLock();
 	new Thread(() -> printMessage(lock)).start();
