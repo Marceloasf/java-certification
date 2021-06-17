@@ -1136,3 +1136,5 @@ For example, if two users try to create an account at the same time with the sam
 Looking at all the three possible outcomes, the first one can be considered the worst of them all, because when one of the users log in to the site, the application will return an error because it cannot tell them apart (duplicate users). The other two are far more acceptable than the first, because those two are not leading to invalid data being persisted.
 
 > **Note:** For the third scenario, it often doesn't matter which user gain access to the account, but is a common practice to choose whichever thread made the request first, whenever possible.
+
+## Working with Parallel Streams (p.888-898)
