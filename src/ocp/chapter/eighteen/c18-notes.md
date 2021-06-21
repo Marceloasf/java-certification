@@ -1138,3 +1138,26 @@ Looking at all the three possible outcomes, the first one can be considered the 
 > **Note:** For the third scenario, it often doesn't matter which user gain access to the account, but is a common practice to choose whichever thread made the request first, whenever possible.
 
 ## Working with Parallel Streams (p.888-898)
+
+Up until now, all of the streams that we worked with have been serial streams. A *serial stream* is a stream in which the results are ordered, with only one entry being processed at a time. A *parallel stream* is a stream that is capable of processing results concurrently, using multiple threads. 
+
+Using a parallel stream can change not only the performance of your application but also the expected results. Some operations also need special handling to be able to be processed in a parallel manner. 
+
+> **Tip:** The number of threads avaialable in a parallel stream is proportional to the number of available CPUs.
+
+### Creating Parallel Streams
+
+The Stream API was design to make creating parallel streams easy. For the exam you should be familiar with two ways of creating a parallel stream.
+
+Calling `parallel()` on an existing stream is the first way to create one. You just call `parallel()` on an existing stream to convert it to one that supports multithreaded processing, for example:
+
+	Stream<Integer> s1 = List.of(1,2).stream();
+	Stream<Integer> s2 = s1.parallel();
+
+> **Note:** Be aware that `parallel()` is an **intermediate operation** that operates on the original stream. 
+
+The second way to create a parallel stream is creating it from a Java Collection class. The Collection interface includes a method `parallelStream()` that can be called on any collection and returns a parallel stream. For example, the following creates one from a List:
+
+	Stream<Integer> s3 = List.of(1,2,3).parallelStream();
+
+> **Note:** The Stream interface includes a method called `isParallel()`, which verifies if an instance of a stream supports parallel processing. Some operations on streams preserve the parallel attribute, while others don't. For example, the `Stream.concat(Stream s1, Stream s2)` is parallel if either s1 or s2 is parallel, but `flatMap()` for example, doesn't hold the attribute, since it creates a new stream that is not parallel by default, regardless of whether the underlying elements were parallel. 
