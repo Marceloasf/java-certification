@@ -1143,7 +1143,7 @@ Up until now, all of the streams that we worked with have been serial streams. A
 
 Using a parallel stream can change not only the performance of your application but also the expected results. Some operations also need special handling to be able to be processed in a parallel manner. 
 
-> **Tip:** The number of threads avaialable in a parallel stream is proportional to the number of available CPUs.
+> **Tip:** The number of threads available in a parallel stream is proportional to the number of available CPUs.
 
 ### Creating Parallel Streams
 
