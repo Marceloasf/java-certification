@@ -307,8 +307,8 @@ But fortunately, we have the `submit()` method on the ExecutorService interface 
 
 <h5>ExecutorService methods:</h5>
 
-| Method name    				  		 |    Description   									|
-| :------------------------------------ | :--------------------------------------------------	|
+| Method name | Description |
+| :---------- | :---------- ||
 | void execute(Runnable command)  		 | Executes a Runnable Task at some point in the future |
 | Future<?> submit(Runnable task) 		 | Executes a Runnable task at some point in the future and returns a Future representing the task |
 | <*T*> Future<*T*> submit(Callable<*T*> task) | Executes a Callable task at some point in the future and returns a Future representing the pending results of the task |
@@ -327,27 +327,27 @@ The java.util.concurrent.Future<*V*> instance returned by the `submit()` method 
 
 The Future type is actually an interface! For the exam, you don't need to know any of the classes that implement Future, just that a Future instance is returned by various API methods. The following table includes useful methods for determining the state of a task.
 
-| Method name    				  		 		|    Description   									  |
-| :-------------------------------------------- | :-------------------------------------------------- |
-| boolean isDone() 								| Returns true if the task was completed, threw an exception, or was cancelled |
-| boolean isCancelled() 						| Returns true if the task was cancelled before it completed normally |
-| boolean cancel(boolean mayInterruptIfRunning) | Attempts to cancel execution of the task and returns true if it was successfully cancelled, or false if it could not be cancelled or is complete |
-| V get() 										| Retrieves the result of a task, waiting endlessly if it is not yet available |
-| V get(long timeout, TimeUnit unit) 			| Retrieves the result of a task, waiting the specified amount of time. If the result is not ready bu the time the timeout is reached, a checked TimeoutException will be thrown |
+| Method name                                   | Description                                                                                                                                                                    |
+| :-------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| boolean isDone()                              | Returns true if the task was completed, threw an exception, or was cancelled                                                                                                   |
+| boolean isCancelled()                         | Returns true if the task was cancelled before it completed normally                                                                                                            |
+| boolean cancel(boolean mayInterruptIfRunning) | Attempts to cancel execution of the task and returns true if it was successfully cancelled, or false if it could not be cancelled or is complete                               |
+| V get()                                       | Retrieves the result of a task, waiting endlessly if it is not yet available                                                                                                   |
+| V get(long timeout, TimeUnit unit)            | Retrieves the result of a task, waiting the specified amount of time. If the result is not ready bu the time the timeout is reached, a checked TimeoutException will be thrown |
 
 When the return type of tasks use Future<*V*> and Runnable methods, the type V is determined by the return type of the Runnable method. Since Runnable.run() is void, the get() always returns null when working with Runnable expressions.
 
 The Future.get() method can take an optional value and enum type from java.util.concurrent.TimeUnit. Numerous methods in the Concurrency API use the TimeUnit enum. The following is a table including all of its values.
 
-| Enum Name    				  		 		    |    Description   									  |
-| :-------------------------------------------- | :-------------------------------------------------- |
-| TimeUnit.NANOSECONDS							| Time in one-billionth of a second (1/1,000,000,000) |
-| TimeUnit.MICROSECONDS							| Time in one-millionth of a second (1/1,000,000) 	  |
-| TimeUnit.MILLISECONDS							| Time in one-thousandth of a second (1/1,000)		  |
-| TimeUnit.SECONDS								| Time in seconds 									  |
-| TimeUnit.MINUTES								| Time in minutes 									  |
-| TimeUnit.HOURS								| Time in hours 									  |
-| TimeUnit.DAYS									| Time in days 									  	  |
+| Enum Name             | Description                                         |
+| :-------------------- | :-------------------------------------------------- |
+| TimeUnit.NANOSECONDS  | Time in one-billionth of a second (1/1,000,000,000) |
+| TimeUnit.MICROSECONDS | Time in one-millionth of a second (1/1,000,000)     |
+| TimeUnit.MILLISECONDS | Time in one-thousandth of a second (1/1,000)        |
+| TimeUnit.SECONDS      | Time in seconds                                     |
+| TimeUnit.MINUTES      | Time in minutes                                     |
+| TimeUnit.HOURS        | Time in hours                                       |
+| TimeUnit.DAYS         | Time in days                                        |
 
 ### Introducing *Callable*
 
@@ -448,12 +448,12 @@ Like ExecutorService, we obtain an instance of ScheduledExecutorService using a 
 
 We could store an instance of ScheduledExecutorService in an ExecutorService variable, but doing so would mean that we'd have to cast the object to call any scheduled methods. The following table is a summary of ScheduledExecutorService methods:
 
-| Method Name    				  		 						|    Description   									  |
-| :------------------------------------------------------------ | :-------------------------------------------------- |
-| schedule(Callable<*V*> callable, long delay, TimeUnit unit)								| Creates and executes a Callable task after the given delay |
-| schedule(Runnable command, long delay, TimeUnit unit)										| Creates and executes a Runnable task after the given delay |
-| scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit)		| Creates and executes a Runnable task after the given initial delay, creating a new task every period value that passes |
-| scheduleWithFixedDelay(Runnable command, long initialDelay, long period, TimeUnit unit) 	| Creates and executes a Runnable task after the given initial delay and subsequently with the given delay between the termination of one execution and the commencement of the next |
+| Method Name                                                                             | Description                                                                                                                                                                        |
+| :-------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| schedule(Callable<*V*> callable, long delay, TimeUnit unit)                             | Creates and executes a Callable task after the given delay                                                                                                                         |
+| schedule(Runnable command, long delay, TimeUnit unit)                                   | Creates and executes a Runnable task after the given delay                                                                                                                         |
+| scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit)    | Creates and executes a Runnable task after the given initial delay, creating a new task every period value that passes                                                             |
+| scheduleWithFixedDelay(Runnable command, long initialDelay, long period, TimeUnit unit) | Creates and executes a Runnable task after the given initial delay and subsequently with the given delay between the termination of one execution and the commencement of the next |
 
 These methods in practice are among the most convenient in the Concurrency API, as they perform relatively complex tasks with a single line of code. The delay and period parameters rely on the TimeUnit argument (ENUM) to determine the format of the value, such as seconds or milliseconds.
 
@@ -490,13 +490,13 @@ All the content with the Concurrency API were implemented with single-thread exe
 
 In this section, it's presented three additional factory methods in the Executors class that act on a pool of threads, rather than on a single thread. A *thread pool* is a group of pre-instantiated reusable threads that are available to perform a set of arbitrary tasks. The next table, includes the two previous single-thread executor methods, along with the new ones that you should be familiar with for the exam:
 
-| Method    				  		 		    				|    Description   									  |
-| :------------------------------------------------------------ | :-------------------------------------------------- |
-| ExecutorService newSingleThreadExecutor() 					| Creates a single-threaded executor that uses a single worker thread operating off an unbounded queue, the results are processed sequentially in the order in which they are submitted |
-| ScheduledExecutorService newSingleThreadScheduledExecutor() 	| Creates a single-threaded executor that can schedule commands to run after a given delay or to execute periodically |
-| ExecutorService newCachedThreadPool() 						| Creates a thread pool that creates new threads as needed, but will reuse previously consctructed threads when they are available |
-| ExecutorService newFixedThreadPool(int) 						| Creates a thread pool that reuses a fixed number of threads operating off a shared unbounded queue |
-| ScheduledExecutorService newScheduledThreadPool(int) 			| Creates a thread pool that can schedule commands to run after a given delay or to execute periodically |
+| Method                                                      | Description                                                                                                                                                                           |
+| :---------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| ExecutorService newSingleThreadExecutor()                   | Creates a single-threaded executor that uses a single worker thread operating off an unbounded queue, the results are processed sequentially in the order in which they are submitted |
+| ScheduledExecutorService newSingleThreadScheduledExecutor() | Creates a single-threaded executor that can schedule commands to run after a given delay or to execute periodically                                                                   |
+| ExecutorService newCachedThreadPool()                       | Creates a thread pool that creates new threads as needed, but will reuse previously consctructed threads when they are available                                                      |
+| ExecutorService newFixedThreadPool(int)                     | Creates a thread pool that reuses a fixed number of threads operating off a shared unbounded queue                                                                                    |
+| ScheduledExecutorService newScheduledThreadPool(int)        | Creates a thread pool that can schedule commands to run after a given delay or to execute periodically                                                                                |
 
 These methods return the same instance types, ExecutorService and ScheduledExecutorService. In other words, all of our previous examples are compatible with these new pooled-thread executors.
 
@@ -566,11 +566,11 @@ Implementing this concept in the sheepCount variable, any thread trying to acces
 
 The Concurrency API includes numerous useful classes that are conceptually the same as our primitive classes but that support atomic operations. The next table lists the atomic classes with which you should be familiar for the exam:
 
-| Class Name    				  		 		| Description   									  |
-| :-------------------------------------------- | :-------------------------------------------------- |
-| AtomicBoolean									| A boolean value that may be updated atomically     |
-| AtomicInteger									| An int value that may be updated atomically         |
-| AtomicLong									| A long value that may be updated atomically         |
+| Class Name    | Description                                    |
+| :------------ | :--------------------------------------------- |
+| AtomicBoolean | A boolean value that may be updated atomically |
+| AtomicInteger | An int value that may be updated atomically    |
+| AtomicLong    | A long value that may be updated atomically    |
 
 Each atomic class includes numerous methods that are equivalent to many of the primitive built-in operators that we use on primitives, such as the assignment operator (=) and the increment operators (++). In the following example, we update our SheepManager class with an AtomicInteger:
 
@@ -583,15 +583,15 @@ With this implementation, we get some different outputs, the numbers 1 through 1
 
 The following is a table that lists some common atomic methods:
 
-| Method Name    				  		 		| Description   									  			             |
-| :-------------------------------------------- | :------------------------------------------------------------------------- |
-| get()											| Retrieves the current value						  			             |
-| set()											| Sets the given value, equivalent to the assignment operator (=)            |
-| getAndSet()									| Atomically sets the new value and returns the old value  			         |
-| incrementAndGet()								| For numeric classes, atomic pre-increment operation equivalent to ++value  |
-| getAndIncrement()								| For numeric classes, atomic post-increment operation equivalent to value++ |
-| decrementAndGet()								| For numeric classes, atomic pre-decrement operation equivalent to --value  |
-| getAndDecrement()								| For numeric classes, atomic post-decrement operation equivalent to value-- |
+| Method Name       | Description                                                                |
+| :---------------- | :------------------------------------------------------------------------- |
+| get()             | Retrieves the current value                                                |
+| set()             | Sets the given value, equivalent to the assignment operator (=)            |
+| getAndSet()       | Atomically sets the new value and returns the old value                    |
+| incrementAndGet() | For numeric classes, atomic pre-increment operation equivalent to ++value  |
+| getAndIncrement() | For numeric classes, atomic post-increment operation equivalent to value++ |
+| decrementAndGet() | For numeric classes, atomic pre-decrement operation equivalent to --value  |
+| getAndDecrement() | For numeric classes, atomic post-decrement operation equivalent to value-- |
 
 ### Improving Access with Synchronized Blocks
 
@@ -728,12 +728,12 @@ The ReentrantLock class ensures that once a thread has called lock() and obtaine
 
 The Lock interface includes four methods that you should know for the exam:
 
-| Method	    				  		 		| Description   									  			             |
-| :-------------------------------------------- | :------------------------------------------------------------------------- |
-| void lock() 									| Requests a lock and blocks until lock is acquired 						 |
-| void unlock() 								| Releases a lock  |
-| boolean tryLock() 							| Requests a lock and and returns immediately a boolean indicating whether the lock was successfully acquired  |
-| boolean tryLock(long, TimeUnit) 				| Requests a lock and blocks up to the specified time until lock is required, it returns a boolean indicating whether the lock was successfully acquired  | 
+| Method                          | Description                                                                                                                                            |
+| :------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| void lock()                     | Requests a lock and blocks until lock is acquired                                                                                                      |
+| void unlock()                   | Releases a lock                                                                                                                                        |
+| boolean tryLock()               | Requests a lock and and returns immediately a boolean indicating whether the lock was successfully acquired                                            |
+| boolean tryLock(long, TimeUnit) | Requests a lock and blocks up to the specified time until lock is required, it returns a boolean indicating whether the lock was successfully acquired |
 
 #### Attempting to Acquire a Lock
 
@@ -939,8 +939,8 @@ As we do when instantiating an ArrayList object but passing a List reference, it
 
 The following table lists the common concurrent classes with which you should be familiar with for the exam:
 
-| Class name	| Java Collections Framework interfaces   | Elements Ordered?   | Sorted?   | Blocking?  |
-| :------------ | :-------------------------------------- | :------------ 		| :-------- | :--------- | 
+| Class name | Java Collections Framework interfaces | Elements Ordered? | Sorted? | Blocking? |
+| :--------- | :------------------------------------ | :---------------- || :-------- | :--------- | 
 | ConcurrentHashMap		| ConcurrentMap							 | No			| No		| No		 | 
 | ConcurrentLinkedQueue	| Queue									 | Yes			| No		| No		 |
 | ConcurrentSkipListMap	| ConcurrentMap, SortedMap, NavigableMap | Yes			| Yes		| No		 |
@@ -1161,3 +1161,146 @@ The second way to create a parallel stream is creating it from a Java Collection
 	Stream<Integer> s3 = List.of(1,2,3).parallelStream();
 
 > **Note:** The Stream interface includes a method called `isParallel()`, which verifies if an instance of a stream supports parallel processing. Some operations on streams preserve the parallel attribute, while others don't. For example, the `Stream.concat(Stream s1, Stream s2)` is parallel if either s1 or s2 is parallel, but `flatMap()` for example, doesn't hold the attribute, since it creates a new stream that is not parallel by default, regardless of whether the underlying elements were parallel. 
+
+### Performing a Parallel Decomposition
+
+A *parallel decomposition* is the process of taking a task, breaking it up into smaller pieces that can be performed concurrently and then reassembling the results. The more concurrent a parallel decomposition is, the greater is the performance improvement of using parallel streams. For example: 
+
+	private static int doWork(int input) {
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) { }
+		return input;
+	}
+
+	long start = System.currentTimeMillis();
+	List.of(1,2,3,4,5).parallelStream().map(w -> doWork(w)).forEach(s -> System.out.print(s + " "));
+	System.out.println();
+	var timeTaken = (System.currentTimeMillis()-start)/1000;
+	System.out.println("Time:" + timeTaken + " seconds");
+
+With a parallel stream, the `map()` and `forEach()` operations are applied concurrently, outputing:
+
+	3 2 1 5 4  // Can be random
+	Time: 5 seconds // It depends on the threads running it concurrently
+
+The main differences about implementing this code with a parallel stream instead of implementing it with a serial stream, are that the operations are equivalent to submitting multiple Runnable lambda expressions to a pooled thread executor and then waiting for the results. The results are no longer ordered nor predictable. The results depends in how many CPUs we have available for all of the tasks to be run concurrently. But the key of this implementation is that we have written our code to take advantage of parallel processing when available.
+
+We could use the `forEachOrdered()` operation, which would force our stream into a single threaded process to process the output in order, but our `map()` operation would still be taking advantage of the parallel stream and performing a parallel decomposition in 5 seconds instead of 25.
+
+	List.of(1,2,3,4,5).parallelStream().map(w -> doWork(w)).forEachOrdered(s -> System.out.print(s + " "));
+
+### Processing Parallel Reductions
+
+Reduction operations on parallel streams are referred to as *parallel reductions*. The results for parallel reductions can be different from what you expect when working with serial streams.
+
+When performing *order-based* tasks with parallel streams, methods such as `findAny()` may result in unexpected behavior, since the order is not guaranteed with parallel streams. With a serial stream using `findAny()`, the code will frequently output the first value in the stream, although is not guaranteed.
+
+With a parallel stream, the JVM can create any number of threads to process the stream. When you call `findAny()` on a parallel stream, the JVM selects the first thread to finish the task and retrieves its data. So the result is less predictable than with a serial stream.
+
+> **Note:** Remember that `findAny()` is free to select any element on either serial or parallel streams.
+
+Besides `findAny()`, any stream operation that is based on order, including `findFirst()`, `limit()` or `skip()`, may actually perform more slowly in a parallel environment. This is a result of a parallel processing task being forced to coordinate all of its threads in a synchronized-like way. The results of ordered operations on a parallel stream will be consistent just as in a serial stream. For example, calling `skip(5).limit(2).findFirst()` will return the same result on ordered serial and parallel streams.
+
+> **Note:** You can create unordered streams with `unordered()`. This method does not actually reorder the elements; it just tells the JVM that if an order-based stream operation is applied, the order can be ignored. For serial streams this has no effect whatsoever, but for parallel streams it can greatly improve performance.
+
+#### Combining Results with reduce()
+
+Recall that the stream operation `reduce()` combines a stream into a single object. The first parameter to the `reduce()` method is called the *identity*, the second parameter is called the *accumulator* and the third parameter is called the *combiner*. The following is the signature of the method:
+
+	<U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner)
+
+The following example uses the `reduce()` method and parallel stream:
+
+	System.out.println(List.of('w', 'o', 'l', 'f')
+		.parallelStream()
+		.reduce("",
+				(s1,c) -> s1 + c,
+				(s2,s3) -> s2 + s3)); // Prints 'wolf'
+
+On parallel streams, the `reduce()` method works by applying the reduction to **pairs of elements** within the stream to create intermediate values and then combining those values to produce a final result. For example, 'wolf' is built one character at a time in a serial stream, but in a parallel stream, the intermediate values **wo** and **lf** are created and then combined.
+
+With parallel streams, we now have to worry about order, because what would happen if the elements of a string were combined in the wrong order? Would them produce wlfo or flwo? The Stream API prevents this problem, while still allowing streams to be processed in parallel, as long as you follow one simple rule: *make sure that the accumulator and combiner work regardless of the order they are called in*. 
+
+A problematic accumulator for example, would be when subtracting numbers, where order matters:
+
+	System.out.println(List.of(1,2,3,4,5,6)
+		.parallelStream()
+		.reduce(0, (a, b) -> a - b )); // We can omit a combiner parameter in these examples, as the accumulator
+										  can be used when the intermediate data types are the same.
+
+This code may output -21, 3, or some other value.
+
+We can see other problems if we use an identity parameter that is not truly an identity value. For example:
+
+	System.out.println(List.of("w", "o", "l", "f")
+		.parallelStream()
+		.reduce("X", String::concat); // Prints XwXoXlXf
+
+On a serial stream, this would print Xwolf, but on this parallel stream the result is XwXoXlXf. As part of the parallel process, the identity is applied to multiple elements in the stream, resulting in very unexpected data.
+
+> **Note on Selecting a reduce() Method:** Although there are more than one versions of `reduce()`, and they support parallel processing, it's recommended that you use the three-argument version when working with parallel streams. Providing an explicit combiner method allows the JVM to partition the operations in the stream more efficiently.
+
+#### Combining Results with collect()
+
+Like `reduce()`, The Stream API includes a three-argument version of `collect()` that takes *accumulator* and *combiner* operators, alog with a *supplier* operator instead of an identity. 
+
+	<R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner)
+
+Also, like `reduce()`, the accumulator and combiner operations used must be able to process results in any order. The three-argument version of `collect()` can be performed as  a parallel reduction, as shown in the following:
+
+	Stream<String> stream = Stream.of("w", "o", "l", "f").parallel();
+	SortedSet<String> set = stream.collect(ConcurrentSkipListSet::new, Set::add, Set::addAll);
+	System.out.println(set); // Prints [f, l, o, w]
+
+Recall that elements in a ConcurrentSkipListSet are sorted according to their natural ordering. You should use a concurrent collection to combine the results, also ensuring that the results of concurrent threads do not cause a ConcurrentModificationException. 
+
+Performing such reduction with a collector requires additional considerations. For example, when using an ordered data set, such as a List, the elements in the resulting collection should be in the same order, regardless of whether you use a serial or parallel stream. This may cost some performance, because there are some operations that are unable to be complete in parallel.
+
+When performing a parallel reduction on a Collector, there are a number of properties that must hold true. Otherwise, the `collect()` operation will execute in a single-threaded way. The following are the requirements:
+
+- The stream is parallel.
+- The parameter of the `collect()` operation has the Characteristics.CONCURRENT characteristic.
+- Either the stream is unordered or the collector has the characteristic Characteristics.UNORDERED.
+
+> **Note:** Every Collector instance defines a `characteristics()` method that returns a set of Collector.Characteristics attributes.
+
+For example, while the `Collectors.toSet()` does have the UNORDERED characteristic, it does not have the CONCURRENT characteristic. Therefore, the following is not a parallel reduction even with a parallel stream:
+
+	stream.collect(Collectors.toSet()); // Not a parallel reduction
+
+There are two sets of static methods for retrieving collectors on the Collectors class, that are UNORDERED and CONCURRENT, they are `toConcurrentMap()` and `groupingByConcurrent()`. These methods produce Collector instances that are capable of performing parallel reductions efficiently. There are overloaded versions that take additional arguments for these methods.
+
+	var ohMy = Stream.of("lions","tigers","bears").parallel();
+	ConcurrentMap<Integer, List<String>> map = ohMy.collect(Collectors.groupingByConcurrent(String::length));
+	System.out.println(map); // {5=[lions, bears], 6=[tigers]}
+
+#### Encouraging Parallel Processing
+
+Guaranteeing that a particular stream will perform reductions in parallel, instead of single-threaded, is often difficult in practice. For example, the one-argument `reduce()` operation on a parallel stream may perform concurrently even when there is no explicit combiner argument. 
+
+The key to applying parallel reductions is to encourage the JVM to take advantage of the parallel structures, such as using a `groupingByConcurrent()` collector on a parallel stream rather than a `groupingBy()` collector. By encouraging the JVM to take advantage of the parallel processing, we get the best possible performance at runtime.
+
+### Avoiding Stateful Operations 
+
+Side effects can appear in parallel streams if our lambda expressions are stateful. A *stateful lambda expression* is one whose result depends on any state that might change during the execution of a pipeline. On the other hand, *stateless lambda expression* is one whose result does not depend on any state that might change during the execution of a pipeline. 
+
+Let's try an example. Imagine we require a method that keeps only even numbers in a stream and adds them to a list. Also, we want ordering of the numbers in the stream and list to be consistent. The following method accomplishes this in a stateful manner:
+
+	public List<Integer> addValues(IntStream source) {
+		var data = Collections.synchronizedList(new ArrayList<Integer>());
+		source.filter(s -> s % 2 == 0).forEach(i -> data.add(i)); // STATEFUL
+		return data;
+	}
+
+If we call this method with a serial list, it would work as expected (for example: `addValues(IntStream.range(1, 11))`). On the other hand, if we had a implementation that passed a parallel stream (`addValues(IntStream.range(1, 11)).parallel()`), the output order would become random. The problem when using a parallel stream is that our lambda expression is stateful and modifies a list that is outside our stream. We could use `forEachOrdered()`, but it would force the parallel stream to be serial, losing concrrency enhancements.
+
+We can fix the problem discussed above, by changing our addValues implementation:
+
+	public List<Integer> addValues(IntStream source) {
+		return source.filter(s -> s % 2 == 0).boxed().collect(Collectors.toList());
+	}
+
+This implementation processes the stream and then collects all the results into a new list. It produces the same result on both serial and parallel streams. A consistent result. It removes the stateful operation and reles on the collector to assemble the elements. We could also use a concurrent collector to parallelize the building of the list.
+
+It is **strongly recommended** that you avoid stateful operations when using parallel streams, so as to remove any potential data side effects. In fact, they should be avoided in serial streams since doing so limits the code's ability to someday take advantage of paralelization.
