@@ -488,7 +488,7 @@ declarations, etc). So to use an annotation in a type use or type parameter, lik
 - One possible explanation for this behavior is backward compatibility. When these values were added in Java 8, it was decided that they would have to be explicitly declared to be used in these locations.
 - With that said, when the authors of Java added the MODULE value in Java 9, they didn't make the this same decision. So if @Target is absent, the annotation is permitted in amodule declaration by default.
 
-## Using Common Annotations (p.577-585)
+## Using Common Annotations (p.577-584)
 
 Unlike custom annotations that you might author, many of these annotations have special rules, and if they are used incorrectly, the compiler will report an error. Some of these annotations (like @Override) are quite useful, and are recommended to be used in practice. Others like @SafeVarargs, are more likely to see only on a certification exam. 
 
@@ -582,3 +582,41 @@ The @SafeVarargs marker annotation indicates that a method does not perform any 
 Remember that a varargs parameter is used to indicate the method may be passed zero or more values of the same type, by providing an ellipsis (...). In addition, a method can have at most one varargs parameter, and it must be listed **last**.
 
 This annotation is used to guarantee to other developers that your method does not perform any unsafe operations with the varargs parameter. It also supresses unchecked compiler warnings for the varargs parameter. It will not fix the unsafe operations, like a ClassCastException that can be thrown at runtime. You should also know that the annotation can be applied **only** to methods that contain a varargs parameter and are not able to be overridden (must have a varargs parameter, and the methods need to be marked as static, final, or private).
+
+### Reviwing Common Annotations
+
+The following are some tables that lists the common annotations that you should be familiar with for the exam:
+
+  | Annotation  |  Marker Annotation  |  Type of value()      |    Optional members                                     |
+  | :---------  | :-----------------  | :---------------      |   :---------------------------------------------------  |
+  | @Override     |  Yes              | -                     |   -                                                     |
+  | @FunctionalInterface  |  Yes      | -                     |   -                                                     |
+  | @Deprecated |  No                 | -                     |   String since() - boolean forRemoval()                 |
+  | @SuppressWarnings |  No           | String[]              |   -                                                     |
+  | @SafeVarargs |  Yes               | -                     |   -                                                     |
+
+Some of these have special rules that will trigger a compiler error if used incorrectly, as shown in the next table:
+
+  | Annotation                        |  Applies to             |  Compiler error when  |
+  | :-------------------------------- | :-----------------      | :-------------------  |
+  | @Override                         |  Methods                | Method signature does not match the signature of a inherited method |
+  | @FunctionalInterface              |  Interfaces             | Interface does not contain a single abstract method |
+  | @Deprecated                       |  Most Java declarations | -                     |
+  | @SuppressWarnings                 |  Most Java declarations | -                     |
+  | @SafeVarargs                      |  Methods, constructors  | Method or constructor does not contain a varargs parameter or is applied to a method not marked private, static or final |
+
+Remember that while none of these annotations is required, they do improve the quality of your code. They also help prevent you from making a mistake.
+
+## JavaBean Validation (p.585)
+
+The annotations covered in this chapter, are the ones you need to know for the exam, but there are many incredibly useful annotations available.
+
+If you've ever used JavaBeans to transmite data, then you've probably written code to validate it. While this can be cumbersome for large data structures, annotations allow you to mark private fields directly. The following are some useful **javax.validation** annotations:
+
+- @NotNull: Object cannot be null.
+- @NotEmpty: Object cannot be null or have size of 0.
+- @Size(min=5, max=10): Sets minimum and/or maximum sizes.
+- @Max(600) and @Min(-5): Sets the maximum or minimum numeric values.
+- @Email: Validates that the email is in a valid format.
+
+These annotations can be applied to a variety of data types. Using these annotations is only half of the story. The service receiving or processing the data needs to perform the validation step. In some frameworks like Spring Boot, this can be performed automatically by adding the @Value annotation to a service parameter.
