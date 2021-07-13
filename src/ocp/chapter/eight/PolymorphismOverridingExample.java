@@ -13,7 +13,7 @@ public class PolymorphismOverridingExample extends Penguin {
 
   public void printThis() {
       super.printInfo(); // Prints 8 - because the object is a PolymorphismExample and the method getHeight has been overridden to return 8
-      this.printInfo(); // Prints 3 - because printInfo has been overriden on PolymorphismExample and it calls super.getHeight (3) and not the this.getHeight (8)
+      this.printInfo(); // Prints 3 - because printInfo has been overridden on PolymorphismExample and it calls super.getHeight (3) and not the this.getHeight (8)
   }
 
   public void printInfo() {

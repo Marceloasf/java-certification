@@ -12,7 +12,7 @@ abstract class Bird extends Animal implements Fly { // This class isn't instanti
     public abstract String getName();
 
     protected void makeNoise(String a) { // The first concrete subclass of Bird and Animal (Stork) will not need to override this method, since it's 
-                                         // overriden here as a nonabstract method. It could be redeclared here as an abstract method too.
+                                         // overridden here as a nonabstract method. It could be redeclared here as an abstract method too.
         System.out.println(a);
     }
 

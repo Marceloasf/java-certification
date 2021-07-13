@@ -224,6 +224,6 @@ multiple inheritance, since Java enables only limited multiple inheritance for i
 * Notes after taking the review exam:
   - Remember that an abstract class may include all of the same members as a nonabstract class (even constructors).
   - The main() method can be included inside an abstract class.
-  - Note that the methods can be overloaded inside instead of overriden, so there are some tricky questions that do this in the exam and the concrete will not compile, 
+  - Note that the methods can be overloaded inside instead of overridden, so there are some tricky questions that do this in the exam and the concrete will not compile, 
   since the concrete class doesn't override all the abstract inherited methods. Abstract methods can be overloaded on abstract classes too, causing the same problem if 
   the concrete class doesn't override the abstract method.

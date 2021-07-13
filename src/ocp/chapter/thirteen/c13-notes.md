@@ -487,3 +487,98 @@ If you try to use an annotation more than once without the @Repeatable annotatio
 declarations, etc). So to use an annotation in a type use or type parameter, like lambdas or generic declaration, you must explicitly set the @Target to include these values. If an annotation is declared without the @Target annotation that includes these values, then these locations are prohibited.
 - One possible explanation for this behavior is backward compatibility. When these values were added in Java 8, it was decided that they would have to be explicitly declared to be used in these locations.
 - With that said, when the authors of Java added the MODULE value in Java 9, they didn't make the this same decision. So if @Target is absent, the annotation is permitted in amodule declaration by default.
+
+## Using Common Annotations (p.577-585)
+
+Unlike custom annotations that you might author, many of these annotations have special rules, and if they are used incorrectly, the compiler will report an error. Some of these annotations (like @Override) are quite useful, and are recommended to be used in practice. Others like @SafeVarargs, are more likely to see only on a certification exam. 
+
+
+### Marking Methods with *@Override*
+
+The @Override is a marker annotation that is used to indicate a method is overriding an inherited method, whether it be inherited from an interface or parent class. Using this annotation is not required, but using it incorrectly is prohibited. So remember from Chapter 8: `an overriding method must have the same signature, the same or broader access modifier, and a covariant return type, and not declare any new or broader checked exceptions`. Here's an example:
+
+    public interface Intelligence {
+        int cunning();
+    }
+    public class Canine implements Intelligence {
+        @Override public int cunning() { return 500; }
+        void howl() { System.out.println("Woof!"); }
+    }
+    public class Wolf extends Canine {
+        @Override
+        public int cunning() { return Integer.MAX_VALUE; }
+        @Override void howl() { System.out.println("Howl!"); }
+    }
+
+In this example, the @Override annotation is applied to three methods that it inherits from the parent class or interface. Remember that if the methods are being overloaded instead of overridden, the compiler will output an error.
+
+> **Note:** The annotations in this section are entirely optional, but they improve the quality of the code. Adding these annotations will help other readers of your code, removing the "guesswork" from them while reading the your code. It will make the compiler help you spot some errors too.
+
+### Declaring Interfaces with *@FunctionalInterface*
+
+On earlier chapters, functional interfaces were introduced, which are interfaces with exactly one abstract method. The @FunctionalInterface marker annotation can be applied to any valid functional interface. As with the @Override annotation, the compiler will output an error if used incorrectly (applied on an invalid functional interface). For example:
+
+    @FunctionalInterface interface Scaley {
+        boolean isSnake();
+    }
+
+    @FunctionalInterface
+    public interface Smooth extends Scaley {
+        boolean equals(Object unused);
+    }
+
+Both of these implementations compile, since they are two valid functional interfaces. 
+
+### Retiring Code with *@Deprecated*
+
+In professional software development, we rarely write a libraly once and never go back to it. Over the years, this library can be updated to contain new methods, or some bug fixes on existant methods. Sometimes a method changes so much that we need to create a new version of it, but we can't just remove the old version entirely, what we want is a way to notify our users that a new version of the method is available and give them time to migrate their code to the newer version before we finally remove the old one. 
+
+With those ideas in mind, the @Deprecated annotation is included in Java. This annotation is similar to a marker annotation, in that it can be used without any values, but it includes some optional elements. It can be applied to nearly any Java declaration, such as classes, methods, or variables. For example: 
+
+    /**
+     * Design and plan a zoo. 
+     * @deprecated Use ParkPlanner instead.
+     */  
+    @Deprecated
+    public class ZooPlanner { ... }
+
+With this implementation, the users of the ZooPlanner class will receive a compiler warning if they are using ZooPlanner. 
+
+The @Deprecated annoitation does support two optional values: `String since()` and `boolean forRemoval()`. They provide additional information about when the deprecation occurred in the past and whether or not the type is expected to be removed entirely in the future.
+
+    /**
+     * Method to formulate a zoo layout. 
+     * @deprecated Use ParkPlanner.planPark(String... data) instead.
+     */  
+    @Deprecated(since="1.8", forRemoval=true)
+    public void plan() { }
+
+Note that the @Deprecated annotation does not allow you to provide any suggested alternatives, for that you should use the Javadoc annotation.
+
+> **Always Document the Reason for Deprecation:** Whenever you deprecate a method, you should add a Javadoc annotation to instruct users on how they should update their code. This is considered a good coding practice. For example, the conbstructors of the wrapper classes, like Integer or Double, where recently marked @Deprecated, with the Javadoc note that you should use the factory method `valueOf()` instead. In this case, the advantage is that an immutable value from a pool can be reused, rather than creating a new object. This saves memory and improves performance.
+
+### Ignoring Warnings with *@SuppressWarnings* 
+
+In some cases, we need to perform a particular operation, and we don't care whether or not it is a potential programming problem. So for these cases, we can apply the @SuppressWarnings annotations, which can be applied to a class, method or type, and it'll basically tell the compiler to not warn you about it. Unlike the previous annotations, it requires a `String[] value()` parameter. The following are some of the available values for this annotation:
+
+- "deprecation": Ignore warnings related to types or methods marked with the @Deprecated annotation.
+- "unchecked": Ignore warnings related to the use of raw types, shuch as List instead of List<*String*>.
+
+The annotation actually supports a lot of other values, but for the exam, you only need to know these presented above. Following are two examples of usage:
+
+    @SuppressWarnings("deprecation") public void wakeUp() {
+        SongBird.sing(10);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void goToBed() {
+        SongBird.chirp(new ArrayList());
+    }
+
+### Protecting Arguments with @SafeVarargs
+
+The @SafeVarargs marker annotation indicates that a method does not perform any potential unsafe operations on its varargs parameter. It can be applied only to constructors or methods that cannot be overridden (aka methods marked private, static or final).
+
+Remember that a varargs parameter is used to indicate the method may be passed zero or more values of the same type, by providing an ellipsis (...). In addition, a method can have at most one varargs parameter, and it must be listed **last**.
+
+This annotation is used to guarantee to other developers that your method does not perform any unsafe operations with the varargs parameter. It also supresses unchecked compiler warnings for the varargs parameter. It will not fix the unsafe operations, like a ClassCastException that can be thrown at runtime. You should also know that the annotation can be applied **only** to methods that contain a varargs parameter and are not able to be overridden (must have a varargs parameter, and the methods need to be marked as static, final, or private).

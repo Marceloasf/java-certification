@@ -53,7 +53,7 @@
   - Optional specifiers list:
     * static: The static modifier is used for class methods (will cover more later in this Chapter).
     * abstract: The abstract modifier is used when a method body is not provided (Chapter 9 will cover it).
-    * final: The final modifier is used when a method is not allowed to be overriden by a subclass (Chapter 8 will cover it).
+    * final: The final modifier is used when a method is not allowed to be overridden by a subclass (Chapter 8 will cover it).
     * synchronized: The synchronized modifier is used with multithreaded code (1Z0-816 Chapters will cover it).
     * native: The native modifier is used when interacting with code written in another language such as C++. It is not on either OCP 11 exam.
     * strictfp: The strictfp modifier is used for making floating-point calculations portable. It is not on either OCP 11 exam.
