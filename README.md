@@ -13,15 +13,15 @@ Oracle Certified Associate Java SE 8 Programmer 1 Study Guide
 
 Oracle Certified Professional Java SE 11 Developer Complete Study Guide
 
-- [Chapter 5 - Core Java APIs](./src/oca/chapter/five)
-- [Chapter 6 - Lambdas and Functional Interfaces](./src/oca/chapter/six)
-- [Chapter 7 - Methods and Encapsulation](./src/oca/chapter/seven)
-- [Chapter 8 - Class Design](./src/oca/chapter/eight)
-- [Chapter 9 - Advanced Class Design](./src/oca/chapter/nine)
-- [Chapter 10 - Exceptions](./src/oca/chapter/ten)
-- [Chapter 11 - Modules](./src/oca/chapter/eleven)
-- [Chapter 12 - Java Fundamentals](./src/oca/chapter/twelve)
-- [Chapter 13 - Annotations](./src/oca/chapter/thirteen)
-- [Chapter 18 - Concurrency](./src/oca/chapter/eighteen)
+- [Chapter 5 - Core Java APIs](./src/ocp/chapter/five)
+- [Chapter 6 - Lambdas and Functional Interfaces](./src/ocp/chapter/six)
+- [Chapter 7 - Methods and Encapsulation](./src/ocp/chapter/seven)
+- [Chapter 8 - Class Design](./src/ocp/chapter/eight)
+- [Chapter 9 - Advanced Class Design](./src/ocp/chapter/nine)
+- [Chapter 10 - Exceptions](./src/ocp/chapter/ten)
+- [Chapter 11 - Modules](./src/ocp/chapter/eleven)
+- [Chapter 12 - Java Fundamentals](./src/ocp/chapter/twelve)
+- [Chapter 13 - Annotations](./src/ocp/chapter/thirteen)
+- [Chapter 18 - Concurrency](./src/ocp/chapter/eighteen)
 
-- [Others](./src/oca/chapter/other)
+- [Others](./src/ocp/chapter/other)
