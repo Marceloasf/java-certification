@@ -15,9 +15,8 @@ Java Stream API
 On this chapter, we'll discuss how to create our own classes and methods that use generics, so that the same class can be used with many types.
 
 > **Note:** Remember, the letters (R, T, and U) are generics that you can pass any type to when using these functional interfaces.
-
 Functional interfaces used in this chapter:
-   
+
   | Functional interfaces  |  Return type        |  Method name          |  # parameters   |
   | :--------------------  | :-----------------  | :-------------------  |  :------------  |
   | Supplier<*T*>          |  T                  | get()                 |  0              |
