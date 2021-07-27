@@ -22,6 +22,7 @@ Oracle Certified Professional Java SE 11 Developer Complete Study Guide
 - [Chapter 11 - Modules](./src/ocp/chapter/eleven)
 - [Chapter 12 - Java Fundamentals](./src/ocp/chapter/twelve)
 - [Chapter 13 - Annotations](./src/ocp/chapter/thirteen)
+- [Chapter 14 - Generics and Collections](./src/ocp/chapter/fourteen)
 - [Chapter 18 - Concurrency](./src/ocp/chapter/eighteen)
 
 - [Others](./src/ocp/chapter/other)
