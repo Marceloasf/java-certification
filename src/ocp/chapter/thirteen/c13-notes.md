@@ -28,7 +28,7 @@ If they are similar to interfaces, why we just don't use them? While interfaces 
       @ZooAnimal(habitat="Special Enclosure") private Lion blindLion;
     }
 
-The habitat value is part of the type declaration of each variable, not an individual object. This class defines an habitat for each Lion, even if a. Lion variable points to another object, it would still have the same habitat value. This example brings us to the second rule about annotations: `annotations establish relationships that make it easier to manage data about our application.` The third rule about annotations is: `an annotation ascribes custom information on the declaration where it is defined.`. The same annotation can often be applied to completely unrelated classes or variables. There is one final rule about annotations you should be familiar with: `annotations are optional metadata and by themselves do not do anything.`. This means that you can take a project filled with thousand of annotations and remove all of them, and it will still compile and run, albeit with potetially different behavior at runtime.
+The habitat value is part of the type declaration of each variable, not an individual object. This class defines an habitat for each Lion, even if a. Lion variable points to another object, it would still have the same habitat value. This example brings us to the second rule about annotations: `annotations establish relationships that make it easier to manage data about our application.` The third rule about annotations is: `an annotation ascribes custom information on the declaration where it is defined`. The same annotation can often be applied to completely unrelated classes or variables. There is one final rule about annotations you should be familiar with: `annotations are optional metadata and by themselves do not do anything`. This means that you can take a project filled with thousand of annotations and remove all of them, and it will still compile and run, albeit with potetially different behavior at runtime.
 
 This last rule might seem a little counterintuitive at first, but it refers to the fact that annotations aren't utilized where they are defined. It's up to the rest of the application, or more likely the underlying framework, to enforce or use annotations to accomplish tasks.
 
@@ -276,7 +276,7 @@ Remember that List or Collection are not in the list of supported element types 
 Now we'll cover built-in annotations applied to other annotations. Yes, metadata about metadata. Since these annotations re built into Java, they primarily impact the compiler.
 
 ### Limiting Usage with @Target 
-Many annotation declarations include @Target annotation, which limits the types the annotation can be applied to. More specifically, the @Target annotation takes an array of ElementType enuim values as its value() element. Values for the @Target annotations, ElementType value followed by what they apply to:
+Many annotation declarations include @Target annotation, which limits the types the annotation can be applied to. More specifically, the @Target annotation takes an array of ElementType enum values as its value() element. Values for the @Target annotations, ElementType value followed by what they apply to:
 
 - TYPE: Classes, interfaces, enums, annotations.
 - FIELD: Instance and static variables, enum values.
@@ -315,6 +315,7 @@ You might notice that some of the ElementType applications overlap. For example,
 ### Understanding the TYPE_USE Value
 
 The TYPE_USE is the most complex of those listed types. The TYPE_USE parameter can be used anywhere there is a Java type. By including it in @Target, it actually includes nearly all the values listed before, included classes, interfaces, constructors, parameters and more. There are a few exceptions, for example: 
+
 - It can be used only on a method that returns a value. Methods that return void would still need the METHOD value defined.
 - It also allows annotations in places where types are used, such as cast operations, object creation with new, inside type declarations, etc.
 

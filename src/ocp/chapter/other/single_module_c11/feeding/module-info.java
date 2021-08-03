@@ -1,3 +1,0 @@
-module zoo.animal.feeding {
-    
-}
