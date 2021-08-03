@@ -1,26 +1,23 @@
-** Chapter 7 - Methods and Encapsulation
+# Chapter 7 - Methods and Encapsulation
 
-* Creating and Using Methods
-  - Create methods and contructors with arguments and return values
-  - Create and invoke overloaded methods
-  - Apply the static keyword to methods and fields
+Creating and Using Methods
+- Create methods and contructors with arguments and return values
+- Create and invoke overloaded methods
+- Apply the static keyword to methods and fields
 
-* Applying Encapsulation
-  - Apply access modifiers
-  - Apply encapsulation principles to a class
+Applying Encapsulation
+- Apply access modifiers
+- Apply encapsulation principles to a class
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+## Designing Methods (p.250-251)
+A method declaration is composed by, respectively, an access modifier (public), *optional* specifier (final), return type (void), method name (any name that starts with a letter, $ or _), list of parameters (which must be wrapped in parentheses), exceptions(optional) and the method body (must have braces). 
 
-** p.250-251
-** Designing Methods:
-  - A method declaration is composed by, respectively, an access modifier (public), *optional* specifier (final), return type (void),
-  method name (any name that starts with a letter, $ or _), list of parameters (which must be wrapped in parentheses), exceptions
-  (optional) and the method body (must have braces).
-  - The method name and parameter list are called the method signature.
-  Parts of a method declaration:
-  __________________________________________________________
- | Element                         Required?                |
- |__________________________________________________________|
+> **Note:** The method name and parameter list are called the method signature.
+
+Parts of a method declaration:
+  ____________________   ____________________________________
+ | Element             |            Required?                |
+ |____________________ | ____________________________________|
  | Access modifier                 No                       |
  | Optional modifier               No                       |
  | Return type                     Yes                      |
@@ -29,35 +26,49 @@
  | Optional exception list         No                       |
  | Method body *                   Yes, but can be empty { }|
  |__________________________________________________________|
-  * The full body can be omitted for abstract methods.
 
-** p.251-252
-** Access Modifiers:
-  - Java offers four choices of access modifiers:
-    * private: The private modifier means the method can be called only from within the same class.
-    * Default (package-private) Access: With default access, the method can be called only from classes in the same package. There is 
-    no keyword for default access. You simply omit the access modifier.
-    * protected: The protected modifier means the method can be called only from classes in the same package or subclasses.
-    * public: The public modifier means the method can be called from any class.
-    Obs.: The default keyword exists in Java, but it's not used for access control (Chapter 9 will cover interfaces).
-  - Some tricky method declarations that may appear in the exam:
+  |Element                 | Required?                 |
+  |:---------------------- | :------------------------ |
+  |Access modifier         | No                        |
+  |Optional modifier       | No                        |
+  |Return type             | Yes                       |
+  |Method name             | Yes                       |
+  |Parameter list          | Yes, but can be empty ( ) |
+  |Optional exception list | No                        |
+  |Method body *           | Yes, but can be empty { } |
+
+> **Table Note:** The full body can be omitted for abstract methods.
+
+## Access Modifiers (p.251-252)
+
+Java offers four choices of access modifiers:
+- private: The private modifier means the method can be called only from within the same class.
+- Default (package-private) Access: With default access, the method can be called only from classes in the same package. There is no keyword for default access. You simply omit the access modifier.
+- protected: The protected modifier means the method can be called only from classes in the same package or subclasses.
+- public: The public modifier means the method can be called from any class.
+
+> Obs.: The default keyword exists in Java, but it's not used for access control (Chapter 9 will cover interfaces).
+
+Some tricky method declarations that may appear in the exam:
+
     `public void walk1() { }` // VALID
     `default void walk2() { }` // DOES NOT COMPILE
     `void public walk3() { }` // DOES NOT COMPILE
     `void walk4() { }` // VALID
 
-** p.252-253
-** Optional Specifiers:
-  - Different than access modifiers, you can have multiple specifiers in the same method (although not all combinations are legal).
-  - Multiple specifiers can be specified in any order.
-  - Optional specifiers list:
-    * static: The static modifier is used for class methods (will cover more later in this Chapter).
-    * abstract: The abstract modifier is used when a method body is not provided (Chapter 9 will cover it).
-    * final: The final modifier is used when a method is not allowed to be overridden by a subclass (Chapter 8 will cover it).
-    * synchronized: The synchronized modifier is used with multithreaded code (1Z0-816 Chapters will cover it).
-    * native: The native modifier is used when interacting with code written in another language such as C++. It is not on either OCP 11 exam.
-    * strictfp: The strictfp modifier is used for making floating-point calculations portable. It is not on either OCP 11 exam.
-  - Some tricky method declarations with specifiers that can appear in the exam:
+## Optional Specifiers (p.252-253)
+
+Different than access modifiers, you can have multiple specifiers in the same method (although not all combinations are legal). Multiple specifiers can be specified in any order. Optional specifiers list:
+
+- static: The static modifier is used for class methods (will cover more later in this Chapter).
+- abstract: The abstract modifier is used when a method body is not provided (Chapter 9 will cover it).
+- final: The final modifier is used when a method is not allowed to be overridden by a subclass (Chapter 8 will cover it).
+- synchronized: The synchronized modifier is used with multithreaded code (1Z0-816 Chapters will cover it).
+- native: The native modifier is used when interacting with code written in another language such as C++. It is not on either OCP 11 exam.
+- strictfp: The strictfp modifier is used for making floating-point calculations portable. It is not on either OCP 11 exam.
+
+Some tricky method declarations with specifiers that can appear in the exam:
+
     `public void walk1() { }` // VALID
     `public final void walk2() { }` // VALID
     `public static final void walk3() { }` // VALID
@@ -66,25 +77,25 @@
     `public void final walk6() { }` // DOES NOT COMPILE - It's not allowed to declare the optional specifiers after the return type.
     `final public void walk7() { }` // VALID - Java allows the optional specifiers to appear before the access modifier.
 
-** p.253-254
-** Return Type:
-  - Methods with a return type other than void are required to have a return statement (returning the same data type) inside their body.
-  - Methods that have a return type of void are permitted to have a return statement with no value returned or omit the return statement.
-  - Some examples of wrong method declaration:
+## Return Type (p.253-254)
+
+Methods with a return type other than void are required to have a return statement (returning the same data type) inside their body. Methods that have a return type of void are permitted to have a return statement with no value returned or omit the return statement. Some examples of wrong method declaration:
+
     `public String walk1() { }` // DOES NOT COMPILE - No return statement
     `public walk2() { }` // DOES NOT COMPILE - No return type specified
     `public String int walk3() { }` // DOES NOT COMPILE - Two return types are specified (only one can be specified)
     `String walk4(int a) { if (a == 4) return ""; }` // DOES NOT COMPILE - Missing a default return statement, in case of a !== 4
 
-** p.254-255
-** Method Name:
-  - Review of some rules:
-    * An identifier may only contain letters, numbers, $ or _.
-    * The first character is not allowed to be a number.
-    * An identifier is not allowed to contain special characters (%,#,&,@...).
-    * Reserved words are not allowed (public), but remember that Java is camelcase, for example public !== Public. 
-    * Single underscore (_) character is not allowed as an identifier.
-    * By convention, methods begin with a lowercase letter, but are not required to.
+## Method Name (p.254-255)
+
+Review of some rules:
+
+- An identifier may only contain letters, numbers, $ or _.
+- The first character is not allowed to be a number.
+- An identifier is not allowed to contain special characters (%,#,&,@...).
+- Reserved words are not allowed (public), but remember that Java is camelcase, for example public !== Public. 
+- Single underscore (_) character is not allowed as an identifier.
+- By convention, methods begin with a lowercase letter, but are not required to.
 
 ** p.256-257
 ** Working with Varargs:
