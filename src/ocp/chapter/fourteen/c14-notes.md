@@ -133,3 +133,55 @@ Reading method references is helpful in understanding the code. The following ta
   | Constructor                             | Class name             | new           |  ArrayList::new    |
  
 > **Note:** The number of parameters in a method reference is irrelevant, since we can even use it with a method that accepts a varargs parameter.
+
+## Using Wrapper Classes and the Diamond Operator (p.605-608)
+
+Remember that each Java primitive has a corresponding class. With `autoboxing`, the compiler will automatically convert the primitive value to the corresponding wrapper. Same for `unboxing`, which will do the reverse.
+
+Wrapper Classes:
+
+  | Primitive type        |  Wrapper class      |  Example of initializing   |
+  | :-------------------- | :------------------ | :------------------------  |
+  | boolean               | Boolean             | Boolean.valueOf(true)      |
+  | byte                  | Byte                | Byte.valueOf((byte) 1)     |
+  | short                 | Short               | Short.valueOf((short) 1)   |
+  | int                   | Integer             | Integer.valueOf(1)         |
+  | long                  | Long                | Long.valueOf(1)            |
+  | float                 | Float               | Float.valueOf((float) 1.0) |
+  | double                | Double              | Double.valueOf(1.0)        |
+  | char                  | Character           | Character.valueOf('c')     |
+
+The following are examples of autoboxing and unboxing:
+
+    Integer pounds = 120; // Autoboxing an primitive int to an Integer on the declaration
+    Character letter = "robot".charAt(0); // Autoboxing can involve methods
+    char r = letter; // Character 'letter' is unboxed to a char type var
+
+> **Note:** Remember that one advantage of a wrapper class over a primitive is that it can hold a null value. 
+
+Be careful with tricks, autobox can work on methods, but remember that if a method has an overloaded signature of the primitive value, Java will will match this signature instead of the Object one.
+
+### Diamond Operator (<>)
+
+In the past we would write generics with the following sintax: 
+
+    List<Integer> list = new ArrayList<Integer>();
+    List<String,Integer> map = new HashMap<String,Integer>();
+    List<String,List<Integer>> mapLists = new HashMap<String,List<Integer>>();
+
+There are some expressions where generic types might not be the same on both sides, but often they are identical. The diamond operator was added to solve this duplication problem. He is a shorthand notation that allows you to omit the generic type from the **right** side of a statement when the type can be inferred. The following are the equivalent to the previous example, but using the diamond operator:
+
+    List<Integer> list = new ArrayList<>();
+    List<String,Integer> map = new HashMap<>();
+    List<String,List<Integer>> mapLists = new HashMap<>();
+
+Basically, the first is the variable declaration and fully specifies the generic type. The second is an expression that infers the type from the assignment operator (using the <>).
+
+> **Note:** The diamond operator cannot be used as the type in a variable declaration! It can be used only on the right side of an assignment operation. 
+
+Another way to declare it, it's using **var** with the diamond operator, for example:
+
+    var list = new ArrayList<Integer>(); // Declares a new ArrayList<Integer>
+    var list2 = new ArrayList<>(); // Declares a new ArrayList<Object>
+
+Remember that Java infers the type on this kind of expression, so using only the <> without a type on the left, Java will assume you wanted Object.
