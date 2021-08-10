@@ -185,3 +185,21 @@ Another way to declare it, it's using **var** with the diamond operator, for exa
     var list2 = new ArrayList<>(); // Declares a new ArrayList<Object>
 
 Remember that Java infers the type on this kind of expression, so using only the <> without a type on the left, Java will assume you wanted Object.
+
+## Using Lists, Sets, Maps and Queues (p.608-630)
+
+First let's start defining these collections. A *collection* is a group of objects contained in a single object. The Java Collections Framework is a set of classes in java.util for storing collections. The four main interfaces on this framework are:
+
+- List: A *list* is an ordered collection of elements that allows duplicate values. The elements in a list can be accessed by an index (int).
+- Set: A *set* is a collection that does not allow duplicate entries.
+- Queue: A *queue* is a collection that orders its elements in a specific order for processing. The typical order of a queue is in a `first-in, first-out` (FIFO) order, but other orderings are possible.
+- Map: A *map* is a collection that maps keys to values, with no duplicate keys allowed. The elements in a map are key/value pairs.
+
+These collections have some classes that implement them. Some of them you need to be familiar for the exam:
+
+- List: ArrayList and LinkedList
+- Set: HashSet and TreeSet
+- Queue: LinkedList
+- Map: HashMap and TreeMap
+
+From all these interfaces shown above, the Map interface is the only one which does not implements the Collection interface. It is considered part of the framework, even though isn't technically considered a Collection. But it is a collection (note the lowercase), since it contains a group of objects. Maps are treated differently because they need different methods due to being key/value pairs.
