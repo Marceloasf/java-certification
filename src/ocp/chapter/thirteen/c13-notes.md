@@ -392,7 +392,7 @@ Javadoc has its own annotations that are used solely in generating data within a
        *  @return   the result of the light show operation. 
        *  @author   Grace Hopper
        *  @since    1.5
-       *  @deprecated Use EnchancedZooLightShow.lights() instead.
+       *  @deprecated Use EnhancedZooLightShow.lights() instead.
        */
        @Deprecated(since="1.5") public static String perform(int distance) {
          return "Beginning light show!";

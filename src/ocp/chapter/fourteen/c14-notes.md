@@ -203,3 +203,142 @@ These collections have some classes that implement them. Some of them you need t
 - Map: HashMap and TreeMap
 
 From all these interfaces shown above, the Map interface is the only one which does not implements the Collection interface. It is considered part of the framework, even though isn't technically considered a Collection. But it is a collection (note the lowercase), since it contains a group of objects. Maps are treated differently because they need different methods due to being key/value pairs.
+
+### Common Collections Methods
+
+The Collections interface contains useful methods for working with lists, sets and queues. Many of these methods are *convenience methods*, meaning that they could be implemented by you, but using these methods makes your code easier to read and write.
+
+> **Note:** On this section, the classes used are ArrayList and HashSet, but these methods can apply to any class that inherits the Collections interface.
+
+#### *add()*
+
+The `add()` method inserts a new value into the Collection and reutrns whether it was successful. The method signature is as follows:
+
+    boolean add(E element)
+
+Remember that the Collections Framework uses a lot of generics, so expect to see E frequently. The E means the generic type that was used to create the collection. Some Collection types will always return true when using `add()`, for other types, there is logic to define the return. Here are some examples of `add()`:
+
+    Collection<String> list = new ArrayList<>();
+    System.out.println(list.add("Sparrow")); // true
+    System.out.println(list.add("Sparrow")); // true
+
+    Set<String> set = new HashSet<>();
+    System.out.println(set.add("Sparrow")); // true
+    System.out.println(set.add("Sparrow")); // false
+
+As you can see above, List allows duplicates, making the return true each time, on the other hand, Set does not allow duplicates, so it returns false when trying to add a duplicate value.
+
+#### *remove()*
+
+The `remove()` method removes a single matching value in the collection and returns whether it was successful. The method signature is as follows:
+
+    boolean remove(Object object)
+
+The following are some examples on how to use it:
+
+    Collection<String> birds = new ArrayList<>();
+    birds.add("hawk"); // [hawk]
+    birds.add("hawk"); // [hawk, hawk]
+    System.out.println(birds.remove("cardinal")); // false
+    System.out.println(birds.remove("hawk")); // true
+    System.out.println(birds); // [hawk]
+
+Note that when the element is not found/removed, it just returns false. It only removes one match.
+
+It's possible to call `remove()` on a List with an int using the index, remember that using the index can result in a IndexOutOfBoundsException, in case that a index that does not exists is passed. So just remember that `remove()` has overloaded implementations.
+
+Java does not allow removing elements from a list while using the enhanced for loop. For example:
+
+    Collection<String> birds = new ArrayList<>();
+    birds.add("hawk");
+    birds.add("hawk");
+
+    for (String bird : birds)
+        birds.remove(bird); // Throws ConcurrentModificationException
+
+Yes, it's possible to get a ConcurrentModificationException without threads. This is they way Java complains that you are trying to modify the list while looping through it. There are some ways to fix this and they will be shown in Chapter 18 (Concurrency).
+
+#### *isEmpty()* and *size()*
+
+This are some simple methods, basically they look at how many elements are in the Collection. These are their signatures:
+
+    boolean isEmpty()
+    int size()
+
+The main difference between them is that `isEmpty()` checks if the Collection is empty returning a boolean, and `size()` return the size of the Collection. Some examples:
+
+    Collection<String> birds = new ArrayList<>();
+    System.out.println(birds.isEmpty()); // true
+    System.out.println(birds.size()); // 0
+    birds.add("hawk");
+    birds.add("hawk");
+    System.out.println(birds.isEmpty()); // false
+    System.out.println(birds.size()); // 2
+
+#### *clear()*
+
+The `clear()` method provides an easy way to discard all elements of the Collection. The signature is as follows:
+
+    void clear()
+
+The following are some examples of how to use it:
+
+    Collection<String> birds = new ArrayList<>();
+    birds.add("hawk");
+    birds.add("hawk");
+    System.out.println(birds.isEmpty()); // false
+    System.out.println(birds.size()); // 2
+    birds.clear();
+    System.out.println(birds.isEmpty()); // true
+    System.out.println(birds.size()); // 0
+
+After calling `clear()`, the Collection turns back to being an empty Collection.
+
+#### *contains()*
+
+The `contains()` method checks whether a certain value is in the Collection. The signature is as follows:
+
+    boolean contains(Object object)
+
+The following are some examples of how to use it:
+
+    Collection<String> birds = new ArrayList<>();
+    birds.add("hawk");
+    System.out.println(birds.contains("hawks")); // true
+    System.out.println(birds.contains("robin")); // false
+
+The `contains()` method calls `equals()` on elements of the Collection to check if there are any matches.
+
+#### *removeIf()*
+
+The `removeIf()` method removes all elements that match a condition, only if they match the condition. It's possible to specify what should be deleted using a block of code or even a method reference. The signature is as follows (the ? super will be explained further):
+
+    boolean removeIf(Predicate<? super E> filter)
+
+It uses a Predicate, so it'll take one parameter and return a boolean. Some examples:
+
+    Collection<String> list = new ArrayList<>();
+    list.add("Magician");
+    list.add("Assistant");
+    list.removeIf(s -> s.startsWith("A"));
+    System.out.println(list); // [Magician]
+    
+That condition will remove all of the String values that start with the letter A. Another example, but this time using method reference:
+
+    Collection<String> set = new HashSet<>();
+    set.add("Wand");
+    set.add("");
+    set.removeIf(String::isEmpty);
+    System.out.println(set); // [Wand]
+
+#### *forEach()*
+
+The `forEach()` method allows you to loop through a Collection. It uses a Consumer that takes a single parameter and does not return anything. The signature is as follows: 
+
+    void forEach(Consumer<? super T> action)
+
+The following are some examples of how to use it:
+
+    Collection<String> cats = Arrays.asList("Annie", "Ripley");
+    cats.forEach(System.out::println);
+    cats.forEach(c -> System.out.println(c));
