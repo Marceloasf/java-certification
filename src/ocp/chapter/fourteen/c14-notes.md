@@ -342,3 +342,22 @@ The following are some examples of how to use it:
     Collection<String> cats = Arrays.asList("Annie", "Ripley");
     cats.forEach(System.out::println);
     cats.forEach(c -> System.out.println(c));
+
+### Using the List Interface
+
+Now we are going to move on to specific classes. A List is used when you need an ordered collection that can contain duplicate values. You can retrieve and insert items at specific positions of the list based on an int index. Unlike an array, many List implementations can change in size after they are declared. 
+
+The List is pretty much like an array, it has a strucutre like where it has an index, starting from 0, and the data it holds.
+
+Lists can be used without caring about the order of elements, but you can sort them out if you need to. The default order of a list is the order the items were added in. There are some implementations of List that can be differente in some aspects, we'll take a look at some of the most common. 
+
+> **Note:** Remember that there are Interfaces and Classes when talking about Collections, for example, List is an interface, while ArrayList is a class that implements List. 
+
+#### Comparing List Implementations
+
+ ArrayList is like a resizable array. When new elements are added to it, the ArrayList will automaticcally grow. When you aren't sure which collection to use, use an ArrayList. The main benefit on an ArrayList is that you can look up any element in constant time. Adding and removing an element is slower than accessing an element. This makes ArrayList a good choice when you are reading more (or the same amount as) often than writing. 
+
+ A LinkedList is special because it implements both List and Queue. It has all the methods of a List. It also has additional methods to facilitate adding or removing from the beginning and/or end of the list. The main benefits of a LinkedList are that you can access, add and remove from the beginning and end of the list in constant time. The trade-off is that dealing with an arbitrary index takes linear time, making a LinkedList a good choice when you need a Queue. 
+
+ > **Note:** Both of these classes implements List, but only LinkedList implements Queue.
+ 
