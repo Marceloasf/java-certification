@@ -423,3 +423,13 @@ The `replaceAll()` is a little different than the others, since it takes an Unar
     System.out.println(numbers); // [3, 6, 9]
 
 This lambda triples the value of each value in the list. So this method calls the lambda on each element of the list and replaces the value at that index.
+
+### Using the *Set* Interface
+
+We use a Set when we don't want to allow duplicate elements on a Collection. Set has some different implementation, but what they all have in common is that they don't allow duplicates.
+
+#### Comparing *Set* Implementations
+
+A HashSet stores its elements in a *hash table*, which means the elements keys are a hash and the values are an Object. It uses the `hashCode()` method of the objects to retrieve them more efficiently. The main benefit is that adding elements and checking whether an element is in the set both have constant time, but in the other hand, we lost the order in which the elements were inserted in the set.
+
+A TreeSet stores its elements in a sorted tree structure. The main benefit is that the set is always sorted, the trade-off being that when you add and check whether an element exists takes longer than with a HashSet, and it takes longer as the tree grows larger.
