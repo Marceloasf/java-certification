@@ -343,7 +343,7 @@ The following are some examples of how to use it:
     cats.forEach(System.out::println);
     cats.forEach(c -> System.out.println(c));
 
-### Using the List Interface
+### Using the *List* Interface
 
 Now we are going to move on to specific classes. A List is used when you need an ordered collection that can contain duplicate values. You can retrieve and insert items at specific positions of the list based on an int index. Unlike an array, many List implementations can change in size after they are declared. 
 
@@ -353,7 +353,7 @@ Lists can be used without caring about the order of elements, but you can sort t
 
 > **Note:** Remember that there are Interfaces and Classes when talking about Collections, for example, List is an interface, while ArrayList is a class that implements List. 
 
-#### Comparing List Implementations
+#### Comparing *List* Implementations
 
  ArrayList is like a resizable array. When new elements are added to it, the ArrayList will automaticcally grow. When you aren't sure which collection to use, use an ArrayList. The main benefit on an ArrayList is that you can look up any element in constant time. Adding and removing an element is slower than accessing an element. This makes ArrayList a good choice when you are reading more (or the same amount as) often than writing. 
 
@@ -361,3 +361,65 @@ Lists can be used without caring about the order of elements, but you can sort t
 
  > **Note:** Both of these classes implements List, but only LinkedList implements Queue.
  
+#### Creating a *List* with a Factory
+
+There are some special methods that allow us to create a List without knowing the type, which is different than creating a List from an ArrayList or a LinkedList. These methods are factory methods that allow us to create a List including data in one line. Some of these methods return an immutable object, as you might remember from previous chapters. These are the three factory methods to create a List:
+
+ | Method                    | Description                                                   | Can add elements?  | Can replace element?  | Can delete elements?  |
+ | :------------------------ | :-----------------------------------                          | :----------------- | :-------------------- | :-------------------- |
+ | Arrays.asList(varargs)    | Returns fixed size list backed by an array                    | No                 | Yes                   | No                    |
+ | List.of(varargs)          | Returns immutable list                                        | No                 | No                    | No                    |
+ | List.copyOf(collection)   | Returns immutable list with copy of original collection's values  | No             | No                    | No                    |
+
+ Here are some examples on how to use them:
+
+    String[] array = new String[] { "a", "b", "c" };
+    List<String> asList = Arrays.asList(array); // [a, b, c]
+    List<String> of = List.of(array); // [a, b, c]
+    List<String> copyOf = List.copyOf(asList); // [a, b, c]
+
+    array[0] = "z";
+
+    System.out.println(asList); // [z, b, c]
+    System.out.println(of); // [a, b, c]
+    System.out.println(copyOf); // [a, b, c]
+
+    asList.set(0, "x");
+    System.out.println(Arrays.toString(array)); // [x, b, c]
+
+    copy.add("y"); // throws UnsupportedOperationException
+
+Basically, the update on the elements only works when using asList, because the array changes when the asList List changes and vice versa, the other two types of List would throw an exception. All the lists would throw a exception when trying to add or delete elements.
+
+#### Working with *List* Methods
+
+These are methods of the List interface, they work with indexes. These are some that you should be familiar with, in addition to the ones inherited from Collection:
+
+- `boolean add(E element)`: Adds the element to the end (available on all Collection APIs) 
+- `void add(int index, E element)`: Adds the element at the index and moves the rest towards the end
+- `E get(int index)`: Returns the element at the index
+- `E remove(int index)`: Removes the element at the index and moves the rest towards the front
+- `void replaceAll(UnaryOperator<E> op)`: Replaces each element in the list with the result of the operator
+- `E set(int index, E e)`: Replaces the element at a index and returns the original. Throws **IndexOutOfBoundsException** if the index is larger than the maximum one set
+
+The following examples demonstrate most of these:
+
+    List<String> list = new ArrayList<>();
+    list.add("SD");
+    list.add(0, "NY");
+    System.out.println(list.get(0));   // [NY]
+    list.set(1, "FL");
+    System.out.println(list);   // [NY, FL]
+    list.remove("NY");
+    list.remove(0);
+    list.set(0, "?");   // IndexOutOfBoundsException
+
+> **Note:** The output would be the same if you tried these examples with a LinkedList. The code would be less efficient, but only noticiable on veryt large lists. 
+
+The `replaceAll()` is a little different than the others, since it takes an UnaryOperator that takes one parameter and returns a value of the same type, for example: 
+
+    List<Integer> numbers = Arrays.asList(1, 2, 3);
+    numbers.replaceAll(x -> x * 3);
+    System.out.println(numbers); // [3, 6, 9]
+
+This lambda triples the value of each value in the list. So this method calls the lambda on each element of the list and replaces the value at that index.
