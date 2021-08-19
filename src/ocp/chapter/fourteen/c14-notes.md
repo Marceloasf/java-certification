@@ -433,3 +433,70 @@ We use a Set when we don't want to allow duplicate elements on a Collection. Set
 A HashSet stores its elements in a *hash table*, which means the elements keys are a hash and the values are an Object. It uses the `hashCode()` method of the objects to retrieve them more efficiently. The main benefit is that adding elements and checking whether an element is in the set both have constant time, but in the other hand, we lost the order in which the elements were inserted in the set.
 
 A TreeSet stores its elements in a sorted tree structure. The main benefit is that the set is always sorted, the trade-off being that when you add and check whether an element exists takes longer than with a HashSet, and it takes longer as the tree grows larger.
+
+#### Working with *Set* Methods
+
+Like List, you can create an immutable Set in one line or make a copy of an existing one, for example:
+
+    Set<Character> letters = Set.of('Z', 'o', 'o');
+    Set<Character> copy = Set.copyOf(letters);
+
+These are the only extra Set methods that you need to know for the exam, on the other hand, you need to know how sets behave with respect to the traditional Collection methods. Another important thing to know is the difference between the types of Set, first HashSet:
+
+    Set<Integer> set = new HashSet<>();
+    boolean b1 = set.add(66); // true
+    boolean b2 = set.add(10); // true
+    boolean b3 = set.add(66); // false
+    boolean b4 = set.add(8); // true
+    set.forEach(System.out::println); // this code can print: 66 8 10
+
+The elements are not ordered, because HashSet is not ordered. Now let's take a look on TreeSet:
+
+    Set<Integer> set = new TreeSet<>();
+    boolean b1 = set.add(66); // true
+    boolean b2 = set.add(10); // true
+    boolean b3 = set.add(66); // false
+    boolean b4 = set.add(8); // true
+    set.forEach(System.out::println); // this code can print: 8 10 66
+
+The elements are printed in their natural order. Numbers implements the Comparable interface.
+
+The `equals()` method is used to determine equality. On Sets the `hashCode()` method is used to know which *bucket* to look in so that Java doesn't have to look through the whole set to find out wheter an object is there. If all implementations return the same `hashCode()`, then Java needs to call `equals()` on every element of the set. 
+
+### Using the *Queue* Interface
+
+Usually we use a Queue when elements are added and removed in a specific order, for sorting elements too. Unless stated otherwise, a queue is assumed to be FIFO (first-in, first-out), but some queue implementations can change this to use a different type of ordering. Another commonly used format is LIFO (last-in, first-out), also referred to as a *stack*. In Java, both can be implemented with the Queue interface.
+
+In a Queue using FIFO order, the first one to be added is considered to be in the front of the queue (index 0), and the last one to be added to be in the back of the queue (index n).
+
+#### Comparing *Queue* Implementations
+
+LinkedList is not only a list, it is a double-ended queue too. A double-ended queue is different from a regular queue in that you can insert and remove elements from both the front and back of the queue. The main benefit of a LinkedList is that it implements both the List and Queue interfaces, the trade-off is that it isn't as efficient as a common queue. You can use the ArrayDeque class (short for double-ended queue) if you need a more efficient one. 
+
+> **Note:** **ArrayDeque** is not in scope for the exam.
+
+#### Working with *Queue* Methods
+
+The Queue interface contains a lot of methods, but there are only six that you need to be familiar for the exam. These six Queue methods are:
+
+ | Method                    | Description                                                                      | Throws exception on failure  |
+ | :------------------------ | :-----------------------------------                                             | :-----------------           |
+ | boolean add(E e)          | Adds an element to the back of the queue and returns true or throws an exception | Yes                          |
+ | E element()               | Returns next element or throws an exception if the queue is empty                | Yes                          |
+ | boolean offer(E e)        | Adds an element to the back of the queue and returns whether it was successful   | No                           |
+ | E remove()                | Removes and returns next element or throws an exception if the queue is empty    | Yes                          |
+ | E poll()                  | Removes and returns next element or returns null if the queue is empty           | No                           |
+ | E peek()                  | Returns next element or returns null if the queue is empty                       | No                           |
+    
+
+There are two sets of methods, one that throws an exception when something goes wrong, and another that return a different value when something goes wrong. The `offer()`/`poll()`/`peek()` methods are the most common ones. Let's look at some examples:
+
+    Queue<Integer> queue = new LinkedList<>();
+    System.out.println(queue.offer(10)); // true
+    System.out.println(queue.offer(4)); // true
+    System.out.println(queue.peek()); // 10 
+    System.out.println(queue.poll()); // 10 
+    System.out.println(queue.poll()); // 4 
+    System.out.println(queue.peek()); // null 
+
+> **Note:** Some queues are limited in size, which would cause offering an element to the queue to fail, but this type of scenario is not present in the exam.
