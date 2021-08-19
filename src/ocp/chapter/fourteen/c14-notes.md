@@ -500,3 +500,20 @@ There are two sets of methods, one that throws an exception when something goes 
     System.out.println(queue.peek()); // null 
 
 > **Note:** Some queues are limited in size, which would cause offering an element to the queue to fail, but this type of scenario is not present in the exam.
+
+
+### Using the *Map* Interface
+
+Map is used when we need to identify values by a key. For example, a contact list on your phone, you will look up for the contact by its name rather than its phone number. There are some different map implementations, you don't need to know all their names, but you need to know that a TreeMap is sorted. The main thing that all Map classes have in common is that they all have keys and values. Beyond that, they each can offer different functionalities.
+
+Just like *List* and *Set*, there is a helper method to create a Map in one line. But you need to pass the values in **pairs of keys and values**. For example: 
+
+    Map.of("key1", "value1", "key2", "value2", ...);
+
+Unlike the other interfaces, this is not ideal to use, because it can lead to mistakes like miscounting the keys and values and leaving some value out. This kind of code would compile but throw an error at runtime. But there is a better way to create a Map, which allows you to supply key and value pairs, following is a exemple:
+
+    Map.ofEntries(
+        Map.entry("key1", "value1"),
+        Map.entry("key2", "value2"));
+
+On this case, if we leave out a parameter, the `entry()` method will not compile. The `Map.copyOf(map)` method works just like the previous interfaces methods.
