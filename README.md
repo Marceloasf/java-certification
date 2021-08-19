@@ -4,23 +4,19 @@ Repository dedicated to the study of the needed content to obtain a Java certifi
 
 ## [OCA-BOOK](./src/oca/chapter)
 
-Oracle Certified Associate Java SE 8 Programmer 1 Study Guide
-
-- [Chapter 1 - Java Building Blocks](./src/oca/chapter/one)
-- [Chapter 2 - Operators and Statements](./src/oca/chapter/two)
+- [Java Building Blocks](./src/oca/chapter/one)
+- [Operators and Statements](./src/oca/chapter/two)
 
 ## [OCP-BOOK](./src/ocp/chapter)
 
-Oracle Certified Professional Java SE 11 Developer Complete Study Guide
-
-- [Chapter 5 - Core Java APIs](./src/ocp/chapter/five)
-- [Chapter 6 - Lambdas and Functional Interfaces](./src/ocp/chapter/six)
-- [Chapter 7 - Methods and Encapsulation](./src/ocp/chapter/seven)
-- [Chapter 8 - Class Design](./src/ocp/chapter/eight)
-- [Chapter 9 - Advanced Class Design](./src/ocp/chapter/nine)
-- [Chapter 10 - Exceptions](./src/ocp/chapter/ten)
-- [Chapter 11 - Modules](./src/ocp/chapter/eleven)
-- [Chapter 12 - Java Fundamentals](./src/ocp/chapter/twelve)
-- [Chapter 13 - Annotations](./src/ocp/chapter/thirteen)
-- [Chapter 14 - Generics and Collections](./src/ocp/chapter/fourteen)
-- [Chapter 18 - Concurrency](./src/ocp/chapter/eighteen)
+- [Core Java APIs](./src/ocp/chapter/five)
+- [Lambdas and Functional Interfaces](./src/ocp/chapter/six)
+- [Methods and Encapsulation](./src/ocp/chapter/seven)
+- [Class Design](./src/ocp/chapter/eight)
+- [Advanced Class Design](./src/ocp/chapter/nine)
+- [Exceptions](./src/ocp/chapter/ten)
+- [Modules](./src/ocp/chapter/eleven)
+- [Java Fundamentals](./src/ocp/chapter/twelve)
+- [Annotations](./src/ocp/chapter/thirteen)
+- [Generics and Collections](./src/ocp/chapter/fourteen)
+- [Concurrency](./src/ocp/chapter/eighteen)
