@@ -438,7 +438,7 @@ A TreeSet stores its elements in a sorted tree structure. The main benefit is th
 
 Like List, you can create an immutable Set in one line or make a copy of an existing one, for example:
 
-    Set<Character> letters = Set.of('Z', 'o', 'o');
+    Set<Character> letters = Set.of('Z', 'o', 'O');
     Set<Character> copy = Set.copyOf(letters);
 
 These are the only extra Set methods that you need to know for the exam, on the other hand, you need to know how sets behave with respect to the traditional Collection methods. Another important thing to know is the difference between the types of Set, first HashSet:
@@ -510,10 +510,75 @@ Just like *List* and *Set*, there is a helper method to create a Map in one line
 
     Map.of("key1", "value1", "key2", "value2", ...);
 
-Unlike the other interfaces, this is not ideal to use, because it can lead to mistakes like miscounting the keys and values and leaving some value out. This kind of code would compile but throw an error at runtime. But there is a better way to create a Map, which allows you to supply key and value pairs, following is a exemple:
+Unlike the other interfaces, this is not ideal to use, because it can lead to mistakes like miscounting the keys and values and leaving some value out. This kind of code would not compile. But there is a better way to create a Map, which allows you to supply key and value pairs, following is a exemple:
 
     Map.ofEntries(
         Map.entry("key1", "value1"),
         Map.entry("key2", "value2"));
 
 On this case, if we leave out a parameter, the `entry()` method will not compile. The `Map.copyOf(map)` method works just like the previous interfaces methods.
+
+#### Comparing *Map* Implementations
+
+A HashMap stores the keys in a **hash table**. This means it uses the `hashCode()` method to retrieve the keys more efficiently. The main benefit is that adding elements and retrieving the element by key both have constant time. The trade-off is that you lose the order in which you inserted the elements, but most of the time you aren't concerned with that. If you need that order, you can use LinkedHashMap instead, but this implementation is not in scope for the exam.
+
+A TreeMap stores the keys in a **sorted tree strucuture**. This means that the keys are always in sorted order, but like a TreeSet, the trade-off is that adding and checking whether a key is present takes longer as the tree grows larger.
+
+#### Working with *Map* Methods
+
+Remember that Map does not extend Collection, so there are more specific methods for this interface. Since there are both keys and valuess, we are going to need generic type parameters for both. These generic parameters are K for key and V for value. The methods that you need to know for the exam are listed in the following table. Some of them were simplified to make them easier to understand.
+
+| Method                    | Description                                                                      |
+| :------------------------ | :-----------------------------------                                             |
+| void clear()          | Removes all keys and values from the map |
+| boolean containsKey(Object key)          | Returns whether key is in map |
+| boolean containsValue(Object value)          | Returns whether value is in map |
+| Set<*Map.Entry<K,V>*> entrySet()          | Returns a Set of key/value pairs  |
+| void forEach(BiConsumer(K key, V value))          | Loop through each key/value pairs  |
+| V get(Object key)          | Returns the value mapped by the key or null if none is mapped |
+| V getOrDefault(Object key, V defaultValue)          | Returns the value mapped by the key or the default value if none is mapped |
+| boolean isEmpty()          | Returns whether the map is empty |
+| Set<*K*> keySet()          | Returns set of all keys |
+| V merge(K key, V value, BiFunction(<*V, V, V*> func)) | Sets value if the key is not set. Runs the function if the key is set to determine the new value. Removes if null  |
+| V put(K key, V value) | Adds or replaces a key/value pair and returns previous value or null |
+| V putIfAbsent(K key, V value) | Adds a value if key is not present and returns null. Otherwise, returns the existing value |
+| V remove(Object key) | Removes and returns the value mapped to the key or returns null if none |
+| V replace(K key, V value) | Replaces the value for a given key if the key is set and returns the original value or null if none |
+| void replaceAll(BiFunction<*K, V, V*> func) | Replaces each value with the results of the function |
+| int size() | Returns the number of entries (key/value pairs) in the map |
+| Collection<V> values() | Returns a Collection of all values |
+
+##### Basic Methods
+
+Here we are going to compare two Map types (HashMap and TreeMap) with the basic methods from the Map interface. First let's use HashMap:
+
+    Map<String, String> map = new HashMap<>();
+    map.put("koala", "bamboo");
+    map.put("lion", "meat");
+    map.put("giraffe", "leaf");
+    String food = map.get("koala"); // bamboo
+    for (String key: map.keySet()) System.out.print(key + ","); // koala, giraffe, lion
+
+On this example we can see that with `put()` we insert some pairs into the Map, with `get()` we get the value given the key of that pair and finally with `keySet()` we get all the keys. As you might notice, the order of the values printed are not sorted, thats because we are using a HashMap, which uses the `hashCode()` method of the keys to determine the order. Now let's take a look at TreeMap:
+
+    Map<String, String> map = new TreeMap<>();
+    map.put("koala", "bamboo");
+    map.put("lion", "meat");
+    map.put("giraffe", "leaf");
+    String food = map.get("koala"); // bamboo
+    for (String key: map.keySet()) System.out.print(key + ","); // giraffe, koala, lion
+
+TreeMap **sorts** the keys as we would expect. If we were to have called `values()` instead, the order of the values would correspond to the order of the keys.
+
+With the same map, we can do some boolean checks:
+
+    System.out.println(map.contains("lion")); // DOES NOT COMPILE - Because contains does not exists on the Map interface
+    System.out.println(map.containsKey("lion")); // true
+    System.out.println(map.containsValue("lion")); // false
+    System.out.println(map.size()); // 3
+    map.clear();
+    System.out.println(map.size()); // 0
+    System.out.println(map.isEmpty()); // true
+
+As we can see, most of these methods are simple to use and do literally what their names indicate.
+ 
