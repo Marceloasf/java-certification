@@ -582,3 +582,110 @@ With the same map, we can do some boolean checks:
 
 As we can see, most of these methods are simple to use and do literally what their names indicate.
  
+##### *forEach()* and *entrySet()*
+
+The Map implementation of the method `forEach()` is a little different than the one seen before, the lambda on this one has two parameters instead of one (its a BiConsumer instead of a Consumer), the key and the value. For example:
+
+    Map<Integer, String> map = new HashMap<>();
+    map.put(1, "a");
+    map.put(2, "b");
+    map.put(3, "c");
+    map.forEach((k, v) -> System.out.println(v));
+
+If you dont't need the key, you can call the method `values()` on the map and then use a method reference instead, like the following: 
+
+    map.values().forEach(System.out::println);
+
+Another way of using the `forEach()` method is with the `entrySet()` method, which transforms the Map pairs in a Set. Java has a static interface inside Map called Entry and it provides methods to get the key and value each pair, like the following: 
+
+    map.entrySet().forEach((e) -> System.out.println(e.getKey() + e.getValue()));
+
+##### *getOrDefault()*
+
+The `get()` method returns null if the requested key is not found, but if we need a different value to be return, we can use the `getOrDefault()` method instead. This method allows us to pass a parameter that defines a default value that will be returned if the key is not mapped. For example, the following compare both of them:
+
+    Map<Character, String> map = new HashMap<>();
+    map.put('x', "spot");
+    System.out.println(map.get('x')); // spot
+    System.out.println(map.getOrDefault('x', "")); // spot
+    System.out.println(map.get('y')); // null
+    System.out.println(map.getOrDefault('y', "")); // ""
+
+##### *replace()* and *replaceAll()*
+
+These are similar to the Collection version of them, except that a key is involved. For example:
+
+    Map<Integer, Integer> map = new HashMap<>();
+    map.put(1, 2);
+    map.put(2, 4);
+    Integer original = map.replace(2, 10); // 4 - returns the original value
+    System.out.println(map); // { 1=2, 2=10 }
+    map.replaceAll((k, v) -> k + v);
+    System.out.println(map); // { 1=3, 2=12 }
+
+##### *putIfAbsent()*
+
+This method sets a value in the map but skips it if the value is already set to a non-null value. For example:
+
+    Map<String, String> favorites = new HashMap<>();
+    favorites.put("Jenny", "Bus Tour");
+    favorites.put("Tom", null);
+    favorites.putIfAbsent("Jenny", "Tram");
+    favorites.putIfAbsent("Sam", "Tram");
+    favorites.putIfAbsent("Tom", "Tram");
+    System.out.println(favorites); // {Tom=Tram, Jenny=Bus Tour, Sam=Tram}
+
+Only the ones with a null value or non mapped were added to the Map.
+
+##### *merge()*
+
+This method allows us to add logic on him of what to choose. For example, if we needed to choose the longest name, we could write a code to express this by passing a mapping function to the `merge()` method:
+
+    BiFunction<String, String, String> mapper = (v1, v2) -> v1.length() > v2.length ? v1 : v2;
+
+    Map<String, String> favorites = new HashMap<>();
+    favorites.put("Jenny", "Bus Tour");
+    favorites.put("Tom", "Tram");
+
+    String jenny = favorites.merge("Jenny", "Skyride", mapper);
+    String tom = favorites.merge("Tom", "Skyride", mapper);
+
+    System.out.println(favorites); // {Tom=Skyride, Jenny=Bus Tour}
+    System.out.println(jenny); // Bus Tour
+    System.out.println(tom); // Skyride
+
+The `merge()` method can also be used for missing values or null values. But in this case, it doesn't call the BiFunction, because it just uses the new value:
+
+    BiFunction<String, String, String> mapper = (v1, v2) -> v1.length() > v2.length ? v1 : v2;
+    
+    Map<String, String> favorites = new HashMap<>();
+    favorites.put("Sam", null);
+    favorites.merge("Sam", "Skyride", mapper);
+    favorites.merge("Tom", "Skyride", mapper);
+    System.out.println(favorites); // {Tom=Skyride, Sam=Skyride}
+
+Notice that the function is not called, because if it were, we would have a NullPointerException thrown. The mapping funcion is used only when there are two actual values to decide between them.
+
+The last thing you'll need to know about the `merge()` method, is that when the mapping function is called and returns a null, the key is removed from the map:
+
+    BiFunction<String, String, String> mapper = (v1, v2) -> null;
+
+    Map<String, String> favorites = new HashMap<>();
+    favorites.put("Tom", "Bus Tour");
+    favorites.put("Sam", "Bus Tour");
+
+    favorites.merge("Tom", "Skyride", mapper);
+    favorites.merge("Jenny", "Skyride", mapper);
+
+    System.out.println(favorites); // { Tom=Bus Tour, Jenny=Skyride }
+
+Notice that the value that existed on the map was removed, but the one that didn't was added.
+
+The following table shows these scenarios of the `merge()` method:
+
+ | If the request key " "    | And mapping function returns " "     | Then:              |
+ | :------------------------ | :----------------------------------- | :----------------- |
+ | Has a null value in the map | N/A (mapping function not called)  | Update key's value in map with value parameter |
+ | Has a non-null value in the map | null                           | Remove key from map |
+ | Has a non-null value in the map | A non-null value               | Set key to mapping function result |
+ | Is not in the map  | N/A (mapping function not called)           | Add key with value parameter to map directly without calling mapping function |

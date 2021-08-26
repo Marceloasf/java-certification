@@ -22,5 +22,15 @@ public class MapExamples {
         map2.put("dolphin", "water");
         String food2 = map2.get("koala");
         for (String key: map2.keySet()) System.out.print(key + ",");
+
+        System.out.println();
+
+        Map<Integer, String> forEachMap = new HashMap<>();
+        forEachMap.put(1, "a");
+        forEachMap.put(2, "b");
+        forEachMap.put(3, "c");
+        forEachMap.forEach((k, v) -> System.out.println(v));
+        forEachMap.values().forEach(System.out::println);
+        forEachMap.entrySet().forEach((e) -> System.out.println(e.getKey() + e.getValue()));
 	}
 }
