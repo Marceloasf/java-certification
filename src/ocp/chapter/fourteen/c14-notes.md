@@ -656,7 +656,7 @@ This method allows us to add logic on him of what to choose. For example, if we 
 
 The `merge()` method can also be used for missing values or null values. But in this case, it doesn't call the BiFunction, because it just uses the new value:
 
-    BiFunction<String, String, String> mapper = (v1, v2) -> v1.length() > v2.length ? v1 : v2;
+    BiFunction<String, String, String> mapper = (v1, v2) -> v1.length() > v2.length() ? v1 : v2;
     
     Map<String, String> favorites = new HashMap<>();
     favorites.put("Sam", null);
