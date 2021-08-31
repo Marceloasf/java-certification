@@ -689,3 +689,35 @@ The following table shows these scenarios of the `merge()` method:
  | Has a non-null value in the map | null                           | Remove key from map |
  | Has a non-null value in the map | A non-null value               | Set key to mapping function result |
  | Is not in the map  | N/A (mapping function not called)           | Add key with value parameter to map directly without calling mapping function |
+
+ ### Comparing Collection Types
+
+ We conclude this section reviewing all these collection classes, the following table shows some of the Collections Framework types:
+
+ | Type    | Can contain duplicate elements?      | Elements always ordered?            | Has keys and values? | Must add/remove in specific order? | 
+ | :------ | :----------------------------------- | :---------------------------------- | :------------------- | :--------------------------------- |
+ | List    | Yes                                  | Yes (by index)                      | No                   | No                                 |
+ | Map     | Yes (for values)                     | No                                  | Yes                  | No                                 |
+ | Queue   | Yes                                  | Yes (retrieved in defined order)    | No                   | Yes                                |
+ | Set     | No                                   | No                                  | No                   | No                                 |
+    
+Additionally, collection atributes:
+
+ | Type    | Java Collections Framework interface | Sorted?    | Calls `hashCode`?    | Calls `compareTo`? |
+ | :------ | :----------------------------------- | :--------- | :------------------- | :------------------|
+ | ArrayList   | List                             | No         | No                   | No                 |
+ | HashMap     | Map                              | No         | Yes                  | No                 |
+ | HashSet     | Set                              | No         | Yes                  | No                 |
+ | LinkedList  | List, Queue                      | No         | No                   | No                 |
+ | TreeMap     | Map                              | Yes        | No                   | Yes                |
+ | TreeSet     | Set                              | Yes        | No                   | Yes                |
+
+ > **Note:** Remember that the data structures that involve sorting do not allow null values. 
+
+ ### Some Older Java Collections
+
+ All the following three were early Java data strucutres that you could use with threads, but nowadays there are better modern alternatives if you need a concurrent collection. The following are the collections:
+
+- Vector: Implements List. If you don't need concurrency, use ArrayList instead.
+- Hashtable: Implements Map. If you don't need concurrency, use HashMap instead.
+- Stack: Implements Queue. If you don't need concurrency, use LinkedList instead.
