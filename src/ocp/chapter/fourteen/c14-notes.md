@@ -721,3 +721,103 @@ Additionally, collection atributes:
 - Vector: Implements List. If you don't need concurrency, use ArrayList instead.
 - Hashtable: Implements Map. If you don't need concurrency, use HashMap instead.
 - Stack: Implements Queue. If you don't need concurrency, use LinkedList instead.
+
+
+## Sorting Data (p.631-641)
+
+We discussed earlier about 'order' for TreeSet and TreeMap. For numbers the order its numerical as always, but for String objects, order is defined according to the Unicode char mapping, but for the exam, this means that numbers sort before letters, and uppercase letters sort before lowercase letters.
+
+On many of the following examples, `Collections.sort()` will be used, this method returns void because the method parameter that gets sorted. We can also sort objects that we create. Java provides an interface called *Comparable*, if the created class implements it, it can be used in these data strucutures that require comparison. There is also a class called *Comparator*, this one can be used to specify that we want to use a different order than the object itself provides. Don't be confused by both of them, remember that Comparable and Comparator are different objects.
+
+### Creating a *Comparable* Class
+
+The Comparable interface has only one method, the following code snippet is the entire interface:
+
+    public interface Comparable<T> {
+        int compareTo(T o);
+    }
+
+The generic T on Comparable lets us implement this method and specify the type of the object. With this T, we avoid a cast when implementing compareTo(). Any object can be Comparable. For example:
+
+    import java.util.*;
+    public class Duck implements Comparable<Duck> {
+        private String name;
+        public Duck(String name) {
+            this.name = name;
+        }
+    }
+    public String toString() {
+        return name;
+    }
+    public int compareTo(Duck d) {
+        return name.compareTo(d.name); // sorts asc by name
+    }
+    public static void main(String[] args) {
+        var ducks = new ArrayList<Duck>();
+        ducks.add(new Duck("Quack"));
+        ducks.add(new Duck("Puddles"));
+        Collections.sort(ducks); // sorts by name
+        System.out.println(ducks); // [Puddles, Quack]
+    }
+
+Without implementing the interface, all we would have is a method named `compareTo()`, it wouldn't be a Comparable object.
+
+> **Note:** Since Duck is comparing objects of type String and the String class already has a `compareTo()` method, **it can just delegate**. 
+
+We need to know three rules to understand what the `compareTo()` method returns, these are:
+
+1. The number 0 is returned when the current object is equivalent to the argument to `compareTo()`.
+2. A negative number (less than 0) is returned when the current object is smaller than the argument to `compareTo()`.
+3. A positive number (greater than 0) is returned when the current object is larger than the the argument to `compareTo()`.
+
+For example:
+
+    public class Animal implements Comparable<Animal> {
+        private int id;
+        public int compareTo(Animal a) {
+            return id - a.id; // sorts asc by id
+        }
+        public static void main(String[] args) {
+            var a1 = new Animal();
+            var a2 = new Animal();
+            a1.id = 5;
+            a2.id = 7;
+            System.out.println(a1.compareTo(a2)); // -2
+            System.out.println(a1.compareTo(a1)); // 0
+            System.out.println(a2.compareTo(a1)); // 2
+        }
+    }
+
+> **Note:** Remember that `id - a.id` sorts in ascending order, and `a.id - id` sorts in descending order.
+
+As we can see the outputs, they reflect the rules that were presented before.
+
+#### Casting the *compareTo()* Argument
+
+When dealing with legacy code or code that don't use generics, the compareTo() method requires a cast since it is passed an Object. We can do that as the following example:
+
+    public class LegacyDuck implements Comparable { // note that there is no generics declared
+        private String name;
+        public int compareTo(Object obj) {
+            LegacyDuck d = (LegacyDuck) obj; // casting because there is no generics
+            return name.compareTo(d.name);
+        }
+    }
+
+Since we don't specify a generic type for Comparable, Java assumes that we want an Object, which means that we have to cast to the desired Object before accessing instance variables on it.
+
+#### Checking for *null*
+
+When working with Comparable and Comparator we tend to assume the data has values, but this isn't always the reality. When writing our own methods, we should check the data before comparing it if is not validated ahead of time. For example:
+
+    public class MissingDuck implements Comparable <MissingDuck> {
+        private String name;
+        public int compareTo(MissingDuck quack) {
+            if (quack == null) throw new IllegalArgumentException("Poorly formed");
+            if (this.name == null && quack.name == null) 
+                return 0;
+            else if (this.name == null) return -1;
+            else if (quack.name == null) return 1;
+            else return name.compareTo(quack.name);
+        }  
+    }
