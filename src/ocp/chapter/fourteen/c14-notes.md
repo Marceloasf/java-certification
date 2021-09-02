@@ -821,3 +821,65 @@ When working with Comparable and Comparator we tend to assume the data has value
             else return name.compareTo(quack.name);
         }  
     }
+
+
+#### Keeping *compareTo()* and *equals()* Consistent
+
+If a class implements Comparable, new business logic for determining equality is introduced. The `compareTo()` method returns 0 when the two objects are equal, while the `equals()` method returns true when two objects are equal. A *natural ordering* that uses `compareTo()` is said to be *consistent with equals* if, and only if, `x.equals(y)` is true whenever `x.compareTo(y)` equals 0, and vice versa. It's strongly encouraged to make our own Comparable classes consistent with equals because not all collection classes behave predictably if the `compareTo()` and `equals()` methods are not consistent. For example, a class that defines a `compareTo()` that is not consistent with `equals()`:
+
+    public class Product implements Comparable<Product> {
+        private int id;
+        private String name;
+
+        public int hashCode() { return id; }
+        public boolean equals(Object obj) {
+            if (!(obj instanceof Product)) return false;
+            var other = (Product) obj;
+            return this.id == other.id;
+        }
+        public int compareTo(Product obj) {
+            return this.nname.compareTo(obj.name);
+        } 
+    }
+
+We might sort this by name, but names is not unique. Therefore, the return value of `compareTo()` might not be 0 when comparing two equal Product objects, so this method is not consistent with equals. One way to fix this would be to use a Comparator to define the sort elsewhere.
+
+### Comparing Data with a *Comparator*
+
+If we want to sort an object that did not implement Comparable, or sort objects in different ways at different times, we can use Comparator, for example:
+
+
+    import java.util.ArrayList;
+    import java.util.Collections;
+    import java.util.Comparator;
+
+    public class Duck implements Comparable<Duck> {
+        private String name;
+        private int weight;
+
+        // assume that there are getters/setters/constructors provided
+        public String toString() {
+            return name;
+        }
+        public int compareTo(Duck d) {
+            return name.compareTo(d.name);
+        }
+        public static void main(String[] args) {
+            Comparator<Duck> byWeight = new Comparator<Duck>() {
+                public int compare(Duck d1, Duck d2) {
+                    return d1.getWeight()-d2.getWeight();
+                }
+            }
+            var ducks = new ArrayList<Duck>();
+            ducks.add(new Duck("Quack", 7));
+            ducks.add(new Duck("Puddles", 10));
+            Collections.sort(ducks); // sorts by name
+            System.out.println(ducks); // [Puddles, Quack]
+            Collections.sort(ducks, byWeight); // sorts by weight with Comparator
+            System.out.println(ducks); // [Quack, Puddles]
+        }
+    }
+
+> **Note:** Comparator is in java.util package, while Comparable is in java.lang (it does not have to be imported).
+
+Comparator is a functional interface, since there is only one abstract method to implement. We could rewrite it with a lambda.
