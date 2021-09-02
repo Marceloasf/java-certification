@@ -848,7 +848,6 @@ We might sort this by name, but names is not unique. Therefore, the return value
 
 If we want to sort an object that did not implement Comparable, or sort objects in different ways at different times, we can use Comparator, for example:
 
-
     import java.util.ArrayList;
     import java.util.Collections;
     import java.util.Comparator;
@@ -869,7 +868,7 @@ If we want to sort an object that did not implement Comparable, or sort objects 
                 public int compare(Duck d1, Duck d2) {
                     return d1.getWeight()-d2.getWeight();
                 }
-            }
+            };
             var ducks = new ArrayList<Duck>();
             ducks.add(new Duck("Quack", 7));
             ducks.add(new Duck("Puddles", 10));
@@ -883,3 +882,14 @@ If we want to sort an object that did not implement Comparable, or sort objects 
 > **Note:** Comparator is in java.util package, while Comparable is in java.lang (it does not have to be imported).
 
 Comparator is a functional interface, since there is only one abstract method to implement. We could rewrite it with a lambda.
+
+    Comparator<Ducck> byWeight = (d1, d2) -> d1.getWeight()-d2.getWeight();
+
+Alternativaly, we can use a method reference and a helper method to specify we want to sort by weight.
+
+    Comparator<Ducck> byWeight = Comparator.comparing(Duck::getWeight);
+
+In this example, `Comparator.comparing()` is a static interface method that creats a Comparator given a lambda expression or a method reference.
+
+> **Is *Comparable* a Functional Interface?** Comparable is a functional interface, since it has only one abstract method, but it would be silly to use it with a lambda, because the point of Comparable is to implement it inside the object being compared.
+
