@@ -810,7 +810,7 @@ Since we don't specify a generic type for Comparable, Java assumes that we want 
 
 When working with Comparable and Comparator we tend to assume the data has values, but this isn't always the reality. When writing our own methods, we should check the data before comparing it if is not validated ahead of time. For example:
 
-    public class MissingDuck implements Comparable <MissingDuck> {
+    public class MissingDuck implements Comparable<MissingDuck> {
         private String name;
         public int compareTo(MissingDuck quack) {
             if (quack == null) throw new IllegalArgumentException("Poorly formed");
@@ -838,7 +838,7 @@ If a class implements Comparable, new business logic for determining equality is
             return this.id == other.id;
         }
         public int compareTo(Product obj) {
-            return this.nname.compareTo(obj.name);
+            return this.name.compareTo(obj.name);
         } 
     }
 
@@ -883,13 +883,74 @@ If we want to sort an object that did not implement Comparable, or sort objects 
 
 Comparator is a functional interface, since there is only one abstract method to implement. We could rewrite it with a lambda.
 
-    Comparator<Ducck> byWeight = (d1, d2) -> d1.getWeight()-d2.getWeight();
+    Comparator<Duck> byWeight = (d1, d2) -> d1.getWeight()-d2.getWeight();
 
 Alternativaly, we can use a method reference and a helper method to specify we want to sort by weight.
 
-    Comparator<Ducck> byWeight = Comparator.comparing(Duck::getWeight);
+    Comparator<Duck> byWeight = Comparator.comparing(Duck::getWeight);
 
 In this example, `Comparator.comparing()` is a static interface method that creats a Comparator given a lambda expression or a method reference.
 
 > **Is *Comparable* a Functional Interface?** Comparable is a functional interface, since it has only one abstract method, but it would be silly to use it with a lambda, because the point of Comparable is to implement it inside the object being compared.
+
+### Comparing *Comparable* and *Comparator*
+
+There are some differences between Comparable and Comparator, they are listed on the following table:
+
+ | Difference                                           | Comparable    | Comparator    |
+ | :------                                              | :-------------| :------------ |
+ | Package name                                         | java.lang     | java.util     |
+ | Interface must be implemented by class comparing?    | Yes           | No            |
+ | Method name in interface                             | compareTo()   | compare()     |
+ | Number of parameters                                 | 1             | 2             |
+ | Common to declare using a lambda                     | No            | Yes           |
+
+ Memorize this table for the exam. For example, the following code does not compile because the method is wrong. A Comparator must implement a method named `compare()`. Pay special attention to these details.
+
+    var byWeight = new Comparator<Duck>() { // DOES NOT COMPILE
+        public int compareTo(Duck d1, Duck d2) {
+            return d1.getWeight() - d2.getWeight();
+        }
+    }
+
+### Comparing Multiple Fields
+
+When writing a Comparator that compares multiple instance vars, the code can turn a lot more complex than it really need to be. We can use method references and build a comparator. For example, the following code can be reduced:
+
+    public class MultiFieldComparator implements Comparator<Squirrel> {
+        public int compare(Squirrel s1, Squirrel s2) {
+            int result = s1.getSpecies().compareTo(s2.getSpecies);
+            if (result != 0) return result;
+            return s1.getWeight()-s2.getWeight();
+        } 
+    }
+
+This code presented above, represents the same logic as the following: 
+
+    Comparator<Squirrel> c = Comparator.comparing(Squirrel::getSpecies).thenComparingInt(Squirrel::getWeight);
+
+Here we chain the method, first creating a comparator on species asc and then sort it by weight if there is a tie. We can also sort in desc order. This method `thenComparingInt()` is one of the many default method on Comparator. 
+
+> **Note:** To sort in descending order, we can use Comparator method `reversed()`.
+
+The following table shows the helper methods we need to know for building a Comparator. The parameters are omitted to keep the focus on the methods. They use many functional interfaces that we'll be going to talk about in the next chapter.
+
+ | Method                     | Description     | 
+ | :------                    | :-------------  | 
+ | comparing(function)        | Compare by the results of a function that returns any Object (or object autoboxed into an Object) | 
+ | comparingDouble(function)  | Compare by the results of a function that returns a double | 
+ | comparingInt(function)     | Compare by the results of a function that returns an int | 
+ | comparingLong(function)    | Compare by the results of a function that returns a long | 
+ | naturalOrder()             | Sort using the order specified by the Comparable implementation on the object itself | 
+ | reverseOrder()             | Sort using the reverse of the order specified by the Comparable implementation on the object itself | 
+
+The following table shows the methods that we can chain to a Comparator to further specify its behavior.
+
+ | Method                           | Description     | 
+ | :------                          | :-------------  | 
+ | reversed()                       | Reverse the order of the chained Comparator | 
+ | thenComparing(function)          | If the previous Comparator returns a 0, use this comparator that returns an Object or can be autoboxed into one | 
+ | thenComparingDouble(function)    | If the previous Comparator returns a 0, use this comparator that returns a double, otherwise, return the value from the previous Comparator  | 
+ | thenComparingInt(function)       | If the previous Comparator returns a 0, use this comparator that returns an int, otherwise return the value from the previous Comparator | 
+ | thenComparingLong(function)      | If the previous Comparator returns a 0, use this comparator that returns a long, otherwise, return the value from the previous Comparator | 
 
