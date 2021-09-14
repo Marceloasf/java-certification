@@ -954,3 +954,71 @@ The following table shows the methods that we can chain to a Comparator to furth
  | thenComparingInt(function)       | If the previous Comparator returns a 0, use this comparator that returns an int, otherwise return the value from the previous Comparator | 
  | thenComparingLong(function)      | If the previous Comparator returns a 0, use this comparator that returns a long, otherwise, return the value from the previous Comparator | 
 
+### Sorting and Searching
+
+For sorting we can use `Collections.sort()` method uses the `compareTo()` method to sort. It expects teh objects to be sorted to be Comparable.
+
+    public class SortRabbits {
+        static class Rabbit{ int id; }
+        public static void main(String[] args) {
+            List<Rabbit> rabbits = new ArrayList<>();
+            rabbits.add(new Rabbit());
+            Collections.sort(rabbits); // does not compile
+        }
+    }
+
+ It does not compile because Java knows that the Rabbit class is not Comparable, knowing that the sorting will fail, it doesn't even let the coded compile. You can fix this by passing a Comparator to `sort()`. Remember that a Comparator is useful when you to specify sort order without using a `compareTo()` method.
+
+    public class SortRabbits {
+        static class Rabbit{ int id; }
+        public static void main(String[] args) {
+            List<Rabbit> rabbits = new ArrayList<>();
+            rabbits.add(new Rabbit());
+            Comparator<Rabbit> c = (r1, r2) -> r1.id - r2.id;
+            Collections.sort(rabbits, c);
+        }
+    }
+
+The `sort()` and `binarySearch()` methods allow you to pass in a Comparator object when you don't want to use the natural order.
+
+#### **Reviewing** *binarySearch()*
+
+The `binarySearch()` method requires a sorted List. 
+
+    List<Integer> list = Arrays.asList(6,9,1,8);
+    Collections.sort(list);
+    System.out.println(Collections.binarySearch(list, 6)); // 1
+    System.out.println(Collections.binarySearch(list, 3)); // -2
+
+It sorts and then it searchs, so it can call binary search properly. The first print, prints the index at which a match is found. The other one prints a negated index of where the requested value would need to be inserted.
+
+    var names = Arrays.asList("Fluffy", "Hoppy");
+    Comparator<String> c = Comparator.reverseOrder();
+    var index = Collections.binarySearch(names, "Hoppy", c);
+    System.out.println(index);
+
+The correct answer -1. Before you panic, you don't need to know that the answer is not defined, you do need to know that the answer is not defined. This list is sorted in ascending order. The comparator reverses the order to the natural order. The line that requests the `binarySearch()`, requests it in descending order. Since the list is ordered in ascending order, the precondition for doing the search is not met. 
+
+We talked about collections that require classes to implement Comparable. Unlike sorting, they don't check that you have actually implemented Comparable at compile time.
+
+If we try to add that Rabbit that does not implement to a TreeSet, an exception is thrown. When TreeSet tries to sort the rabbits after adding one of them, Java discovers the fact that the class does not implement Comparable. Java throws an exception that looks like this:
+
+    Exception in thread "main" java.lang.ClassCastException:
+        class Duck cannot be cast to class java.lang.Comparable
+
+Java throws the exception even when the first object is added to the set, it works this way for consistency. If we tell collections that require sorting that we want to use a specific Comparator, Java knows that we want that and all is well. For example:
+
+    Set<Rabbit> rabbits = new TreeSet<>((r1,r2) -> r1.id-r2.id);
+    rabbits.add(new Rabbit());
+
+    // Instead of
+    Set<Rabbit> rabbits = new TreeSet<>();
+    rabbits.add(new Rabbit()); // ClassCastException
+
+## Working with Generics (p.641-655)
+
+Now we conclude the Chapter with one of the most useful (at times most confusing) feature in the Java language: generics. Generics allow we to write and use parameterized types. We can specify that, for example, we want an ArrayList of String objects. With this, the compiler has enough info to prevent we from causing a casting problem for example. The following code shows a "good" compiler error, because it warns you of a mistake:
+
+    List<String> names = new ArrayList<String>();
+    names.add(new StringBuilder("Webby")); // DOES NOT COMPILE
+
