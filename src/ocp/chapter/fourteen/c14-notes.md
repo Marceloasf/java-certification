@@ -1022,3 +1022,91 @@ Now we conclude the Chapter with one of the most useful (at times most confusing
     List<String> names = new ArrayList<String>();
     names.add(new StringBuilder("Webby")); // DOES NOT COMPILE
 
+### Generic Classes
+
+You can introduce generics into your own classes. The syntax for introducing a genericis to declare a *formal type parameter* in angle brackets. For example, the following class has a generic type var declared after the name of the class:
+
+    public class Crate<T> {
+        private T contents;
+        public T emptyCrate() {
+            return contents;
+        }
+        public void packCrate(T contents) {
+            this.contents = contents;
+        }
+    }
+
+The generic type T is available anywhere within the Crate class. When you instantiate the class, you tell the compiler what T should be for that particular instance.
+
+There are naming conventions for generics, while you can name a type anything you want, the convention is to use single uppercase letters to make it obvious that they aren't real class names. The following are the most common letters to use:
+
+- E for an element
+- K for a map key
+- V for map value
+- N for a number
+- T for a generic data type
+- S, U, V and so forth for multiple generic types
+
+The Crate class presented before can be used with any type of class:
+
+    Elephant elephant = new Elephant();
+    Crate<Elephant> crateForElephant = new Crate<>();
+    crateForElephant.packCrate(elephant);
+
+    Zebra zebra = new Zebra();
+    Crate<Zebra> crateForZebra = new Crate<>();
+    crateForZebra.packCrate(zebra);
+    
+    Robot robot = new Robot();
+    Crate<Robot> crateForRobot = new Crate<>();
+    crateForRobot.packCrate(robot);
+
+> **Note:** Generic classes become useful when the classes used as the type parameter can have absolutely nothing to do with each other.
+
+Before generics, we would need to use Object as the type on Crate and cast the objects returned. When using generics, the generic class don't need to know about the objects that go into it and vice versa. We do not require the objects implement an interface or anything like that. A class can be put in the generic class without any changes at all.
+
+Generics aren't limited to having a single type parameter, for example, the following class has two generic type parameters:
+
+    public class SizeLimitedCrate<T, U> {
+        private T contents;
+        private U sizeLimit;
+        public SizeLimitedCrate(T contents, U sizeLimit) {
+            this.contents = contents;
+            this.sizeLimit = sizeLimit;
+        }
+    }
+
+On this example, T is the type of the crate and U represents the unit that we are using to measure the maximum size for the crate. We can use this class like this:
+
+    Elephant elephant = new Elephant();
+    Integer numPounds = 15_000; // Remember that numeric literals can have underscores
+    SizeLimitedCrate<Elephant, Integer> c1 = new SizeLimitedCrate<>(elephant, numPounds);
+
+Here the type is Elephant and the unit is Integer. 
+
+### What Is Type Erasure?
+
+Specifying a generic type allows the compiler to enforce proper use of the generic type. For example, specifying the type of Crate as Test is like replacing T in Crate with Test. But this is just for compile time. The compiler replaces all references to T in Crate with Object, making Crate look like the following at runtime:
+
+    public class Crate<Object> {
+        private Object contents;
+        public Object emptyCrate() {
+            return contents;
+        }
+        public void packCrate(Object contents) {
+            this.contents = contents;
+        }
+    }
+
+This means there is only **one** .class file. There are no copies for different parameterized types. (Some other languages work that way.)
+
+This process of removing the generics syntax from the code is referred to as *type erasure*. Type erasure allows your code to be compatible with older versions of Java that do not contain generics. 
+
+The compiler adds the relevant casts for your code to work with this type of erased class. For example, if we code the following:
+
+    Robot r = crate.emptyCrate();
+
+The compiler turns it into the following:
+
+    Robot r = (Robot) crate.emptyCrate();
+    
