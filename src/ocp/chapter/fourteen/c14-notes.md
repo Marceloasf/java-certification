@@ -1156,3 +1156,72 @@ Here are the things that you can't do with generics:
 - Using a primitive type as a generic type parameter: This isn't a big deal because you can use the wrapper class instead. If you want a type of int, just use Integer.
 - Creating a static variable as a generic type parameter: This is not allowed because the type is linked to the instance of the class.
 
+### Generic Methods
+
+We can declare formal type parameters on method level too. It's often used for static methods since they aren't part of an instance that can declare the desired type. However, they are also allowed on non-static methods. The following is an example of methods using generic parameters:
+
+    public class Handler {
+        public static <T> void prepare(T t) {
+            System.out.println("Preparing" + t);
+        }
+        
+        public static <T> Crate<T> ship(T t) {
+            System.out.println("Shipping" + t);
+            return new Crate<T>();
+        }
+    }
+
+The method parameter is the generic type T. Before the return type, we need to declare the `formal type parameter of <T>`. In the ship method, we do show how to use the generic parameter in the return type, `Crate<T>`, for the method.
+
+Unless a method is obtaining the generic formal type parameter from the class/interface, it is specified immediately before the return type of the method. The following are some examples of this:
+
+    public class More {
+        public static <T> void sink(T t) { }
+        public static <T> T identity(T t) { return t; }
+        public static void sink(T t) { } // DOES NOT COMPILE, because it omits the formal parameter type
+        public static T noGood(T t) { return t; } // DOES NOT COMPILE, because it omits the formal parameter type
+    }
+
+We can call a generic method normally and the compiler will try to figure out which one we want. But there is an optional syntax for invoking a generic method, which is specifying the type explicitly, making it obvious what the type is:
+
+    Box.<String>ship("package");
+    Box.<String[]>ship(args);
+
+When a method declare a generic parameter type, it is independent of the class generics. For example, the following class declares a generic T on both levels:
+
+    public class Crate<T> {
+        public <T> T tricky(T t) {
+            return t;
+        }
+    }
+
+When we call the code as follows:
+
+    public static String createName() {
+        Crate<Robot> crate = new Crate<>();
+        return create.tricky("bot");
+    }
+
+T on the Crate class declaration is Robot, because is what gets referenced when constructing a Crate, on the other hand, the T on the method tricky is String, because that is what is passed to the method. So keep an eye out for these kind of code on the exam. 
+
+### Bounding Generic Types
+
+Up until this point, we saw generics being treated as an Object and therefore don't have many methods available. Bounded wildcards solve this by restricting what types can be used in a wildcard. A *bounded parameter type* is a generic type that specifies a bound for the generic. 
+
+A *wildcard generic type* is an unknown generic type represented with a question mark (?). We can use generic wildcards in three ways, the following table shows each one of these three wildcard types:
+
+ | Type of Bound                   | Syntax         | Example    |
+ | :------                         | :------------- | :------------ |
+ | Unbounded wildcard              | ?              | `List<?> a = new ArrayList<String>();`     |
+ | Wildcard with an upper bound    | ? extends type | `List<? extends Exception> a = new ArrayList<RuntimeException>();`     |
+ | Wildcard with an lower bound    | ? super type   | `List<? super Exception> a = new ArrayList<Object>();`     |
+
+The following three sections will explain these three types.
+
+### Unbounded Wildcards
+
+
+### Upper-Bounded Wildcards
+
+
+### Lower-Bounded Wildcards
