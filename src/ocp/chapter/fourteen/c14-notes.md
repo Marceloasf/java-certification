@@ -1220,6 +1220,45 @@ The following three sections will explain these three types.
 
 ### Unbounded Wildcards
 
+An unbounded wildcard represents any type. When we use ?, we specify that any type is ok. For example, we could have a method that looks through a list of any type:
+
+    public static void printList(List<?> list) {
+        for (Object x: list) System.out.println(x);
+    }
+    public static void main(String[] args) {
+        List<String> keywords = new ArrayList<>();
+        keywords.add("java");
+        printList(keywords);
+    }
+
+The `printList()` method takes any type of list as a parameter, in this case String happens to be 'anything'.
+
+We must know that when using `var`, the following two are not equivalent:
+
+    List<?> x1 = new ArrayList<>();
+    var x2 = new ArrayList<>();
+
+There are two differences here, first one is that x1 is of type List, while x2 is of type ArrayList, and that we can only assign x2 to a `List<Object>`. These two variables have one thing in common. Both return type is Object when calling the `get()` method.
+
+There are some things that we must pay attention, for example, the following is the same method showed above but declaring `List<Object>` instead of `List<?>`:
+
+    public static void printList(List<Object> list) {
+        for (Object x: list) System.out.println(x);
+    }
+    public static void main(String[] args) {
+        List<String> keywords = new ArrayList<>();
+        keywords.add("java");
+        printList(keywords); // DOES NOT COMPILE
+    }
+
+It does not compile because `List<String>` cannot be assigned to `List<Object>`. Even with String being a subclass os Object. This happens because Java is trying to keep us from writing code like this:
+
+    List<Integer> numbers = new ArrayList<>();
+    numbers.add(new Integer(42));
+    List<Object> objects = numbers; // DOES NOT COMPILE
+    objects.add("forty two");
+
+Thhe compiler promises us that only Integer objects will appear in numbers. If we could assign numbers to objects, then the next line would break that promise by adding a String in the List, since both variables (numbers and objects) are references to the same object. Good thing that the compiler prevents this.
 
 ### Upper-Bounded Wildcards
 
