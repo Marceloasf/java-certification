@@ -1240,7 +1240,7 @@ We must know that when using `var`, the following two are not equivalent:
 
 There are two differences here, first one is that x1 is of type List, while x2 is of type ArrayList, and that we can only assign x2 to a `List<Object>`. These two variables have one thing in common. Both return type is Object when calling the `get()` method.
 
-There are some things that we must pay attention, for example, the following is the same method showed above but declaring `List<Object>` instead of `List<?>`:
+There are some things that we must pay attention on the exam. The following is the same method showed above but declaring `List<Object>` instead of `List<?>`:
 
     public static void printList(List<Object> list) {
         for (Object x: list) System.out.println(x);
