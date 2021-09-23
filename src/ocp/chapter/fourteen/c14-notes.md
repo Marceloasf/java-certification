@@ -1262,5 +1262,53 @@ Thhe compiler promises us that only Integer objects will appear in numbers. If w
 
 ### Upper-Bounded Wildcards
 
+We can't write code that uses a superclass as the reference and the instance as the subclass. For example: 
+
+    ArrayList<Number> list = new ArrayList<Integer>(); // DOES NOT COMPILE
+
+Instead, we can use a upper bounded wildcard:
+
+    List<? extends Number> list = new ArrayList<Integer>();
+
+This wildcard says that any class that extends Number or Number itself can be used as the formal parameter type.
+
+Remember that type erasure makes Java thing that a generic type is an Object, so for example, this method:
+
+    public static long total(List<? extends Number> list) {
+        long count = 0;
+        for (Number number: list) count += number.longValue();
+        return count; 
+    }
+
+Is equivalent to this when Java converts it:
+
+    public static long total(List list) {
+        long count = 0;
+        for (Object obj: list) {
+            Number number = (Number) number;
+            count += number.longValue();
+        }
+        return count; 
+    }
+
+Something interesting happens when we work with **upper bounds or unbounded wildcards**. The list becomes logially immutable and therefore cannot be modified. Technically, you can remove elements from the list (the exam won't ask about this).
+
+    static class Sparrow extends Bird { }
+    static class Bird { }
+
+    public static void main(String[] args) {
+        List<? extends Bird> birds = new ArrayList<Bird>();
+        birds.add(new Sparrow()); // Does not compile
+        birds.add(new Bird()); // Does not compile
+    }
+
+The problem here is that Java does not know what type `List<? extends Bird>` really is. It could be `List<Bird>` or `List<Sparrow>` or some other generic type. The first compiler error is that we can't add a Sparrow to a `List<? extends Bird>`, the second compiler error happens because we can't add a Bird to a `List<Sparrow>`. To Java both of these are possible scenarios, so neither is allowed.
+
+We can also use upper bounds with interfaces, for example:
+
+    interface Flyer { void fly(); }
+    private void groupOfFlyers(List<? extends Flyer> flyer) { }
+
+Note that we used the keyword extends instead of implements. Upper bounds are like anonymous classes in that they use extends regardless of whether we are working with a class or an interface. The method `groupOfFlyers()` accepts everyone that implements Flyer.
 
 ### Lower-Bounded Wildcards
