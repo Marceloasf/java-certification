@@ -1312,3 +1312,32 @@ We can also use upper bounds with interfaces, for example:
 Note that we used the keyword extends instead of implements. Upper bounds are like anonymous classes in that they use extends regardless of whether we are working with a class or an interface. The method `groupOfFlyers()` accepts everyone that implements Flyer.
 
 ### Lower-Bounded Wildcards
+
+If we try to write a method adding strings with two lists: 
+
+    List<String> strings = new ArrayList<String>();
+    strings.add("tweet");
+
+    List<Object> objects = new ArrayList<Object>(strings);
+
+    addSound(strings);
+    addSound(objects);
+
+There is a problem with these implementation. It is that we want to pass a `List<String>` and a `List<Object>` to the same method. Before we understand why this is a problem and how we can fix it, let's look at the following table, which explains why we need a lower bound:
+
+
+ | `public static void addSound(_____ list) {list.add("quack");}`     | Method compiles   | Can pass a `List<String>` | Can pass a `List<Object>`    |
+ | :------                         | :-------------                             | :------------                              |  :------------ |
+ | List<?>                         | No (unbounded generics are immutable)      | Yes                                        |  Yes  |
+ | List<? extends Object>          | No (upper-bounded generics are immutable)  | Yes                                        |  Yes  |
+ | List<*Object*>                  | Yes                                        | No (with generics, must pass exact match)  |  Yes  |
+ | List<? super String>            | Yes                                        | Yes                                        |  Yes  |
+
+
+To solve this problem, we need to use a lower bound:
+
+    public static void addSound(List<? super String> list) {
+        list.add("quack");
+    }
+
+With a lower bound, we are telling Java that the list will be a *list of String objects or a list of some objects that are a superclass of String*. Either way, it's safer to add a String to that list. Just like generic classes, you probably won't use this in your code unless you are writing code for others to reuse. But for the exam you need to understand it.
