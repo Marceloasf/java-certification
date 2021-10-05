@@ -1341,3 +1341,5 @@ To solve this problem, we need to use a lower bound:
     }
 
 With a lower bound, we are telling Java that the list will be a *list of String objects or a list of some objects that are a superclass of String*. Either way, it's safer to add a String to that list. Just like generic classes, you probably won't use this in your code unless you are writing code for others to reuse. But for the exam you need to understand it.
+ 
+### Putting It All Together 

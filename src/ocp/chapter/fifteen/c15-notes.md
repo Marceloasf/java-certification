@@ -1,0 +1,20 @@
+# Chapter 15 - Functional Programming
+
+Java Stream API
+- Describe the Stream interface and pipelines
+- Use lambda expressions and method references
+
+Built-in Functional Interfaces
+- Use interfaces from the java.util.function package
+- Use core functional interfaces including Predicate, Consumer, Function and Supplier
+- Use primitive and binary variations of base interfaces of java.util.function package
+  
+Lambda Operations on Streams
+- Extract stream data using map, peek and flatMap methods
+- Search stream data using search findFirst, findAny, anyMatch, allMatch and noneMatch methods
+- Use the Optional class
+- Perform calculations using count, max, min, average and sum stream operations
+- Sort a ccollection using lambda expressions
+- Use Collectors with streams, including the groupingBy and partitioningBy operations
+
+## Working with Built-in Functional Interfaces (p.670-681)
