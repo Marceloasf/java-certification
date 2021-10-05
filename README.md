@@ -19,4 +19,5 @@ Repository dedicated to the study of the needed content to obtain a Java certifi
 - [Java Fundamentals](./src/ocp/chapter/twelve)
 - [Annotations](./src/ocp/chapter/thirteen)
 - [Generics and Collections](./src/ocp/chapter/fourteen)
+- [Functional Programming](./src/ocp/chapter/fifteen)
 - [Concurrency](./src/ocp/chapter/eighteen)
