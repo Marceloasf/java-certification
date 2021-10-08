@@ -1342,4 +1342,65 @@ To solve this problem, we need to use a lower bound:
 
 With a lower bound, we are telling Java that the list will be a *list of String objects or a list of some objects that are a superclass of String*. Either way, it's safer to add a String to that list. Just like generic classes, you probably won't use this in your code unless you are writing code for others to reuse. But for the exam you need to understand it.
  
-### Putting It All Together 
+### Understand Generic Supertypes
+
+When you have subclasses and superclasses, lower bounds can get tricky. This is why:
+
+    List<? super IOException> exceptions = new ArrayList<Exception>();
+    exceptions.add(new Exception());
+    exceptions.add(new IOException());
+    exceptions.add(new FileNotFoundException());
+ 
+ The code that does not compile because we could have a `List<IOException>` and an Exception object wouldn't fit in there. And last FileNotFoundException can be added to the array, it's tricky because FileNotFoundException is a subclass of IOException, and the keyword says super. What happens is that Java understand that FileNotFoundException is also an IOException.
+
+### Combining Generic Declarations
+
+Now we are going to look at some examples that show some tough pieces of code that can be on the exam:
+
+    class A { }
+    class B extends A { }
+    class C extends B { }
+
+    List<?> list1 = new ArrayList<A>();
+    List<? extends A> list2 = new ArrayList<A>();
+    List<? super A> list3 = new ArrayList<A>();
+
+Does this code compiles? Yes! Here's how: First we create an ArrayList that can hold instances of class A. Any generic type can be referenced from an unbounded wildcard, making this ok. Then we try to store a list in a variable declaration with an upper-bounded wildcard. Which is okay, since the generic type extends A. We can have all three generic types stored here (A, B and C). The last one is tricky as mentioned before, since it has a lower-bounded wildcard, the lowest type we can reference is **A**. Since that's what we got, it compiles.
+
+Now we have some examples that doesn't compile and one that compile:
+
+    List<? extends B> list4 = new ArrayList<A>(); // DOES NOT COMPILE
+    List<? super B> list5 = new ArrayList<A>();
+    List<?> list6 = new ArrayList<? extends A>(); // DOES NOT COMPILE
+
+The first one does not compile because we have an upper-bounded wildcard that allows B and C to be referenced, since we are trying to reference A, the code does not compile. Then we have a lower-bounded wildcard that compiles because A is a supertype of B (allows reference to A, B and Object). Finally, the last one allows a reference to any generic type since it is an unbounded wildcard, but the problem there is that we need to know what that type will be when instantiating the ArrayList. 
+
+### Passing Generic Arguments
+
+The first method example is a normal use of generics:
+
+    <T> T first(List<? extends T> list) {
+        return list.get(0)
+    }
+
+It uses a method specific type parameter, T. It takes a parameter of `List<T>`, or some subclass of T, and it returns a single object of that T type. The following does not compile:
+
+    <T> <? extends T> second(List<? extends T> list) {
+        return list.get(0)
+    }
+
+This one does not compile because the return type in it isn't actually a type. As we write the method, we need to know what type it is supposed to return, *we can't specify this as a wildcard*. The following does not compile too, but it's more tricky:
+
+    <B extends A> B third(List<B> list) {
+        return new B(); // DOES NOT COMPILE
+    }
+
+The trick here is that this method would compile normally, but it does not because within the scope of the method, B can represent class A, B or C, because they all extends the A class. Since B is not refering to the class B, we can't instantiate it.
+
+The last example is kinda tricky too:
+
+    void fourth(List<? super B> list) { } // COMPILES
+    
+    <X> void fifth(List<X super B> list) { } // DOES NOT COMPILE
+
+It does not compile because it tries to mix a method-specific parameter with a wildcard. Remember that wildcards must have a `?` in them.
