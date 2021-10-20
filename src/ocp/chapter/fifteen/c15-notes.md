@@ -125,7 +125,7 @@ A BiConsumer can have doesn't need the two parameters to be the same type, they 
 
 ### Implementing *Predicate* and *BiPredicate*
 
-A Predicate is often used when filtering or matching, both are common operations. A BiPredicate is just like a Predicate except that it takes two parameters. The following is the interface definition:
+A Predicate is often used when filtering or matching, both are common operations. A BiPredicate is just like a Predicate except that it takes two parameters. The following are the interfaces definitions:
 
     @FunctionalInterface 
     public interface Predicate<T> {
@@ -155,3 +155,88 @@ Here are some examples of Predicate and BiPredicate usage:
 
 We can see that method references save a good bit of typing, but the downside is that they are less explicit.
 
+### Implementing *Function* and *BiFunction*
+
+A Function is responsible for turning one parameter into a value of a potentially different type and returning it. A BiFunction is responsible for turning two parameters into a value and returning it. The interfaces are defined as follows:
+
+    @FunctionalInterface
+    public interface Function<T, R> {
+        R apply(T t);
+        // omitted default and static methods 
+    }
+
+    @FunctionalInterface
+    public interface BiFunction<T, U, R> {
+        R apply(T t, U u);
+        // omitted default method
+    }
+
+The following example converts a String to the length of the String:
+
+    Function<String, Integer> f1 = String::Length;
+    Function<String, Integer> f2 = x -> x.length();
+
+    System.out.println(f1.apply("cluck")); // 5
+    System.out.println(f2.apply("cluck")); // 5
+
+This function turns a String into an Integer. Technically it turns the String into an int, which is autoboxed into an Integer. The types don't have to be different. The following combines two String objects and produces another String:
+
+    BiFunction<String, String, String> b1 = String::concat;
+    BiFunction<String, String, String> b2 = (string, toAdd) -> string.concat(toAdd);
+
+    System.out.println(b1.apply("baby", "chick")); // baby chick
+    System.out.println(b2.apply("baby", "chick")); // baby chick
+
+The first two types in the BiFunction are the input types, the third is the return type. For the method reference on the example above, the first parameter is the instance that `concat()` is called on and the second is passed to `concat()` as the parameter.
+
+### Implementing *UnaryOperator* and *BinaryOperator*
+
+UnaryOperator and BinaryOperator are a special case of a Function (UnaryOperator extends Function and BinaryOperator extends BiFunction). They **require** all type parameters to be the same type. A UnaryOperator transform its value into one of the same type. For example, incrementing by one is a unary operation. A BinaryOperator merges two values into one of the same type. Adding two numbers is a binary operation. The following are the interfaces definitions:
+
+    @FunctionalInterface
+    public interface UnaryOperator<T> extends Function<T, T> { }
+
+    @FunctionalInterface
+    public interface BinaryOperator<T> extends BiFunction<T, T, T> {
+        // omitted static methods
+     }
+
+This means that method signatures look like this: 
+
+    T apply(T t); // UnaryOperator
+
+    T apply(T t1, T t2); // BinaryOperator
+
+These methods are the actually inherited from the Function and BiFunction superclasses. But the generic declarations on the subclasses are what force the types to be the same. For example:
+
+    UnaryOperator<String> u1 = String::toUpperCase;
+    UnaryOperator<String> u2 = x -> x.toUpperCase();
+
+    System.out.println(u1.apply("chirp")); // CHIRP
+    System.out.println(u2.apply("chirp")); // CHIRP
+
+We don't need to specify the return type in the generics, since UnaryOperator requires it to be the same as the parameter. And here's the binary example:
+
+    BinaryOperator<String> b1 = String::concat;
+    BinaryOperator<String> b2 = (string, toAdd) -> string.concat(toAdd);
+
+    System.out.print(b1.apply("baby ", "chick")); // baby chick
+    System.out.print(b2.apply("baby ", "chick")); // baby chick
+
+The code here is way easier to understand, since we don't need to declare more than one generic type.
+
+#### Creating Your Own Functional Interfaces
+
+Java provides a built-in interface for functions with one or two parameters, what if we need more than that? We can create a funtional interface with more than that, like this:
+
+    @FunctionalInterface
+    interface TriFunctional<T,U,V,R> {
+        R apply(T t, U u, V v);
+    }
+    
+    @FunctionalInterface
+    interface QuadFunctional<T,U,V,W,R> {
+        R apply(T t, U u, V v, W w);
+    }
+
+On both these examples, the last type parameter is the return type, just like the Function and BiFunction interfaces. This Java built-in interfaces are meant to facilitate the most common functional interfaces that you'll need. Remember that we can add any functional interfaces that we want to, Java matches them when we use lambdas or method references.
