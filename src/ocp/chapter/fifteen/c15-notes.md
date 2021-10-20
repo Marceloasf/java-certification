@@ -43,3 +43,38 @@ Now we are going to look at some functional interfaces, that are provided in the
 There is one functional interface here that was not in the first interfaces table (Collections Framework), which is BinaryOperator. These are not all the functional interfaces available, but these are the most important for this section of the chapter. There are even functional interfaces for handling primitives (we'll see them later in the chapter). It's important to memorize all these functions listed above, because they will be on the exam.   
 
 > **Notes:** Many of the functional interfaces are defined in the java.util.function package. On Chapter 18 "Concurrency", there will be two more functional interfaces called Runnable and Callable, they are used for concurrency the majority of time, However, you need to know them for the exam and know that they are both functional interfaces that don't take any parameters, with Runnable returning void and Callable returning a generic type.
+
+### Implementing *Supplier*
+
+A Supplier is used when you want to generate or supply values without taking any input. The interface is defined like this:
+
+    @FunctionalInterface
+    public interface Supplier<T> {
+        T get();
+    }
+
+You can create a LocalDate using the factory method `now()`. This example shows how to use a Supplier to call it:
+
+    Supplier<LocalDate> s1 = LocalDate::now;
+    Supplier<LocalDate> s2 = () -> LocalDate.now();
+
+    LocalDate d1 = s1.get();
+
+    System.out.println(d1);
+    System.out.println(s2.get()); // Prints the same date as the println above
+
+Both implementations create Suppliers. This is a good example of using static methods with lambda and method reference. A Supplier is often used when constructing new objects. For example, we can print two empty StringBuilder objects.
+
+    Supplier<StringBuilder> s1 = StringBuilder::new;
+    Supplier<StringBuilder> s2 = () -> StringBuilder();
+
+    System.out.println(s1.get());
+    System.out.println(s2.get());
+
+On this example we used a constructor reference to create the object (first line) and we've been using generics to define what type of Supplier we are using. The last example is a little bit different but is simple, just look at it carefully:
+
+    Supplier<ArrayList<String>> s3 = ArrayList<String>::new;
+    ArrayList<String> a1 = s3.get();
+    System.out.println(a1);
+
+When we call `s3.get()`, we get a new instance of `ArrayList<String>`, which is the generic type of the Supplier, in other words, a generic that contains another generic.
