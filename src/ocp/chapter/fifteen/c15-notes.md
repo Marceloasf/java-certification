@@ -95,7 +95,7 @@ You use a Consumer when you want to do something with a parameter but not return
         // omitted default method
     }
 
-Here are some examples of the Consumer interface:
+Here are some examples of the Consumer and BiConsumer interface:
 
     Consumer<String> c1 = System.out::println;
     Consumer<String> c2 = x -> System.out.println(x);
@@ -112,5 +112,46 @@ Here are some examples of the Consumer interface:
 
     System.out.println(map); // {chicken=7, chick=1}
 
+    var map2 = new HashMap<String, String>();
+    BiConsumer<String, String> b3 = map::put;
+    BiConsumer<String, String> b4 = (k, v) -> map.put(k, v);
+
+    b3.accept("chicken", "Cluck");
+    b4.accept("chick", "Tweep");
+
+    System.out.println(map2); // {chicken=Cluck, chick=Tweep}
+
 A BiConsumer can have doesn't need the two parameters to be the same type, they can be too. As we can see, we can use method references in most of the cases with Consumer and BiConsumer.
+
+### Implementing *Predicate* and *BiPredicate*
+
+A Predicate is often used when filtering or matching, both are common operations. A BiPredicate is just like a Predicate except that it takes two parameters. The following is the interface definition:
+
+    @FunctionalInterface 
+    public interface Predicate<T> {
+        boolean test(T t);
+        // omitted default and static methods 
+    }
+
+    @FunctionalInterface 
+    public interface BiPredicate<T, U> {
+        boolean test(T t, U u);
+        // omitted default methods
+    }
+
+Here are some examples of Predicate and BiPredicate usage:
+
+    Predicate<String> p1 = String::isEmpty;
+    Predicate<String> p2 = b -> b.isEmpty();
+
+    System.out.println(p1.test("")); // true
+    System.out.println(p2.test("")); // true
+
+    BiPredicate<String> b1 = String::startsWith;
+    BiPredicate<String> b2 = (string, prefix) -> string.startsWith(prefix);
+
+    System.out.println(b1.test("chicken", "chick")); // true
+    System.out.println(b2.test("chicken", "chick")); // true
+
+We can see that method references save a good bit of typing, but the downside is that they are less explicit.
 
