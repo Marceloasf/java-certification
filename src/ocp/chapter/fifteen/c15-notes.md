@@ -78,3 +78,39 @@ On this example we used a constructor reference to create the object (first line
     System.out.println(a1);
 
 When we call `s3.get()`, we get a new instance of `ArrayList<String>`, which is the generic type of the Supplier, in other words, a generic that contains another generic.
+
+### Implementing *Consumer* and *BiConsumer*
+
+You use a Consumer when you want to do something with a parameter but not return anything. BiConsumer does the same thing, except that it takes two parameters. They are defined as follows:
+
+    @FunctionalInterface
+    public interface Consumer<T> {
+        void accept(T t);
+        // omitted default method
+    }
+
+    @FunctionalInterface
+    public interface BiConsumer<T, U> {
+        void accept(T t, U u);
+        // omitted default method
+    }
+
+Here are some examples of the Consumer interface:
+
+    Consumer<String> c1 = System.out::println;
+    Consumer<String> c2 = x -> System.out.println(x);
+
+    c1.accept("Annie");
+    c2.accept("Annie"); // Both print Annie
+
+    var map = new HashMap<String, Integer>();
+    BiConsumer<String, Integer> b1 = map::put;
+    BiConsumer<String, Integer> b2 = (k, v) -> map.put(k, v);
+
+    b1.accept("chicken", 7);
+    b2.accept("chick", 1);
+
+    System.out.println(map); // {chicken=7, chick=1}
+
+A BiConsumer can have doesn't need the two parameters to be the same type, they can be too. As we can see, we can use method references in most of the cases with Consumer and BiConsumer.
+
