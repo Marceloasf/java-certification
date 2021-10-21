@@ -292,3 +292,24 @@ Now we can have a look at the Function interface `compose()` method, that chains
     System.out.println(combined.apply(3)); // 8
 
 This time **before** runs first, turning 3 into a 4, then **after** runs, doubling the 4 to 8. 
+
+## Returning an *Optional*
+
+How do we express a "we don't know" or "not applicable" answer in Java? We use the *Optional* type. An Optional is created using a factory. You can either request an empty Optional or pass a value for the Optional to wrap. You can image an Optional as a box that might have something inside.
+
+### Creating an *Optional*
+
+Here's an example of an average method that uses Optional and creates it both ways commented above:
+
+    public static Optional<Double> average(int... scores) {
+        if (scores.length == 0) return Optional.empty();
+        int sum = 0;
+        for (int score: scores) sum += score;
+        return Optional.of((double) sum / scores.length);
+    }
+
+If we call the method above we can see what is inside our two boxes:
+
+    System.out.println(average(90, 100)); // Optional[95.0]
+    System.out.println(average()); // Optional.empty
+
