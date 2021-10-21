@@ -240,3 +240,55 @@ Java provides a built-in interface for functions with one or two parameters, wha
     }
 
 On both these examples, the last type parameter is the return type, just like the Function and BiFunction interfaces. This Java built-in interfaces are meant to facilitate the most common functional interfaces that you'll need. Remember that we can add any functional interfaces that we want to, Java matches them when we use lambdas or method references.
+
+### Convenience Methods on Functional Interfaces
+
+By definition, a functional interface can only contain a single abstract method, but this doesn't mean that it can't have other methods, like default methods. It's common for interfaces to have several helpful default methods. All of these methods facilitate using functional interfaces. The following table shows only the main methods methods on the built-in interfaces, that you'll need to know for the exam:
+
+> **Note:** BiConsumer, BiFunction and BiPredicate interfaces have similar methods **available**.
+
+ | Interface instance     | Method return type       | Method name   | Method parameters |
+ | :------                | :-------------           | :------------ |  :------------    |
+ | Consumer               | Consumer                 | andThen()     | Consumer          |
+ | Function               | Function                 | andThen()     | Function          |
+ | Function               | Function                 | compose()     | Function          |
+ | Predicate              | Predicate                | and()         | Predicate         |
+ | Predicate              | Predicate                | negate()      | -                 |
+ | Predicate              | Predicate                | or()          | Predicate         |
+
+Let's start with these two simple examples:
+
+    Predicate<String> egg = s -> s.contains("egg");
+    Predicate<String> brown = s -> s.contains("brown");
+
+Now we need a predicate for brown eggs and another for all other eggs:
+
+    Predicate<String> brownEggs = s -> s.contains("egg") && s.contains("brown");
+    Predicate<String> otherEggs = s -> s.contains("egg") && ! s.contains("brown");
+
+This works, but it can be better. A better way to deal with this case is to use two default methods on Predicate:
+
+    Predicate<String> brownEggs = egg.and(brown);
+    Predicate<String> brownEggs = egg.and(brown.negate); // These are the first two Predicate example variables
+
+Now these two are way shorter, cleaner and even easier to understand what is going on. 
+
+Moving on to the Consumer interface now. We can use the `andThen()` method, which runs two functional interfaces in sequence:
+
+    Consumer<String> c1 = x -> System.out.print("1: " + x);
+    Consumer<String> c2 = x -> System.out.print(",2: " + x);
+
+    Consumer<String> combined = c1.andThen(c2);
+    combined.accept("Annie"); // 1: Annie,2: Annie
+
+Notice that the same parameter is passed to both c1 and c2 in this case. The Consumer instances are run in sequence and are independent of each other. 
+
+Now we can have a look at the Function interface `compose()` method, that chains functional interfaces. But instead it passes along the output of one to the input of another: 
+
+    Functional<Integer, Integer> before = x -> x + 1;
+    Functional<Integer, Integer> after = x -> x * 2;
+
+    Function<Integer, Integer> combined = after.compose(before);
+    System.out.println(combined.apply(3)); // 8
+
+This time **before** runs first, turning 3 into a 4, then **after** runs, doubling the 4 to 8. 
