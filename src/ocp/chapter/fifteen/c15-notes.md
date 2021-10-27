@@ -293,7 +293,7 @@ Now we can have a look at the Function interface `compose()` method, that chains
 
 This time **before** runs first, turning 3 into a 4, then **after** runs, doubling the 4 to 8. 
 
-## Returning an *Optional*
+## Returning an *Optional* (p.681-685)
 
 How do we express a "we don't know" or "not applicable" answer in Java? We use the *Optional* type. An Optional is created using a factory. You can either request an empty Optional or pass a value for the Optional to wrap. You can image an Optional as a box that might have something inside.
 
@@ -340,5 +340,29 @@ These were the static methods that we need to know about Optional for the exam. 
  | orElseThrow()           | Throws NoSuchElementException                    | Returns value                       |
  | orElseThrow(Supplier s) | Throws exception created by calling the Supplier | Returns value                       |
 
-With these methods we can do code that it's easier to read, that instead of using an if statement, we can do it all in one line, with a Consumer or Supplier for example.
+With these methods we can do code that it's easier to read, that instead of using an if statement, we can do it all in one line, with ifPresent and a Consumer for example.
 
+> **Note:** orElseThrow() was added on Java 10.
+
+### Dealing with an Empty *Optional*
+
+The other methods (orElse...) allow us to specify what to do if a value is not present. So the following are some examples of them all and how they behave:
+
+    Optional<Double> opt = average(); // no value present on opt
+    System.out.println(opt.orElse(Double.NaN)); // NaN
+    System.out.println(opt.orElseGet(() -> Math.random())); // 0.564594598248 
+    System.out.println(opt.orElseThrow()); // Throws NoSuchElementException 
+    System.out.println(opt.orElseThrow(() -> new IllegalStateException())); // Throws IllegalStateException
+    System.out.println(opt.orElseGet(() -> new IllegalStateException())); // DOES NOT COMPILE, the opt variable is an Optional<Double>, Supplier must return a Double.
+
+    Optional<Double> optWithValue = average(90, 100);
+    System.out.println(optWithValue.orElse(Double.NaN)); // 95.0
+    System.out.println(optWithValue.orElseGet(() -> Math.random())); // 95.0
+    System.out.println(optWithValue.orElseThrow()); // 95.0
+    // orElse is not used in these examples because there is a value present
+
+### Is *Optional* the same as null?
+
+Before Java 8, the common return was null instead of Optional. But there were some problems with this approach. It wasn't a clear way to express that null might be a special value, because when returning an Optional, is clear that there might not be a value in there. Another advantage of Optional is that we can use functional programming style with the methods rather than using some common statements, like the if statement.  
+
+## Using Streams (p.685-706)
