@@ -313,3 +313,32 @@ If we call the method above we can see what is inside our two boxes:
     System.out.println(average(90, 100)); // Optional[95.0]
     System.out.println(average()); // Optional.empty
 
+We can check if an Optional contains a value (`isPresent()`) and then `get()` that value if present:
+
+    Optional<Double> opt = average(90,100);
+    if (opt.isPresent()) {
+        System.out.println(opt.get()); // 95.0
+    }
+
+If we don't check before calling `get()` on an Optional, a NoSuchElementException is thrown. 
+
+    java.util.NoSuchElementException: No value present 
+
+When creating an Optional, we can define it wrapping an value with `of(value)` method or `empty()`. If the value is null, we can use the factory method `ofNullable(value)` to wrap the value and create the Optional.
+
+> **Note:** A variable whose type is Optional should never itself be null. null can be assigned to an Optional, but it's not a good practice, always use one of these factory methods commented above to create an Optional.
+
+These were the static methods that we need to know about Optional for the exam. The following table shows most of the instance methods on Optional that we need to know too. There are a few others that will be covered later in the chapter. 
+
+ | Method                  | When Optional **is empty**                       | When Optional **contains a value**  |
+ | :------                 | :-------------                                   | :------------                       |
+ | get()                   | Throws an exception                              | Returns value                       |
+ | ifPresent(Consumer c)   | Does nothing                                     | Calls Consumer with value           |
+ | isPresent()             | Returns false                                    | Returns true                        |
+ | orElse(T other)         | Returns other parameter                          | Returns value                       |
+ | orElseGet(Supplier s)   | Retruns result of calling Supplier               | Returns value                       |
+ | orElseThrow()           | Throws NoSuchElementException                    | Returns value                       |
+ | orElseThrow(Supplier s) | Throws exception created by calling the Supplier | Returns value                       |
+
+With these methods we can do code that it's easier to read, that instead of using an if statement, we can do it all in one line, with a Consumer or Supplier for example.
+
