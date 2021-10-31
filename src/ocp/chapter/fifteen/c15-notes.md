@@ -366,3 +366,25 @@ The other methods (orElse...) allow us to specify what to do if a value is not p
 Before Java 8, the common return was null instead of Optional. But there were some problems with this approach. It wasn't a clear way to express that null might be a special value, because when returning an Optional, is clear that there might not be a value in there. Another advantage of Optional is that we can use functional programming style with the methods rather than using some common statements, like the if statement.  
 
 ## Using Streams (p.685-706)
+
+A *stream* in Java is a sequence of data. A *stream pipeline* consists of the operations that run on a stream to produce a result.
+
+To understand the *pipeline flow* we need to think of a stream pipeline as an assembly line in a factory, where we have a number of jobs that need different persons to do them, and the steps require to follow a certain order, where the second depends on the first finishing it's assignment. This assembly line is finite. *Finite streams* have a limit. There are others assembly lines that run forever, where a cycle is treated as *infinite*, since it does not end for an inordinately large period of time. Another important feature of an assembly line is that each person touches each element to do their operation and then that piece of data is gone, it does not come back. They are different than lists and queues as we saw in the other chapter, where elements of a list can be accessed any time and queue elements are limited in which elements we can access, but they are all there. With streams, the data is not generated up front, it is only created when needed. This is an example of *lazy evaluation*, which delays execution until necessary. 
+
+Many things can happen along the assembly line stations, in functional programming these are called *stream operations*, operations are ocurr in a pipeline, where someone has to start and end the work. There can be any number of stations in between. There are three parts to a stream pipeline, respectively:
+
+- **Source:** Where the stream comes from.
+- **Intermediate operations:** Transforms the stream into another one. There can be as few or as many intermediate operations as we'd like. Since streams use lazy evaluation, the intermediate operations do not run until the terminal operation runs.
+- **Terminal operation:** Actually produces a result. Since streams can be used only once, the stream is no longer valid after a terminal operation completes. 
+
+The important thing on these 'assembly lines' is what comes in and goes out, what happens in between the intermediate operations is an implementation detail. The following table shows some scenarions to make sure that we are clear about the differences between intermediate operations and terminal operations:
+
+ | Scenario                                 | Intermediate operation  | Terminal operation  |
+ | :------                                  | :-------------          | :------------       |
+ | Required part of a useful pipeline?      | No                      | Yes |
+ | Can exist multiple times in a pipeline?  | Yes                     | No |
+ | Return type is a stream type?            | Yes                     | No |
+ | Executed upon method call?               | No                      | Yes |
+ | Stream valid after call?                 | Yes                     | No |
+
+A factory typically has a foreman who oversses the work. Java serves as the 'foreman' when working with stream pipelines. He takes care of everything envolving running a stream pipeline.
