@@ -387,4 +387,43 @@ The important thing on these 'assembly lines' is what comes in and goes out, wha
  | Executed upon method call?               | No                      | Yes |
  | Stream valid after call?                 | Yes                     | No |
 
-A factory typically has a foreman who oversses the work. Java serves as the 'foreman' when working with stream pipelines. He takes care of everything envolving running a stream pipeline.
+A factory typically has a foreman who oversees the work. Java serves as the 'foreman' when working with stream pipelines. He takes care of everything envolving running a stream pipeline.
+
+### Creating Finite Streams
+
+In Java, the streams we have been talking about are represented by the Stream<*T*> interface.
+
+We'll start with finite streams. There are some ways to create them:
+
+    Stream<String> empty = Stream.empty(); // count = 0
+    Stream<Integer> singleElement = Stream.of(1); // count = 1
+    Stream<Integer> fromArray = Stream.of(1,2,3); // count = 3
+
+The third example shows how to create a stream from a varargs. The method signature uses varargs, which let us specify an array or individual elements. Java also provides a convenient way of converting a Collection to a stream:
+
+    var list = List.of("a", "b", "c");
+    Stream<String> fromList = list.stream();
+
+It's just a simple method call to create a stream from a list. 
+
+> **Note:** We can create a parallel stream from a list too, just calling the method `list.parallelStream()`. This stream can be used when concurrency is needed, you can have multiple threads working on your stream, but keep in mind that some tasks cannot be done in parallel, for example a task that needs ordering. More about concurrency is discussed on it's own chapter.
+
+### Creating Infinite Streams
+
+We can't create an infinite list, but we can create infinite streams:
+
+    Stream<Double> randoms = Stream.generate(Math::random);
+    Stream<Integer> oddNumbers = Stream.iterate(1, n -> n + 2);
+
+Both of these operations will generate numbers as long as we need them, if we call a `randoms.forEach(System.out::println)` the program will print numbers until we kill it. Later in the chapter we will discuss the `limit()` method which turns the infinite stream into a finite stream. 
+
+Note that if we print the stream, it will not print the elements like a List, it will print something like this: java.util.stream.ReferencePipeline$3@4517d9a3.
+
+Imagine that we wanted just odd numbers less than 100. Java 9 introduced an overloaded version of `iterate()` that solves this:
+
+    Stream<Integer> oddNumbersUnder100 = Stream.iterate(
+        1,              // seed
+        n -> n < 100,   // Predicate to specify when is done
+        n -> n + 2      // UnaryOperator to get next value
+    );
+
