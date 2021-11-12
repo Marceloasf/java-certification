@@ -427,3 +427,18 @@ Imagine that we wanted just odd numbers less than 100. Java 9 introduced an over
         n -> n + 2      // UnaryOperator to get next value
     );
 
+### Reviewing Stream Creation Methods
+
+To review, make sure you know all the methods on the following table. These are the ways of creating a source for streams, given a Collection instace coll.
+
+ | Method                                           | Finite or infinite?  | Notes  |
+ | :------                                          | :-------------       | :------------       |
+ | Stream.empty()                                   | Finite               | Creates Stream with zero elements |
+ | Stream.of(varargs)                               | Finite               | Creates Stream with elements listed |
+ | coll.stream()                                    | Finite               | Creates Stream from a Collection |
+ | coll.parallelStream()                            | Finite               | Creates Stream from a Collection where the stream can run in parallel |
+ | Stream.generate(supplier)                        | Infinite             | Creates Stream by calling the Supplier for each element upon request |
+ | Stream.iterate(seed, unaryOperator)              | Infinite             | Creates Stream by using the seed for the first element and then calling the UnaryOperator for each subsequent element upon request |
+ | Stream.iterate(seed, predicate, unaryOperator)   | Finite or Infinite   | Creates Stream by using the seed for the first element and then calling the UnaryOperator for each subsequent element upon request. Stops if the Predicate returns false |
+
+ 
