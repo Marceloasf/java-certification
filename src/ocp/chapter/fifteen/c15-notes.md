@@ -441,4 +441,5 @@ To review, make sure you know all the methods on the following table. These are 
  | Stream.iterate(seed, unaryOperator)              | Infinite             | Creates Stream by using the seed for the first element and then calling the UnaryOperator for each subsequent element upon request |
  | Stream.iterate(seed, predicate, unaryOperator)   | Finite or Infinite   | Creates Stream by using the seed for the first element and then calling the UnaryOperator for each subsequent element upon request. Stops if the Predicate returns false |
 
- 
+### Using Common Terminal Operations
+
