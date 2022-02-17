@@ -264,21 +264,19 @@
 
 - Legal vs. illegal configurations with a traditional try statement:
 
----
+  - Legal vs. illegal configurations with a traditional try statement:
 
-| 0 finally blocks 1 finally block 2 or more finally blocks |
-|0 catch blocks Not legal Legal Not legal |
-|1 or more catch blocks Legal Legal Not legal |
-|\***\*\*\*\*\***\*\*\***\*\*\*\*\***\*\*\***\*\*\*\*\***\*\*\***\*\*\*\*\***\_\***\*\*\*\*\***\*\*\***\*\*\*\*\***\*\*\***\*\*\*\*\***\*\*\***\*\*\*\*\***|
+  |                        | 0 finally blocks | 1 finally block | 2 or more finally blocks |
+  | :--------------------- | :--------------- | :-------------- | :----------------------- |
+  | 0 catch blocks         | Not legal        | Legal           | Not legal                |
+  | 1 or more catch blocks | Legal            | Legal           | Not legal                |
 
-- Legal vs. illegal configurations with a try-with-resources statement:
+  - Legal vs. illegal configurations with a try-with-resources statement:
 
----
-
-| 0 finally blocks 1 finally block 2 or more finally blocks |
-|0 catch blocks Legal Legal Not legal |
-|1 or more catch blocks Legal Legal Not legal |
-|\***\*\*\*\*\***\*\*\***\*\*\*\*\***\*\*\***\*\*\*\*\***\*\*\***\*\*\*\*\***\_\***\*\*\*\*\***\*\*\***\*\*\*\*\***\*\*\***\*\*\*\*\***\*\*\***\*\*\*\*\***|
+  |                        | 0 finally blocks | 1 finally block | 2 or more finally blocks |
+  | :--------------------- | :--------------- | :-------------- | :----------------------- |
+  | 0 catch blocks         | Legal            | Legal           | Not legal                |
+  | 1 or more catch blocks | Legal            | Legal           | Not legal                |
 
 - You can see that for both of these try statements, two or more programmer-defined finally blocks are not allowed. The implicit one is not count here.
 
