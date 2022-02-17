@@ -125,15 +125,10 @@ The equality operators (== and !=) are used in one of three scenarios:
 
 ## The switch Statement (p.72-75)
 
-    - Supported data types are byte, short, char, int, enum values, String, Byte, Short, Character and Integer.
-    - A switch statement may contain 0 or more case branches, break inside the case is optional,
-    and the default is optional and it may appear anywhere within the switch statement.
-    - The values in each case statement must be compile-time constant values of the same data type as the switch value,
-    this means that you can use only literals, enum constants or final constant variables of the same data type. A final
-    constant is a variable that is marked with the final modifier and initialized with a literal value in the same
-    expression in which it is declared.
-    - If there isn't a break statement on the default or case block, flow will continue to the next proceeding
-    case or default block automatically until it finds a break statement or finishes the structure.
+- Supported data types are byte, short, char, int, enum values, String, Byte, Short, Character and Integer.
+- A switch statement may contain 0 or more case branches, break inside the case is optional, and the default is optional and it may appear anywhere within the switch statement.
+- The values in each case statement must be compile-time constant values of the same data type as the switch value, this means that you can use only literals, enum constants or final constant variables of the same data type. A final constant is a variable that is marked with the final modifier and initialized with a literal value in the same expression in which it is declared.
+- If there isn't a break statement on the default or case block, flow will continue to the next proceeding case or default block automatically until it finds a break statement or finishes the structure.
 
 ## The while Statement (p.77)
 
