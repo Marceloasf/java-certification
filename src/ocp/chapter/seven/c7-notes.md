@@ -1,30 +1,33 @@
 # Chapter 7 - Methods and Encapsulation
 
 Creating and Using Methods
+
 - Create methods and contructors with arguments and return values
 - Create and invoke overloaded methods
 - Apply the static keyword to methods and fields
 
 Applying Encapsulation
+
 - Apply access modifiers
 - Apply encapsulation principles to a class
 
 ## Designing Methods (p.250-251)
-A method declaration is composed by, respectively, an access modifier (public), *optional* specifier (final), return type (void), method name (any name that starts with a letter, $ or _), list of parameters (which must be wrapped in parentheses), exceptions(optional) and the method body (must have braces). 
+
+A method declaration is composed by, respectively, an access modifier (public), _optional_ specifier (final), return type (void), method name (any name that starts with a letter, $ or \_), list of parameters (which must be wrapped in parentheses), exceptions(optional) and the method body (must have braces).
 
 > **Note:** The method name and parameter list are called the method signature.
 
 Parts of a method declaration:
 
-  |Element                 | Required?                 |
-  |:---------------------- | :------------------------ |
-  |Access modifier         | No                        |
-  |Optional modifier       | No                        |
-  |Return type             | Yes                       |
-  |Method name             | Yes                       |
-  |Parameter list          | Yes, but can be empty ( ) |
-  |Optional exception list | No                        |
-  |Method body *           | Yes, but can be empty { } |
+| Element                 | Required?                 |
+| :---------------------- | :------------------------ |
+| Access modifier         | No                        |
+| Optional modifier       | No                        |
+| Return type             | Yes                       |
+| Method name             | Yes                       |
+| Parameter list          | Yes, but can be empty ( ) |
+| Optional exception list | No                        |
+| Method body \*          | Yes, but can be empty { } |
 
 > **Table Note:** The full body can be omitted for abstract methods.
 
@@ -80,16 +83,16 @@ Methods with a return type other than void are required to have a return stateme
 
 Review of some rules:
 
-- An identifier may only contain letters, numbers, $ or _.
+- An identifier may only contain letters, numbers, $ or \_.
 - The first character is not allowed to be a number.
 - An identifier is not allowed to contain special characters (%,#,&,@...).
-- Reserved words are not allowed (public), but remember that Java is camelcase, for example public !== Public. 
-- Single underscore (_) character is not allowed as an identifier.
+- Reserved words are not allowed (public), but remember that Java is camelcase, for example public !== Public.
+- Single underscore (\_) character is not allowed as an identifier.
 - By convention, methods begin with a lowercase letter, but are not required to.
 
 ## Working with Varargs (p.256-257)
 
- A varargs parameter must be the last element in a method's parameter list. Only one varargs parameter is allowed per method:
+A varargs parameter must be the last element in a method's parameter list. Only one varargs parameter is allowed per method:
 
     `public void walk1(int... nums) { }` // COMPILES
     `public void walk2(int start, int... nums) { }` // COMPILES
@@ -110,9 +113,7 @@ You can call a method with varargs parameter in more than a way:
 Access Modifiers in order from most restrictive to least restrictive:
 
 - private: Only code in the same class can call private methods or access private fields.
-    
         `private String name;` or `private String getName() { ... }`
-     
 - Default (package-private) access: Only classes in the same package may call these methods or access these fields.
 
         `String name;` or `String getName() { ... }`
@@ -122,19 +123,18 @@ Access Modifiers in order from most restrictive to least restrictive:
         `protected String name;` or `protected String getName() { ... }`
 
 - public: Anyone can access the member from anywhere.
-      
         `public String name;` or `public String getName() { ... }`
 
 > **Note:** Extending means creating a subclass that has access to any protected and public members of the parent class. Modules redefine public access, making possible to restrict access to public code.
 
 Access modifiers rules:
-   
-  | A method in X can access a Y member           |   private     |      Default (package-private)   |      protected     |      public |
-  | :-------------------------------------------- | :------------ | :------------------------------  | :----------------- | :---------- |
-  | in the same class                             |   Yes         |      Yes                         |      Yes           |      Yes    |
-  | in another class in the same package          |   No          |      Yes                         |      Yes           |      Yes    |
-  | in a subclass in a different package          |   No          |      No                          |      Yes           |      Yes    |
-  | in an unrelated class in a different package  |   No          |      No                          |      No            |      Yes    |
+
+| A method in X can access a Y member          | private | Default (package-private) | protected | public |
+| :------------------------------------------- | :------ | :------------------------ | :-------- | :----- |
+| in the same class                            | Yes     | Yes                       | Yes       | Yes    |
+| in another class in the same package         | No      | Yes                       | Yes       | Yes    |
+| in a subclass in a different package         | No      | No                        | Yes       | Yes    |
+| in an unrelated class in a different package | No      | No                        | No        | Yes    |
 
 ## Applying the static Keyword (p.266-274)
 
@@ -147,16 +147,14 @@ When the static keyword is applied to a variable, method or class, it applies to
 - Is a member of the single class object that exists independently of any instances of that class.
 - main(String... args) method is a static method, that can be called like any other static method. `TestClass.main(new String[0]);`
 
-static methods have two main purposes:
-    1. For utility or helper methods that don't require any object state. Since there is no need to access instance variables, having static methods eliminates the need for the caller to instantiate an object just to call the method.
-    1. For state that is shared by all instances of a class, like a counter. All instances must share the same state. Methods that merely use that should be static as well.
+static methods have two main purposes: 1. For utility or helper methods that don't require any object state. Since there is no need to access instance variables, having static methods eliminates the need for the caller to instantiate an object just to call the method. 1. For state that is shared by all instances of a class, like a counter. All instances must share the same state. Methods that merely use that should be static as well.
 
 ### Accessing a static Variable or Method
 
-- You don't need an instance of the object to call a static member. `System.out.println(Koala.count);`. If the static member is declared inside the same class you're calling, you just call him directly. `System.out.println(count);` - inside Koala class. 
+- You don't need an instance of the object to call a static member. `System.out.println(Koala.count);`. If the static member is declared inside the same class you're calling, you just call him directly. `System.out.println(count);` - inside Koala class.
 
 You can use an instance of the object to call a static member. The compiler checks for the type of the REFERENCE and uses that instead of the OBJECT.
-    
+
         `Koala k = new Koala();`
         `System.out.println(k.count);` // k is a Koala, so print 0
         `k = null`
@@ -179,8 +177,8 @@ You can use an instance of the object to call a static member. The compiler chec
 - Constants are variables that are meant to never change during the program. It uses the final modifier to ensure the variable never changes.
 - Constants use the modifier static final and a different naming convention than other variables. They use all upercase letters with underscores.
 - Constants must be set exactly once, in the same line as the declaration or inside a static initializer block.
-between "words". `private static final int NUM_BUCKETS = 45;` - If you try to change this value the code will note compile.
-- The compiler can only check if we don't try to reassign the final value to point to a different object. So adding a element to a final ArrayList will compile. 
+  between "words". `private static final int NUM_BUCKETS = 45;` - If you try to change this value the code will note compile.
+- The compiler can only check if we don't try to reassign the final value to point to a different object. So adding a element to a final ArrayList will compile.
 
 ### Static Initialization
 
@@ -194,7 +192,7 @@ between "words". `private static final int NUM_BUCKETS = 45;` - If you try to ch
 This imports are only for static members, like "import static java.util.Arrays.asList" // will import only the static method asList, and it can be used directly without Arrays. If we create an asList method in our coding class. Java would give it preference over the imported one, and the method we coded would be used.
 
 Some exam cases of static import usage:
-  
+
     `import static java.util.Arrays;` // Does not compile
     `import static java.util.Arrays.asList;` // Compile
     `static import java.util.Arrays.*;` // Does not compile
@@ -206,13 +204,13 @@ Some exam cases of static import usage:
 
 Java is a "pass-by-value" language. This means that a copy of the variable is made and the method receives that copy. Assignments made in the method do not affect the caller. If the change made on the other method changes a value of the object, like StringBuilder `append()` method, the change will be available to both references, but in a case of trying to assign a new value to the copy, it will not mirror the change. So remember, assigning a new primitive or reference to a parameter doesn't change the caller. Calling methods on a reference to an object can affect the caller.
 
-> **Note:** *pass-by-reference* is another approach, which Java don't utilize, that the values can be affected if they are passed as params and modified.
+> **Note:** _pass-by-reference_ is another approach, which Java don't utilize, that the values can be affected if they are passed as params and modified.
 
 ## Overloading Methods (p.277-283)
 
 Method overloading occurs when methods have the same name but different method signatures, which means they differ by method parameters. Everything other than the method name can vary for overloading methods.
 
- You cannot have methods where the only difference is that one is an instance method and the other is a static method. It's not allowed to overload methods with the same parameter list. They must differ in at least one of the parameters. Java will always pick the most specific version of a method that it can. So it will not autobox if we have two methods with the corresponding param type, one being a Wrapper and the other a primitive. It would call the primitive method in this case: `a(1)` -> `a(int a)` instead of `a(Integer a)`. Remember that Java only accept wider types, it will not automatically convert to a narrower type. If you want so, you'll need to explicitly cast the wider to a narrower type.
+You cannot have methods where the only difference is that one is an instance method and the other is a static method. It's not allowed to overload methods with the same parameter list. They must differ in at least one of the parameters. Java will always pick the most specific version of a method that it can. So it will not autobox if we have two methods with the corresponding param type, one being a Wrapper and the other a primitive. It would call the primitive method in this case: `a(1)` -> `a(int a)` instead of `a(Integer a)`. Remember that Java only accept wider types, it will not automatically convert to a narrower type. If you want so, you'll need to explicitly cast the wider to a narrower type.
 
 Java has a concept called "type erasure", where generics are used only at compile time. So you can't overload with two Lists of different generics.
 
@@ -224,12 +222,12 @@ Normal arrays will work just fine with overload (`int[] ints` and `Integers[] in
 
 The order that Java uses to choose the right overloaded method:
 
-| Rule                        |    Example of what will be chosen for glide(1, 2) |
-| :-------------------------- | :-----------------------------------------------  |
-| Exact match by type         |    String glide(int i, int j)                     |
-| Larger primitive type       |    String glide(long i, long j)                   |
-| Autoboxed type              |    String glide(Integer i, Integer j)             |
-| Varargs                     |    String glide(int... nums)                      |
+| Rule                  | Example of what will be chosen for glide(1, 2) |
+| :-------------------- | :--------------------------------------------- |
+| Exact match by type   | String glide(int i, int j)                     |
+| Larger primitive type | String glide(long i, long j)                   |
+| Autoboxed type        | String glide(Integer i, Integer j)             |
+| Varargs               | String glide(int... nums)                      |
 
 ## Encapsulation (p.283-285)
 
@@ -238,5 +236,5 @@ Means that only methods in the class with the same variables can refer to the in
 - Getter methods most frequently begin with 'is' if the property is a boolean.
 - Getter methods most frequently begin with 'get' if the property is not a boolean.
 - Setter methods begin with 'set'.
-  
-> **Notes after the review exam:** Some exam questions try tricking you with the type 'var' in method declaration. Remember that 'var' can only be used with local variables.   
+
+> **Notes after the review exam:** Some exam questions try tricking you with the type 'var' in method declaration. Remember that 'var' can only be used with local variables.

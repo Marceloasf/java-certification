@@ -60,22 +60,22 @@
   - Remember that enum values can be used in switch statements.
   - The compiler already knows that the only possible matches can be enum values in this case. So Java treats the enum type as implicit. In fact, if you try to type case
     Season.WINTER, literal string or a primitive int, it does not compile. Example:
-          Season summer = Season.SUMMER;
-          switch(summer) {
-            case SUMMER:
-              System.out.println("Time for the pool!");
-              break;
-            case "SPRING":                            // DOES NOT COMPILE
-              System.out.println("Spring time!");
-              break;
-            case Season.WINTER:                       // DOES NOT COMPILE
-              System.out.println("Rake some leaves!");
-              break;
-            case 0:                                   // DOES NOT COMPILE
-              System.out.println("Get out the sled!");
-            default:
-              System.out.println("Is it summer yet?");
-          }
+    Season summer = Season.SUMMER;
+    switch(summer) {
+    case SUMMER:
+    System.out.println("Time for the pool!");
+    break;
+    case "SPRING": // DOES NOT COMPILE
+    System.out.println("Spring time!");
+    break;
+    case Season.WINTER: // DOES NOT COMPILE
+    System.out.println("Rake some leaves!");
+    break;
+    case 0: // DOES NOT COMPILE
+    System.out.println("Get out the sled!");
+    default:
+    System.out.println("Is it summer yet?");
+    }
   - The first case statement does not compile, because a literal string is used in the case value.
   - The second case statement that does not compile, is because Season is used in the case value, if we changed it to WINTER, then it would compile.
   - The third case statement doesn't compile because you can't compare enums with int values, and you cannot use them in a switch case statement either.
@@ -360,12 +360,12 @@
     `public class Gorilla { interface Climb {} Climb climbing = new Climb() { }; // Remember, we are not creating a reference to an interface instance, the { } indicates that we are creating an anonymous // class that implements the Climb interface. }`
   - Prior to Java 8, anonymous classes were frequently used for asynchronous tasks and event handlers. For example an anonymous class being used as an event handler
     in a JavaFX application:
-          Button redButton = new Button();
-          redButton.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-              System.out.println("Red button pressed!");
-            }
-          });
+    Button redButton = new Button();
+    redButton.setOnAction(new EventHandler<ActionEvent>() {
+    public void handle(ActionEvent e) {
+    System.out.println("Red button pressed!");
+    }
+    });
   - Since Java 8, lambda expressions are a much more concise way of expressing the same thing:
 
         Button redButton = new Button();
@@ -396,17 +396,17 @@
   |                    |                |                     |                |                 |
 
 - Nested class access rules:
-  | Permitted Modifiers               | Inner class | static nested class | Local class            | Anonymous class                         |
+  | Permitted Modifiers | Inner class | static nested class | Local class | Anonymous class |
   | :-------------------------------- | :---------- | :------------------ | :--------------------- | :-------------------------------------- |
-  | Can extend any class or implement | Yes         | Yes                 | Yes                    | No, must have exactly one superclass    |
-  | any number of interfaces          |             |                     |                        | or one interface                        |
-  |                                   |             |                     |                        |                                         |
-  | Can access instance members of    | Yes         | No                  | Yes (if declared in an | Yes (if declared in an instance method) |
-  | enclosing class without a ref     |             |                     | instance method)       |                                         |
-  |                                   |             |                     |                        |                                         |
-  | Can access local variables of     | N/A         | N/A                 | Yes (if final or       | Yes (if final or effectively final)     |
-  | enclosing method                  |             |                     | effectively final)     |                                         |
-  |                                   |             |                     |                        |                                         |
+  | Can extend any class or implement | Yes | Yes | Yes | No, must have exactly one superclass |
+  | any number of interfaces | | | | or one interface |
+  | | | | | |
+  | Can access instance members of | Yes | No | Yes (if declared in an | Yes (if declared in an instance method) |
+  | enclosing class without a ref | | | instance method) | |
+  | | | | | |
+  | Can access local variables of | N/A | N/A | Yes (if final or | Yes (if final or effectively final) |
+  | enclosing method | | | effectively final) | |
+  | | | | | |
 
 ### Understanding Interface Members (p.516-526)
 

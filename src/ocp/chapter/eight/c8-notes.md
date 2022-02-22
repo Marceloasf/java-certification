@@ -101,6 +101,7 @@
 - When this() is used with parentheses, Java calls another constructor on the same instance of the class. Searching for a signature with the same
   parameters specified inside the parentheses.
 - The rules for calling this() are:
+
   - It must be the first statement in the constructor.
   - There can be only one call to this() in any contructor.
   - A constructor can't call itself infinitely.
