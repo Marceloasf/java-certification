@@ -460,3 +460,86 @@ The following table summarizes this section:
 | forEach()                              | Does not terminate                | void          | No        |
 | reduce()                               | Does not terminate                | Varies        | Yes       |
 | collect()                              | Does not terminate                | Varies        | Yes       |
+
+- `count()`:
+
+  - Counts the number of elements in a finite stream (in an infinite stream it never terminates).
+  - It's a _reduction_ because it looks at each element in the stream and returns a single value.
+  - Method signature:
+
+        long count()
+
+  - Example:
+
+        Stream<String> s = Stream.of("monkey", "gorilla", "bonobo"); // finite stream
+        System.out.println(s.count()); // 3
+
+- `min() and max()`:
+
+  - Allow us to pass a custom comparator and find the smallets or largest value in a finite stream according to that sort order.
+  - These two hang will hang on an infinite stream because they cannot be sure that a smaller or larger value isn't coming later on the stream.
+  - Both are reductions, since they return a single value after looking at the entire stream.
+  - Method signature:
+
+        Optional<T> min(Comparator<? super T> comparator)
+        Optional<T> max(Comparator<? super T> comparator)
+
+  - Example:
+
+        Stream<String> s = Stream.of("monkey", "ape", "bonobo"); // finite stream
+        Optional<String> min = s.min((s1, s2) -> s1.length() - s2.length());
+        min.ifPresent(System.out::println); // ape
+
+  - Notice that the example above returned an Optional, this allows the method to specify that no minimum or maximum was found. An example of where there isn't a minimum, is as it follows:
+
+        Optional<?> minEmpty = Stream.empty().min((s1, s2) -> 0);
+        System.out.println(minEmpty.isPresent()); // false
+
+  - Since the stream above is empty, the comparator is never called and no value is present for the Optional (returning false with isPresent()).
+
+  > **Note:** As these methods are terminal to the stream, you can't use them both in the same stream.
+
+- `findAny() and findFirst()`:
+
+  - They return an element of the stream _unless_ the stream is empty. With an empty stream, they'll return an empty Optional.
+  - These methods can terminate with an infinite stream.
+  - `findAny()` can return any element of the stream. When called on the streams seen up until now, it commonly returns the first element, but this behavior is not guarateed. On the concurrency chapter, when working with parallel streams, the method is more likely to return a random element.
+  - These methods are terminal operations, but not reductions, the reason is that they sometimes return without processing **all** of the elements in the stream. Meaning that they return a value based on the stream but do not reduce the entire stream into one value.
+  - Method signatures:
+
+        Optional<T> findAny()
+        Optional<T> findFirst()
+
+  - Examples:
+
+        Stream<String> s = Stream.of("monkey", "gorilla", "bonobo");
+        Stream<String> infinite = Stream.generate(() -> "chimp");
+
+        s.findAny().ifPresent(System.out::println); // monkey (usually)
+        infinite.findAny().ifPresent(System.out::println); // chimp
+
+- `allMatch(), anyMatch() and noneMatch()`
+
+  - These methods search a stream and return information about how the stream pertains to the predicate.
+  - These may or may not terminate for infinite streams. It depends on the data.
+  - Like the find methods, they are not reductions, since they may not look at all the elements in the stream.
+  - Method signatures:
+
+        boolean anyMatch(Predicate<? super T> predicate)
+        boolean allMatch(Predicate<? super T> predicate)
+        boolean noneMatch(Predicate<? super T> predicate)
+
+  - Examples:
+
+        var list = List.of("monkey", "2", "chimp");
+        Stream<String> infinite = Stream.generate(() -> "chimp");
+        Predicate<String> pred = x -> Character.isLetter(x.charAt(0));
+
+        System.out.println(list.stream().anyMatch(pred)); // true
+        System.out.println(list.stream().allMatch(pred)); // false
+        System.out.println(list.stream().noneMatch(pred)); // false
+        System.out.println(infinite.anyMatch(pred)); // true
+
+  - Notice that we can reuse the same predicate multiple times, but we need a different stream each time. If we used `allMatch()` instead of `anyMatch()` with the infinite stream, the program would run until we killed it, this would happen because with `anyMatch()` it would find one element and terminate the call.
+
+    > **Note:** These methods return a boolean. By contrast, the find methods return an Optional because they return an element of the stream.
