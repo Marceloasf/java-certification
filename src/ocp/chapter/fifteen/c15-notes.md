@@ -543,3 +543,54 @@ The following table summarizes this section:
   - Notice that we can reuse the same predicate multiple times, but we need a different stream each time. If we used `allMatch()` instead of `anyMatch()` with the infinite stream, the program would run until we killed it, this would happen because with `anyMatch()` it would find one element and terminate the call.
 
     > **Note:** These methods return a boolean. By contrast, the find methods return an Optional because they return an element of the stream.
+
+- `forEach()`
+
+  - Used to iterate over elements of a stream.
+  - On an infinite stream, the loop does not terminate.
+  - Since there is no return value, it is not a reduction.
+  - Method signature:
+
+        void forEach(Consumer<? super T> action)
+
+  - Notice that this is the only terminal operation with a return type of **void**. If something needs to happen, it must happen in the Consumer. For example:
+
+        Stream<String> s = Stream.of("Monkey", "Gorilla", "Bonobo");
+        s.forEach(System.out::print); // MonkeyGorillaBonobo
+
+  > **Note:** It's possible to call `forEach()` directly on a Collection or on a Stream.
+
+  - It's **not** possible to use a traditional `for` loop on a stream.
+
+        Stream<String> s = Stream.of("Monkey", "Gorilla", "Bonobo");
+        for (String str : s) { } // DOES NOT COMPILE
+
+  - `forEach()` sounds like a loop, but it is really a terminal operator for streams. Streams **cannot** be used as the source in a for-each loop to run because they don't implement the Iterable interface.
+
+- `reduce()`
+
+  - Combines a stream into a single object.
+  - It is a reduction, which means it processes all elements.
+  - There are three method signatures:
+
+        T reduce(T identity, BinaryOperator<T> accumulator)
+
+        Optional<T> reduce(BinaryOperator<T> accumulator)
+
+        <U> U reduce(U identity, BinaryOperator<U, ? super T, U> accumulator,   BinaryOperator<U> combiner)
+
+  - First one is the most common way of doing a reduction, by starting with an initial value and keep merging it with the next value.
+  - If we needed to concatenate an array of String objects into a single String without functional programming, it might look like this:
+
+        var array = new String[] { "w", "o", "l", "f" };
+        var result = "";
+        for (var s: array) result = result + s;
+        System.out.println(result); // wolf
+
+  - The _identity_ is the initial value of the reduction, in this case would be an empty String.
+  - The _accumulator_ combines the current result with the current value in the stream.
+  - With lambdas we can do the same thing as we did above, but with a stream and reduction:
+
+        Stream<String> stream = Stream.of("w", "o", "l", "f");
+        String word = stream.reduce("", (s, c) -> s + c);
+        System.out.println(word); // wolf
