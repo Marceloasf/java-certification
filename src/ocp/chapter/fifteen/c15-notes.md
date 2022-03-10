@@ -594,3 +594,43 @@ The following table summarizes this section:
         Stream<String> stream = Stream.of("w", "o", "l", "f");
         String word = stream.reduce("", (s, c) -> s + c);
         System.out.println(word); // wolf
+
+  - _identity_ isn't really necessary, we can omit it. When we omit the identity, an Optional is returned because there might be no data. There are three choices for what is in the Optional:
+
+    - If the stream is empty, an empty Optional is returned.
+    - If the stream has one element, it is returned.
+    - If the stream has multiple elements, the accumulator is applied to combine them.
+
+  - The following example shows these scenarios:
+
+        BinaryOperator<Integer> op = (a, b) -> a * b;
+        Stream<Integer> empty = Stream.empty();
+        Stream<Integer> oneElement = Stream.of(3);
+        Stream<Integer> threeElements = Stream.empty(3, 5, 6);
+
+        empty.reduce(op).ifPresent(System.out::println);         // no output
+        oneElement.reduce(op).ifPresent(System.out::println);    // 3
+        threeElements.reduce(op).ifPresent(System.out::println); // 90
+
+  - The last method signature is used when we are dealing with different types.
+  - It allows Java to create intermediate reductions and then combine them at the end.
+  - The following example counts the number of chars in each String:
+
+        Stream<String> stream = Stream.of("w", "o", "l", "f!");
+        int length = stream.reduce(0, (i, s) -> i+s.length(), (a, b) -> a+b);
+        System.out.println(length); // 5
+
+  - In this example, the first argument is an Integer (i), while the second argument is a String (s) on the accumulator. This one handles mixed data types.
+  - The third parameter is called the _combiner_, which combines anyt intermediate totals. In this case, a and b are both Integer values.
+  - This signature of reduce is useful when working with parallel streams, because it allows the stream to be decomposed and reassebled by separate threads.
+
+- `collect()`
+
+  - Is a special type of reduction called _mutable reduction_.
+  - It is more efficient than a regular reduction because we use the same mutable object while accumulating.
+  - Common mutable objects include StringBuilder and ArrayList.
+  - The methods signatures are as follows:
+
+        <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner)
+
+        <R,A> R collect(Collector<? super T, A, R> collector)
