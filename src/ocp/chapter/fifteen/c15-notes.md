@@ -634,3 +634,44 @@ The following table summarizes this section:
         <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner)
 
         <R,A> R collect(Collector<? super T, A, R> collector)
+
+  - With the first signature, we define how collecting should work. For example:
+
+        Stream<String> stream = Stream.of("w", "o", "l", "f");
+
+        StringBuilder word = stream.collect(
+            StringBuilder::new
+            StringBuilder::append,
+            StringBuilder::append)
+
+        System.out.println(word); // wolf
+
+  - The first parameter is the _supplier_, which creates the object that will store the results as we collect data. Remember that a Supplier doesn't take any parameters and returns a value.
+  - The second parameter is the _accumulator_, which is a BiConsumer that takes two parameters and doesn't return anything. It is responsible for adding one more element to the data collection.
+  - The third parameter is the _combiner_, which is a BiConsumer. It is responsible for taking two data collections and merging them.
+  - Another example with another logic:
+
+        Stream<String> stream = Stream.of("w", "o", "l", "f");
+
+        TreeSet<String> set = stream.collect(
+            TreeSet::new,
+            TreeSet::add,
+            TreeSet::addAll);
+        System.out.println(set); // [f, l, o, w]
+
+  - The collector has three parts as before. The combiner adds all of the elements of one TreeSet to another in case the operations were done in parallel and need to be merged.
+  - Java provides a class with common collectors named Collectors. This approach makes the code easier to read because it is more expressive than using a custom made collector.
+  - We can rewrite the previous example with Collectors:
+
+        Stream<String> stream = Stream.of("w", "o", "l", "f");
+        TreeSet<String> set = stream.collect(Collectors.toCollection(TreeSet::new));
+        System.out.println(set); // [f, l, o, w]
+
+  - If we didn't need the set to be sorted, we could make the code even shorter:
+
+        Stream<String> stream = Stream.of("w", "o", "l", "f");
+        Set<String> set = stream.collect(Collectors.toSet());
+        System.out.println(set); // [f, w, l, o]
+
+  - Using toSet() might get us a different output every time. Another thing is that it doens't guarantee which implementation of Set you'll get. It is likely to be a HashSet, but don't count on that.
+  - The exam, expects that us know about common predefined collections in addition to being able to write our own by passing a supplier, accumulator and combiner.
