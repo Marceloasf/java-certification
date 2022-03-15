@@ -490,7 +490,7 @@ The following table summarizes this section:
         Optional<String> min = s.min((s1, s2) -> s1.length() - s2.length());
         min.ifPresent(System.out::println); // ape
 
-  - Notice that the example above returned an Optional, this allows the method to specify that no minimum or maximum was found. An example of where there isn't a minimum, is as it follows:
+  - Notice that the example above returned an Optional, this allows the method to specify that no minimum or maximum was found. An example of where there isn't a minimum, is as follows:
 
         Optional<?> minEmpty = Stream.empty().min((s1, s2) -> 0);
         System.out.println(minEmpty.isPresent()); // false
@@ -673,5 +673,70 @@ The following table summarizes this section:
         Set<String> set = stream.collect(Collectors.toSet());
         System.out.println(set); // [f, w, l, o]
 
-  - Using toSet() might get us a different output every time. Another thing is that it doens't guarantee which implementation of Set you'll get. It is likely to be a HashSet, but don't count on that.
+  - Using `toSet()` might get us a different output every time. Another thing is that it doens't guarantee which implementation of Set you'll get. It is likely to be a HashSet, but don't count on that.
   - The exam, expects that us know about common predefined collections in addition to being able to write our own by passing a supplier, accumulator and combiner.
+
+### Using Common Intermediate Operations
+
+- An intermediate operation produces a stream as its result.
+- Can also deal with an infinite stream simply by returning another infinite stream, since elements are produced only as needed.
+- It focus on the current element rather than the other elements of a stream.
+
+- `filter()`
+
+  - Returns a Stream with elements that match a given expression.
+  - Method signature is as follows:
+
+        Stream<T> filter(Predicate<? super T> predicate)
+
+  - We can pass any Predicate to it. For example:
+
+    Stream<String> s = Stream.of("monkey", "gorilla", "bonobo");
+    s.filter(x -> x.startsWith("m")).forEach(System.out::print); // monkey
+
+- `distinct()`
+
+  - Returns a stream with duplicate values removed.
+  - The duplicates do not need to be adjacent to be removed.
+  - As you might imagine, Java calls `equals()` to determine whether the objects are the same.
+  - The method signature is as follows:
+
+        Stream<T> distinct()
+
+  - Here's an example:
+
+        Stream<String> s = Stream.of("duck", "duck", "duck", "goose");
+        s.distinct().forEach(System.out::print); // duckgoose
+
+- `limit() and skip()`
+
+  - Can make a Stream smaller or they could make a finite stream out of an infinite stream.
+  - Method signatures are the following:
+
+        Stream<T> limit(long maxSize)
+        Stream<T> skip(long n)
+
+  - The following example creates an infinite stream of numbers counting from 1:
+
+        Stream<Integer> s = Stream.iterate(1, n -> n + 1);
+        s.skip(5).limit(2).forEach(System.out::print); /// 67
+
+  - The `skip()` operation returns an infinite stream staring with the numbers counting from 6, since it skips the first five elements.
+  - The `limit()` call takes the first two of those.
+  - Then we have a finite stream with two elements, which we can then print with the `forEach()` method.
+
+- `map()`
+
+  - Creates a one-to-one mapping from the elements in the stream to the elements of the next step in the stream.
+  - Method signature is as follows:
+
+        <R> Stream<R> map(Function<? super T, ? extends R> mapper)
+
+  - It uses the lambda expression to figure out the type passed to that function and the one returned. The return types is the stream that gets returned.
+  - On streams is for transforming data. Don't confuse it with the Map interface, which maps keys to values.
+  - The following example converts a list of String objects to a list of Integer objects representing their lengths:
+
+        Stream<String> s = Stream.of("monkey", "gorilla", "bonobo");
+        s.map(String::length).forEach(System.out::porint); // 676
+
+  - String::length is shorthand for the lambda `x -> x.length()`, which clearly shows it is a function that turns a String into a Integer.
