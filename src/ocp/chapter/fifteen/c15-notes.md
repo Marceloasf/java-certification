@@ -740,3 +740,64 @@ The following table summarizes this section:
         s.map(String::length).forEach(System.out::porint); // 676
 
   - String::length is shorthand for the lambda `x -> x.length()`, which clearly shows it is a function that turns a String into a Integer.
+
+- `flatMap()`
+
+  - Takes each element in the stream and makes any elements it contains top-level elements in a **single stream**.
+  - Helpful when you want to remove empty elements from a stream or you want to combine a stream of lists.
+  - Method signature:
+
+        <R> Stream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper )
+
+  - Basically this signature means that it returns a Stream of the type that the function contains at a lower level.
+  - The following example gets all the elements into the same level along with getting rid of the empty list:
+
+        List<String> zero = List.of();
+        var one = List.of("Bonobo");
+        var two = List.of("Mama Gorilla", "Baby Gorilla");
+        Stream<List<String>> animals = Stream.of(zero, one, two);
+
+        animals.flatMap(m -> m.stream()).forEach(System.out::println); // prints Bonobo (/n) Mama Gorilla (/n) Baby Gorilla
+
+  - Notice that it removed the empty list and changed al elements of each list to be at top level of the stream.
+
+- `sorted()`
+
+  - It sorts the elements within a stream.
+  - Just like sorting arrays, Java uses the natural ordering unless we specify a comparator.
+  - Method signatures:
+
+        Stream<T> sorted()
+        Stream<T> sorted(Comparator<? super T> comparator)
+
+  - If we call the first signature, it will use the default sort order:
+
+        Stream<String> s = Stream.of("brown", "bear-");
+        s.sorted().forEach(System.out::print); // bear-brown-
+
+  - We can optionally use a Comparator implementation via a method or a lambda. In this example, we are using a method:
+
+        Stream<String> s = Stream.of("brown bear-", "grizzly-");
+        s.sorted(Comparator.reverseOrder()).forEach(System.out::print); // grizzly-brown bear
+
+- `peek()`
+
+  - This is the final _intermediate operation_. It is used mainly for debugging because it allows us to perform a stream operation without actually changing the stream.
+  - Method signature:
+
+        Stream<T> peek(Consumer<? super T> action)
+
+  - Notice that it takes the same argument as the terminal `forEach()` operation. Think of `peek()` as an intermediate version of `forEach()` that returns the original stream back to you.
+  - The most common use for `peek()` is to output the contents of the stream as it goes by.
+  - Remember that `peek()` is intended to perform an operation without changing the result. But be careful, Java does not prevent us from writing bad code, for example:
+
+        var numbers = new ArrayList();
+        var letters = new ArrayList();
+        numbers.add(1);
+        letters.add('a');
+        Stream<List<?>> bad = Stream.of(numbers, letters);
+        bad.peek(x -> x.remove(0)).map(List::size).forEach(System.out::print); // 00
+
+  - Notice why this is a bad code example? Because `peek()` is modifying the data structure that is used in the stream.
+
+### Putting Together the Pipeline
