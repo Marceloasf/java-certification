@@ -1,6 +1,6 @@
 # Java Certification - 1Z0-819 Java SE 11 Developer
 
-Repository dedicated to the study of the needed content to obtain a Java certification. It contains notes and chapter code from the OCA (Java 8) and OCP (Java 11) books. The certification exam that was the focus of this repo is the Oracle Certified Professional 1Z0-819 Java SE 11 Developer, for this exam you are expected to be familiar with all the topics in the OCP book.
+Repository dedicated to **my** studies of the needed content to obtain a Java 11 certification. It contains notes and chapter code from the OCA (Java 8) and OCP (Java 11) books. The certification exam that was the focus of this repo is the Oracle Certified Professional 1Z0-819 Java SE 11 Developer, for this exam you are expected to be familiar with all the topics in the OCP book.
 
 ## [OCA-BOOK](./src/oca/chapter)
 
