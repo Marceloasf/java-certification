@@ -801,3 +801,30 @@ The following table summarizes this section:
   - Notice why this is a bad code example? Because `peek()` is modifying the data structure that is used in the stream.
 
 ### Putting Together the Pipeline
+           
+- Streams allow you to use chaining and express what you want to accomplish rather than how to do so.
+            
+This is an example of code that can be refactored with streams:
+
+        var list = List.of("Toby", "Anna", "Leroy", "Alex");
+        List<String> filtered = new ArrayList();
+        for(String name: list) 
+            if (name.length() == 4) filtered.add(name);
+        
+        Collections.sort(filtered);
+        var iter = filtered.iterator();
+        if (iter.hasNext()) System.out.println(iter.next());
+        if (iter.hasNext()) System.out.println(iter.next());
+            
+This code piece works fine, but with streams is shorter, briefer and clearer to read:
+        
+        var list = List.of("Toby", "Anna", "Leroy", "Alex");
+        list.stream()
+            .filter(n -> n.length() == 4)
+            .sorted()
+            .limit(2)
+            .forEach(System.out::println);
+            
+As we can see, the code is way simpler to understand. This stream call followed by multiple intermediate operations and a terminal operation is called a **stream pipeline**.  
+> **Notes:** The following explanations will use the stream above to explain the pipeline behavior.
+           
