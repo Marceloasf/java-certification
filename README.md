@@ -2,7 +2,7 @@
 
 Repository dedicated to **my** studies of the needed content to obtain a Java 11 certification. It contains notes and chapter code from the OCA (Java 8) and OCP (Java 11) books. The certification exam that was the focus of this repo is the Oracle Certified Professional 1Z0-819 Java SE 11 Developer, for this exam you are expected to be familiar with all the topics in the OCP book.
 
-Note: This content can be used in Java 8 and Java 17 certifications, since most of the content is the same, just make sure to search for key changes on Java objects/libs while studying.
+> **Note:** This content can be used in Java 8 and Java 17 certifications, since most of the content is the same, just make sure to search for key changes on Java objects/libs while studying.
 
 ## [OCA-BOOK](./src/oca/chapter)
 
