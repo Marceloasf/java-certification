@@ -829,8 +829,8 @@ As we can see, the code is way simpler to understand. This stream call followed 
 > **Notes:** The following explanations will use the stream above to explain the pipeline behavior.
 
 The pipeline on this code works this way:
-    1. The stream() is created with the list values starting the stream pipeline, then first thing it does its calling the filter() intermediate operation for each stream value.
-    2. The filter() operation will filter out the values based on its condition and will hold the values until all of them pass through it, once all values are filtered it'll call the next operation on the pipeline, which is the sorted() intermediate operation.
-    3. The sorted() operation sorts all values in the stream and then once they are all sorted it will pass the values down to the limit() operation by the sorted order.
-    4. As limit() is set to two, so it'll receive the first two values from sort and after that it'll stop processing more values since the limit was reached.
-    5. Finally after limit stops processing, it'll pass those filtered values from the stream pipeline to the terminal operation forEach() which will terminate the pipeline printing out the results.
+1. The stream() is created with the list values starting the stream pipeline, then first thing it does its calling the filter() intermediate operation for each stream value.
+2. The filter() operation will filter out the values based on its condition and will hold the values until all of them pass through it, once all values are filtered it'll call the next operation on the pipeline, which is the sorted() intermediate operation.
+3. The sorted() operation sorts all values in the stream and then once they are all sorted it will pass the values down to the limit() operation by the sorted order.
+4. As limit() is set to two, so it'll receive the first two values from sort and after that it'll stop processing more values since the limit was reached.
+5. Finally after limit stops processing, it'll pass those filtered values from the stream pipeline to the terminal operation forEach() which will terminate the pipeline printing out the results.
