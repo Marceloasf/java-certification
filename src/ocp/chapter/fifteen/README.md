@@ -831,6 +831,47 @@ As we can see, the code is way simpler to understand. This stream call followed 
 The pipeline on this code works this way:
 1. The stream() is created with the list values starting the stream pipeline, then first thing it does its calling the filter() intermediate operation for each stream value.
 2. The filter() operation will filter out the values based on its condition and will hold the values until all of them pass through it, once all values are filtered it'll call the next operation on the pipeline, which is the sorted() intermediate operation.
-3. The sorted() operation sorts all values in the stream and then once they are all sorted it will pass the values down to the limit() operation by the sorted order.
-4. As limit() is set to two, so it'll receive the first two values from sort and after that it'll stop processing more values since the limit was reached.
-5. Finally after limit stops processing, it'll pass those filtered values from the stream pipeline to the terminal operation forEach() which will terminate the pipeline printing out the results.
+3. The sorted() operation sorts the values in the stream and keeps sending them down to the limit() operation by the sorted order until the limit is reached.
+4. As limit() is set to two, so while it receives each one of the values at a time from sort() it'll send each one of them to the forEach() terminal operation to print them until the set limit is reached. Once the limit is reached it stops to process other values.
+            
+> **Note:** Keep an eye out for Stream.generate() since it can create infinite streams and result in executions that never stop until the thread gets killed or the program runs out of memory.
+
+#### Real World Scenario - Peeking Behind the Scenes
+
+You can use the peek() method to see how a stream pipeline works behind the scenes. Remember that the methods run agains **each** element one at a time until processing is done. This is an example of the peek() usage to understand the pipeline:
+            
+        var infinite = Stream.iterate(1, x -> x + 1);
+        infinite.limit(5)
+            .peek(System.out::println)
+            .filter(x -> x % 2 == 1)
+            .forEach(System.out::println);            
+
+This example prints the following: 11233455. First it prints the peek value and then it prints the filtered value in the forEach, but as you can see it'll process each element at a time.
+            
+### Working with Primitive Streams
+            
+Until now we've been working with Streams created with generic types, but Java actually includes stream classes besides Stream that can be used to work with select primitives like int, double and long. Supposing that we want to calculate the sum of numbers in a finite stream:
+            
+        Stream<Integer> stream = Stream.of(1, 2, 3);
+        System.out.println(stream.reduce(0, (s, n) -> s + n)); // prints 6
+
+This is not bad, but it could be way easier to implement and read using the primitive Stream classes:
+            
+        Stream<Integer> stream = Stream.of(1, 2, 3);
+        System.out.println(stream.mapToInt(x -> x).sum()); // prints 6
+            
+This time we used what's called an **IntStream** and asked for this class to calculate the sum for us instead of making a reduction. An IntStream contains many of the same intermediate and terminal methods as a Stream but includes specialized methods for working with numeric data. This looks like more a convenience than an important thing, but if you need for example how to compute an average, it would take a lot of work compared to using the methods that are in an IntStream:
+            
+        IntStream intStream = IntStream.of(1, 2, 3);
+        OptionalDouble avg = intStream.average();
+        System.out.println(avg.getAsDouble()); // 2.0            
+            
+So this enables you to calculate an average in a much simpler way than hard coding it.
+            
+#### Creating Primitive Streams
+            
+These are three types of primitive streams:
+
+- IntStream: Used for primitive types int, short, byte and char;
+- LongStream: Used for the primitive type long;
+- DoubleStream: Used for the primitive types double and float.
