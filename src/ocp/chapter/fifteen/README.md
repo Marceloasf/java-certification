@@ -881,7 +881,7 @@ These are the common primitive stream methods:
 | Method | Primitive Stream | Description |
 | :--------------------------------------------- | :------------------ | :-------------------------------------------------------------------------------------------------------------- |
 | OptionalDouble average()   | IntStream, LongStream and DoubleStream              | The arithmetic mean of the elements |
-| Stream_<T>_ boxed()  | IntStream, LongStream and DoubleStream              | A Stream_<T>_ where T is the wrapper class associated with the primitive value |
+| Stream*<T>* boxed()  | IntStream, LongStream and DoubleStream              | A Stream*<T>* where T is the wrapper class associated with the primitive value |
 | OptionalInt max(), OptionalLong max() and OptionalDouble max()  | IntStream, LongStream and DoubleStream              | The maximum element of the stream |
 | OptionalInt min(), OptionalLong min() and OptionalDouble min()  | IntStream, LongStream and DoubleStream              | The minimum element of the stream |
 | IntStream range(int a, int b) and LongStream range(long a, long b)  | IntStream and LongStream            | Returns a primitive stream from a (inclusive) to b (exclusive) |
