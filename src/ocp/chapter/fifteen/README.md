@@ -890,3 +890,43 @@ These are the common primitive stream methods:
 | IntSummaryStatistics summaryStatistics(), LongSummaryStatistics summaryStatistics() and DoubleSummaryStatistics summaryStatistics()  | IntStream, LongStream and DoubleStream  | Returns an object containing numerous stream statistics such as the average, min, max, etc. | 
 
 Some other methods for creating a primitive Stream are equivalent to how we create the source for a regular Stream. For example we can use methods such as: `primitiveStream.empty()`, `primitiveStream.of(n...)`, `primitiveStream.generate()` or `primitiveStream.iterate()`.
+
+#### Mapping Streams
+            
+| Source stream class | To create Stream | To create DoubleStream | To create IntStream | To create LongStream |
+| :------------------ | :--------------- | :-------------------   | :----------------   | :------------------- |
+| Stream<_T_>         | map()            | mapToDouble()         | mapToInt()           | mapToLong() |
+| DoubleStream        | mapToObj()       | map()                 | mapToInt()           | mapToLong()   |
+| IntStream           | mapToObj()       | mapToDouble()         | map()                | mapToLong() |
+| LongStream          | mapToObj()       | mapToDouble()         | mapToInt()           | map() |
+            
+> **Note:** Obviously, they have to be compatible types for this to work. Java requires a mapping function to be provided as a parameter. For ex: Stream<_String_> stringStream is created -> to create a IntStream from it we need to call stringStream.mapToInt(s -> s.length()).
+
+Function parameters when mapping between types of streams:
+            
+| Source stream class | To create Stream | To create DoubleStream | To create IntStream | To create LongStream |
+| :------------------ | :--------------- | :-------------------   | :----------------   | :------------------- |
+| Stream<_T_>         | Function<_T,R_>          | ToDoubleFunction<T>     | ToIntFunction<T>      | ToLongFunction<T> |
+| DoubleStream        | DoubleFunction<_R_>      | DoubleUnaryOperator     | DoubleToIntFunction   | DoubleToLongFunction |
+| IntStream           | IntFunction<_R_>         | IntToDoubleFunction     | IntUnaryOperator      | IntToLongFunction |
+| LongStream          | LongFunction<_R_>        | LongToDoubleFunction    | LongToIntFunction     | LongUnaryOperator |
+            
+> **Note:** Both these tables about mapping streams should be memorized to the exam, since they are describe the basis of mapping streams.
+            
+Another important map method that also exists in primtive streams is the **flatMap()** method. It works the same way as on a regular Stream except the method name is different. Examples:
+            
+        IntStreams ints = integerList.stream().flatMapToInt(x -> IntStream.of(x));
+        DoubleStream doubles = integerList.stream().flatMapToDouble(x -> DoubleStream.of(x));
+        LongStream longs = integerList.stream().flatMapToLong(x -> LongStream.of(x));
+            
+Additionally, you can create a Stream from a primitive stream. These are two ways of doing it:
+            
+            private static Stream<Integer> mapping(IntStream stream) {
+                return stream.mapToObj(x -> x);
+            }
+            
+            private static Stream<Integer> boxing(IntStream stream) {
+                return stream.boxed();
+            }
+            
+The first one works as the ones we saw before, transforming the object into an Stream. The second one is different, basically it autoboxes the primitive stream type to the corresponding wrapper object, that's why it does not need a mapping function. The boxing method exists in all three primitive stream types. 
