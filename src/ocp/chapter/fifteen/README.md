@@ -875,3 +875,18 @@ These are three types of primitive streams:
 - IntStream: Used for primitive types int, short, byte and char;
 - LongStream: Used for the primitive type long;
 - DoubleStream: Used for the primitive types double and float.
+            
+These are the common primitive stream methods:
+            
+| Method | Primitive Stream | Description |
+| :--------------------------------------------- | :------------------ | :-------------------------------------------------------------------------------------------------------------- |
+| OptionalDouble average()   | IntStream, LongStream and DoubleStream              | The arithmetic mean of the elements |
+| Stream<T> boxed()  | IntStream, LongStream and DoubleStream              | A Stream<T> where T is the wrapper class associated with the primitive value |
+| OptionalInt max(), OptionalLong max() and OptionalDouble max()  | IntStream, LongStream and DoubleStream              | The maximum element of the stream |
+| OptionalInt min(), OptionalLong min() and OptionalDouble min()  | IntStream, LongStream and DoubleStream              | The minimum element of the stream |
+| IntStream range(int a, int b) and LongStream range(long a, long b)  | IntStream and LongStream            | Returns a primitive stream from a (inclusive) to b (exclusive) |
+| IntStream rangeClosed(int a, int b) and LongStream rangeClosed(long a, long b)  | IntStream and LongStream            | Returns a primitive stream from a (inclusive) to b (exclusive) |
+| int sum(), long sum() and double sum()  | IntStream, LongStream and DoubleStream  | Returns the sum of the elements in the stream | 
+| IntSummaryStatistics summaryStatistics(), LongSummaryStatistics summaryStatistics() and DoubleSummaryStatistics summaryStatistics()  | IntStream, LongStream and DoubleStream  | Returns an object containing numerous stream statistics such as the average, min, max, etc. | 
+
+Some other methods for creating a primitive Stream are equivalent to how we create the source for a regular Stream. For example we can use methods such as: `primitiveStream.empty()`, `primitiveStream.of(n...)`, `primitiveStream.generate()` or `primitiveStream.iterate()`.
