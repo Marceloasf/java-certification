@@ -906,7 +906,7 @@ Function parameters when mapping between types of streams:
             
 | Source stream class | To create Stream | To create DoubleStream | To create IntStream | To create LongStream |
 | :------------------ | :--------------- | :-------------------   | :----------------   | :------------------- |
-| Stream<_T_>         | Function<_T,R_>          | ToDoubleFunction<T>     | ToIntFunction<T>      | ToLongFunction<T> |
+| Stream<_T_>         | Function<_T,R_>          | ToDoubleFunction<_T_>     | ToIntFunction<_T_>      | ToLongFunction<_T_> |
 | DoubleStream        | DoubleFunction<_R_>      | DoubleUnaryOperator     | DoubleToIntFunction   | DoubleToLongFunction |
 | IntStream           | IntFunction<_R_>         | IntToDoubleFunction     | IntUnaryOperator      | IntToLongFunction |
 | LongStream          | LongFunction<_R_>        | LongToDoubleFunction    | LongToIntFunction     | LongUnaryOperator |
@@ -930,3 +930,17 @@ Additionally, you can create a Stream from a primitive stream. These are two way
             }
             
 The first one works as the ones we saw before, transforming the object into an Stream. The second one is different, basically it autoboxes the primitive stream type to the corresponding wrapper object, that's why it does not need a mapping function. The boxing method exists in all three primitive stream types. 
+            
+#### Using Optional with Primitive Streams
+            
+The Optional version of Primitive Streams adds methods that the common Optional type contains and also adds some other methods that are select for those primitive types. The following are optional types for primitives:
+            
+| Action | OptionalDouble | OptionalInt | OptionalLong |
+| :------------------ | :--------------- | :-------------------   | :---------------- |
+| Getting as a primitive            | getAsDouble()          | getAsInt()       | getAsLong()     |
+| orElseGet() parameter type        | DoubleSupplier         | IntSupplier      | LongSupplier  |
+| Return type of max() and min()    | OptionalDouble         | OptionalInt      | OptionalLong     |
+| Return type of sum()              | double                 | int              | long    |
+| Return type of average()          | OptionalDouble         | OptionalDouble   | OptionalDouble  |
+
+#### Summarizing Statistics
