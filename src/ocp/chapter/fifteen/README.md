@@ -944,3 +944,34 @@ The Optional version of Primitive Streams adds methods that the common Optional 
 | Return type of average()          | OptionalDouble         | OptionalDouble   | OptionalDouble  |
 
 #### Summarizing Statistics
+
+With Summary Statistics we don't need to worry about needing to get max and min from the same stream at a time, since they are both terminal operations. All we gotta do is call summaryStatistics(), this method perform many calculations about the stream, including the following: 
+            
+- **Smallest number (min)**: getMin()
+- **Largest number (max)**: getMax()
+- **Average**: getAverage()
+- **Sum**: getSum()
+- **Number of values**: getCount()
+            
+If the stream were empty, we'd have a count and sum of zero, while the other methods would return an empty optional.
+            
+#### Functional Interfaces for Primitives
+            
+If you didn't memorize the functional interfaces table in the start of this chapter, go take a look at it now if you want to remember about them, because we're going to use them here with primitives. Most of them are for the double, int and long types for streams and optionals. There is one exception, which is the BooleanSupplier, it'll be the first one to be covered.
+            
+##### Functional Interfaces for boolean
+            
+BooleanSupplier is a separate type, it has one method to implement:
+            
+            boolean getAsBoolean()
+            
+It works as you've come to expect with functional interfaces:
+            
+            BooleanSupplier b1 = () -> true;
+            BooleanSupplier b2 = () -> Math.random() > .5;
+            System.out.println(b1.getAsBoolean()); // true
+            System.out.println(b2.getAsBoolean()); // false
+            
+Basically it returns true or false depending on the condition that you put in the lambda.
+            
+#### Functional Interfaces for double, int and long
