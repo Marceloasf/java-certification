@@ -975,3 +975,32 @@ It works as you've come to expect with functional interfaces:
 Basically it returns true or false depending on the condition that you put in the lambda.
             
 #### Functional Interfaces for double, int and long
+            
+The following are common functional interfaces for primitives:
+
+| Functional interfaces | # parameters | Return type | Single abstract method |
+| :------------------ | :--------------- | :-------------------   | :---------------- |
+| DoubleSupplier, IntSupplier and LongSupplier                   | 0                                                   | double, int and long       | getAsDouble, getAsInt and getAsLong     |
+| DoubleConsumer, IntConsumer and LongConsumer                   | 1 (double), 1 (int) and 1 (long)                    | void                       | accept  |
+| DoublePredicate, IntPredicate and LongPredicate                | 1 (double), 1 (int) and 1 (long)                    | boolean                    | test     |
+| DoubleFunction<_R_>, IntFunction<_R_> and LongFunction<_R_>    | 1 (double), 1 (int) and 1 (long)                    | R                          | apply    |
+| DoubleUnaryOperator, IntUnaryOperator and LongUnaryOperator    | 1 (double), 1 (int) and 1 (long)                    | double, int and long       | applyAsDouble, applyAsInt and applyAsLong  |
+| DoubleBinaryOperator, IntBinaryOperator and LongBinaryOperator | 2 (double, double), 2 (int, int) and 2 (long, long) | double, int and long       | applyAsDouble, applyAsInt and applyAsLong  |
+            
+Some things to notice on these functional interfaces for primitives are:
+            
+- Generics are gone from some of the interfaces and instead the type name tells us what primitive type is involved;
+- The single abstract method is often renamed when a primitive type is returned.
+            
+The following are some pritive-specific funtional interfaces:
+            
+| Functional interfaces | # parameters | Return type | Single abstract method |
+| :------------------ | :--------------- | :-------------------   | :---------------- |
+| ToDoubleFunction<_T_>, ToIntFunction<_T_> and ToLongFunction<_T_>          | 1 (T) | double, int and long | applyAsDouble, applyAsInt and applyAsLong  |
+| ToDoubleBiFunction<_T_>, ToIntBiFunction<_T_> and ToLongBiFunction<_T_>    | 2 (T, U) | double, int and long | applyAsDouble, applyAsInt and applyAsLong  |
+| DoubleToIntFunction and DoubleToLongFunction    | 1 (double) and 1 (double) | int and long | applyAsInt and applyAsLong  |
+| IntToDoubleFunction and IntToLongFunction    | 1 (int) and 1 (int) | double and long | applyAsDouble and applyAsLong  |
+| LongToDoubleFunction and LongToIntFunction    | 1 (long) and 1 (long) | double and int | applyAsDouble and applyAsInt  |
+| ObjDoubleConsumer<_T_>, ObjIntConsumer<_T_> and ObjLongConsumer<_T_>    | 2 (T, double), 2 (T, int) and 2 (T, long) | void | accept  |
+            
+### Working with Advanced Stream Pipeline Concepts
