@@ -1004,3 +1004,62 @@ The following are some pritive-specific funtional interfaces:
 | ObjDoubleConsumer<_T_>, ObjIntConsumer<_T_> and ObjLongConsumer<_T_>    | 2 (T, double), 2 (T, int) and 2 (T, long) | void | accept  |
             
 ### Working with Advanced Stream Pipeline Concepts
+            
+We're almost ending this chapter, there are only a few topics left. Now we'll learn about some of the more advanced concepts such as the relationship between streams and the underlying data, chaining Optional and grouping collectors. 
+
+#### Linking Streams to the Underlying Data
+            
+This code will output 3:
+            
+            var cats = new ArrayList<_String_>();
+            cats.add("Annie");
+            cats.add("Ripley");
+            var stream = cats.stream();
+            cats.add("KC");
+            System.out.println(stream.count()); // 3
+            
+A Stream is created from the 'cats' list, but as we already saw earlier Streams are lazily evaluated, this means that the stream isn't actually created on that .stream() call, only an object was created and that object knows where to look for the data when needed. After cats add "KC" to the List, we call the method count() to get values from the List, finally the Stream pipeline runs and it looks for the source and there it finds three values.
+            
+#### Chaining Optionals
+            
+We have some Stream operations for Optionals that can save some of our time and also improve our code, for example the following code does not use a Stream pipeline to manipulate the Optional object:
+            
+            if (optional.isPresent()) {
+                Integer num = optional.get();
+                var string = "" + num;
+                if (string.length() == 3) System.out.println(string);
+            }
+            
+As always we need to check if the optional is present and then use get to return the actual value from the object, but this code contains an extra complexety that doesn't need to be there since we have the ability of using functional programming with Optionals, the following uses a stream pipeline to do the same as the code above:
+            
+            optional.map(n -> "" + n)
+                    .filter(s -> s.length() == 3)
+                    .ifPresent(System.out::println);
+            
+As you can see, this is much shorter and more expressive than the other example.
+            
+If we had an case where we received an empty optional, the first approach if would not let the code inside the if block be executed, on the second approach the empty optional would pass through both map() and filter(), then the ifPresent() wouldn't call the Consumer parameter. Same thing would happen on the second approach if we had an value that does not match the filter(), the filter() operation would pass down to the ifPresent() an empty Optional which would also make the ifPresent() not call the Consumer parameter.
+            
+Two other examples are these:
+            
+- If we wanted to get an Optional<_Integer_> that represents the length of the String contined in another Optional:
+            
+            Optional<Integer> result = optional.map(String::length); // Returns Optional<Integer>
+            
+- But if we wanted to call another method that already returns an Optional<Integer>, this could be a trick in the exam because the following is not compilant:
+            
+            Optional<Integer> result = optional.map(ChainingOptionals::calculator); // Returns Optional<Optional<Integer>>, hence it does not compile
+            
+This last one will not compile because map returns an Optional and the calculator already returns an Optional<_Integer_> for us, so what we need to do to get an actual Optional<_Integer_> is use flatMap() instead of map():
+            
+            Optional<Integer> result = optional.flatMap(ChainingOptionals::calculator); // Returns Optional<Integer>
+
+This works because flatMap removes the unnecessary layer, flattening the result. Chained flatMap calls are also useful when we need to transform one Optional type to another.
+            
+#### Collecting Results
+            
+##### Collecting Using Basic Collectors
+            
+##### Collecting into Maps
+            
+##### Collecting Using Grouping, Partitioning and Mapping
