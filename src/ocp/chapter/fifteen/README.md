@@ -1057,7 +1057,26 @@ This last one will not compile because map returns an Optional and the calculato
 This works because flatMap removes the unnecessary layer, flattening the result. Chained flatMap calls are also useful when we need to transform one Optional type to another.
             
 #### Collecting Results
-            
+
+This is the last topic on this chapter, so far we learned a little about grouping results with the collect() terminal operation. There are many predefined collectors, including some that will be shown in a following list. These collectors are available via static methods on the Collectors interface:
+
+| Collector | Description | Return value when passed to **collect**   |
+| :------------------ | :--------------- | :-------------------   |
+| averagingDouble(ToDoubleFunction f), averagingInt(ToIntFunction f) and averagingLong(ToLongFunction f) | Calculates the average for our three core primitive types | Double |
+| counting() | Counts the number of elements | Long |
+| groupingBy(Function f), groupingBy(Function f, Collector dc) and groupingBy(Function f, Supplier s, Collector dc) | Creates a map grouping by the specified function with the optional map type supplier and optional downstream collector | Map<_K_, List<_T_>> |
+| joining(CharSequence cs) | Creates a single String using cs as a delimiter between elements if one is specified | String |
+| maxBy(Comparator c) and minBy(Comparator c) | Finds the largest/smallest elements | Optional<_T_> |
+| mapping(Function f, Collector dc) | Adds another level of collectors | Collector |
+| partitioningBy(Predicate p) and partitioningBy(Predicate p, Collector dc) | Creates a map grouping by thge specified predicate with the optional further downstream collector | Map<Boolean, List<_T_>> |
+| summarizingDouble(ToDoubleFunction f), summarizingInt(ToIntFunction f) and summarizingLong(ToLongFunction f) | Calculates average, min, maxx and so on | DoubleSummaryStatistics, IntSummaryStatistics and LongSummaryStatistics |
+| summingDouble(ToDoubleFunction f), summingInt(ToIntFunction f) and summingLong(ToLongFunction f) | Calculates the sum for our three core primitive types | Double, Integer and Long |
+| toList() and toSet() | Creates an arbitrary type of list or set | List and Set |
+| toCollection(Supplier s) | Creates a Collection of the specified type | Collection |
+| toMap(Function k, Function v), toMap(Function k, Function v, BinaryOperation m) and toMap(Function k, Function v, BinaryOperator m, Supplier s) | Creates a map using functions to map the keys, values, an optional merge function, and an optional map type supplier | Map |
+
+These are some grouping/partitioning collectors.
+
 ##### Collecting Using Basic Collectors
             
 ##### Collecting into Maps
