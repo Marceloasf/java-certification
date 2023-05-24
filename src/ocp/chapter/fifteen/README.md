@@ -1069,7 +1069,7 @@ This is the last topic on this chapter, so far we learned a little about groupin
 | maxBy(Comparator c) and minBy(Comparator c) | Finds the largest/smallest elements | Optional<_T_> |
 | mapping(Function f, Collector dc) | Adds another level of collectors | Collector |
 | partitioningBy(Predicate p) and partitioningBy(Predicate p, Collector dc) | Creates a map grouping by thge specified predicate with the optional further downstream collector | Map<Boolean, List<_T_>> |
-| summarizingDouble(ToDoubleFunction f), summarizingInt(ToIntFunction f) and summarizingLong(ToLongFunction f) | Calculates average, min, maxx and so on | DoubleSummaryStatistics, IntSummaryStatistics and LongSummaryStatistics |
+| summarizingDouble(ToDoubleFunction f), summarizingInt(ToIntFunction f) and summarizingLong(ToLongFunction f) | Calculates average, min, max and so on | DoubleSummaryStatistics, IntSummaryStatistics and LongSummaryStatistics |
 | summingDouble(ToDoubleFunction f), summingInt(ToIntFunction f) and summingLong(ToLongFunction f) | Calculates the sum for our three core primitive types | Double, Integer and Long |
 | toList() and toSet() | Creates an arbitrary type of list or set | List and Set |
 | toCollection(Supplier s) | Creates a Collection of the specified type | Collection |
@@ -1078,6 +1078,14 @@ This is the last topic on this chapter, so far we learned a little about groupin
 These are some grouping/partitioning collectors.
 
 ##### Collecting Using Basic Collectors
+            
+It's important to pass the Collector to the collect() method. The Collectors exists to help collect elements and a Collector doesn't do anything on its own. For example:
+            
+            String result = stringList.collect(Collectors.joining(", ")); // returns a string joining all elements with a comma and a space
+            String result2 = stringList.collect(Collectors.averagingInt(String::length)); // return the average length of the string elements
+            TreeSet<String> result3 = stringList.filter(s -> s.startsWith("t")).collect(Collectors.toCollection(TreeSet::new)); // filters values that starts with t and returns those inside a new instance of the TreeSet collection -- Could use toSet if we wanted a Set instead of TreeSet
+            
+With these examples you should be able to use almost all of the Collectors from the list, except groupingBy(), mapping(), partitioningBy() and toMap().
             
 ##### Collecting into Maps
             
