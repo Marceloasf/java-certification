@@ -1083,10 +1083,29 @@ It's important to pass the Collector to the collect() method. The Collectors exi
             
             String result = stringList.collect(Collectors.joining(", ")); // returns a string joining all elements with a comma and a space
             String result2 = stringList.collect(Collectors.averagingInt(String::length)); // return the average length of the string elements
-            TreeSet<String> result3 = stringList.filter(s -> s.startsWith("t")).collect(Collectors.toCollection(TreeSet::new)); // filters values that starts with t and returns those inside a new instance of the TreeSet collection -- Could use toSet if we wanted a Set instead of TreeSet
+            TreeSet<String> result3 = stringList.filter(s -> s.startsWith("t")).collect(Collectors.toCollection(TreeSet::new)); // filters values that starts with 't'
+                                         // and returns those inside a new instance of the TreeSet collection -- Could use toSet if we wanted a Set instead of TreeSet
             
 With these examples you should be able to use almost all of the Collectors from the list, except groupingBy(), mapping(), partitioningBy() and toMap().
             
 ##### Collecting into Maps
             
+When creating a map you need to specify two functions. The first function tells the collector how to create the key and the second tells the collector how to create the value. For example:
+            
+            Map<String, Integer> map = stringList.collect(Collectors.toMap(s -> s, String::length)); // results in {ex=2, ex2=3, ex3=3} for ex.
+            
+> **Note:** Returning the same value passed into a lambda is a **common** operation, so Java provides a method for it. We can rewrite the s -> s as Function.identity().
+            
+If we wanted to run the same code but reversed, it would probably throw an exception since the keys could easily repeat themselfs and that would throw a IllegalStateException: Duplicate key 'n'. But there's a way to solve this with a overload of the toMap method, which is the following:
+            
+            Map<Integer, String> map = stringList.collect(Collectors.toMap(String::length, s -> s, (s1, s2) -> s1 + "," + s2));
+            // results in {2=ex, 3=ex2,ex3} instead of an exception.
+            
+The adition of the third lambda makes the toMap method understand how to handle such cases where the keys are the same, and the method will return a HashMap instead of a Map reference. If we wanted to define which map type we wanted to return, we could use the last overload of the toMap method, which is the follwoing:
+            
+            Map<Integer, String> map = stringList.collect(Collectors.toMap(String::length, s -> s, (s1, s2) -> s1 + "," + s2, TreeMap::new));
+            // results in {2=ex, 3=ex2,ex3}, but is a TreeMap ref instead of HashMap.
+            
 ##### Collecting Using Grouping, Partitioning and Mapping
+            
+
