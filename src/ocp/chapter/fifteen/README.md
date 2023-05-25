@@ -1108,4 +1108,50 @@ The adition of the third lambda makes the toMap method understand how to handle 
             
 ##### Collecting Using Grouping, Partitioning and Mapping
             
+The methods groupingBy() and partitioningBy() appear often on the exam, so be sure to understand them well. Let's suppose that we wanted to get groups of names by their length, we can do that by saying that we want to group by length:
+            
+            Map<Integer, List<String>> map = stringList.collect(Collectors.groupingBy(String::length)); // returns {2=[ex], 3=[ex2,ex3]}
+            
+The groupingBy() collector tells collect() that it should group all of the elements of the stream into a Map.The function determines the keys in the Map and each value in the Map is a List of all entries that match that key.
 
+> **Note:** The functional we call in groupingBy() cannot return null. It does **not** allow null keys.
+            
+Suppose we want a Set instead of a List. There's another signature of the method that lets us pass a _downstream collector_, this second collector does something special with the values:
+            
+                        Map<Integer, Set<String>> map = stringList
+                                .collect(Collectors.groupingBy(String::length, Collectors.toSet())); // returns {2=[ex], 3=[ex2,ex3]} but in a Set
+            
+We can even change the Map type returned through yet another parameter:
+            
+                        TreeMap<Integer, Set<String>> map = stringList
+                                .collect(Collectors.groupingBy(String::length, TreeMap::new, Collectors.toSet()));
+            
+As this is very flexible you can do a lot of things with it.
+            
+_Partitioning_ is a special case of grouping. With partitioning there are only two possible groups: **true** and **false**. Partitioning is like splitting a list into two parts. For example: 
+            
+            Map<Boolean, List<String>> map = stringList.collect(Collectors.partitioningBy(s -> s.length() <= 5)); 
+            // returns two lists in a map {false=[tigers],true=[lions,bears]}
+                                                                                                                
+For this example we passed a Predicate with the logic for which group each string belongs in. If we wanted to check for 7 instead of 5, the false array would be empty.
+                                                                                                                
+As with groupingBy() we can change the type of List to something else:
+                                                                                                                
+            Map<Boolean, Set<String>> map = stringList.collect(Collectors.partitioningBy(s -> s.length() <= 5, Collectors.toSet())); 
+                                                                                                             
+But unlike groupingBy we can't change the type of Map that gets returned.
+                
+And finally to end the chapter, instead of using the downstream collector to specify the type, we can use any of the collectors that we've already studied:
+                                                                                                             
+            Map<Integer, Long> map = stringList.collect(Collectors.groupingBy(String::length, Collectors.counting()));  // {5=2, 6=1}
+            
+With this we could also use the mapping Collector instead of counting or any other else:
+            
+            Map<Integer, Long> map = stringList.collect(Collectors.groupingBy(String::length,
+                                                                   Collectors.mapping(
+                                                                              s -> s::chartAt(0),
+                                                                              Collectores.minBy((a,b) -> a - b)
+                                                                   )));  
+            // returns {5=optional[b], 6=Optional[t]} supposing we have a List with these elements: "lions, tigers, bears" 
+            
+This is one of the most difficult codes to read since mapping takes two paramenters: the function for the value and how to group it further. On this case we wanted to get the first letter of the first animal alphabetically of each length.
