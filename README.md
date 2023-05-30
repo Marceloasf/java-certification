@@ -22,4 +22,5 @@ Repository dedicated to **my** studies of the needed content to obtain a Java 11
 - [Annotations](./src/ocp/chapter/thirteen)
 - [Generics and Collections](./src/ocp/chapter/fourteen)
 - [Functional Programming](./src/ocp/chapter/fifteen)
+- [Exceptions, Assertions and Localization](./src/ocp/chapter/sixteen)
 - [Concurrency](./src/ocp/chapter/eighteen)
