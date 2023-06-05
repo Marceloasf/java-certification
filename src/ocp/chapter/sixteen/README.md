@@ -57,3 +57,15 @@ These are some great additions to other ways of calling the constructor of an ex
         }
         
 This is just one example of the many things that we can do inside constructors of custom exceptions.
+
+### Printing Stack Traces
+
+A stack trace shows the exception along with the method calls it took to get there. The JVM automatically prints a stack trace when an exception is thrown and not handled by the program. We can also print the stack trace if we want to when we handle the exception, as the following:
+
+        try {
+          throw new CannotSwimException();
+        } catch (CannotSwimException e) {
+          e.printStackTrace();
+        }
+        
+## Automating Resource Management
