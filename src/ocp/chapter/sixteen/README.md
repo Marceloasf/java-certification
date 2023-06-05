@@ -12,4 +12,48 @@ Localization
 - Use resource bundles
 - Format messages, dates, and numbers with Java
 
-## Introduction - Reviewing Exceptions
+## Creating Custom Exceptions
+
+Java provides many exceptions classes out of the box for us, but sometimes we need to have a custom exception for a more specialized purpose.
+
+### Declaring Exception Classes
+
+When creating a custom exception class we need to decide whether we want a checked or unchecked exception. We can extend any exception class to create a custom exception class, but the most common is to extend Exception for checked exceptions and RuntimeException for unchecked exceptions. Here are some examples of custom checked and unchecked exceptions:
+
+        class CannotSwimException extends Exception {}
+        class DangerInTheWater extends RuntimeException {}
+        class SharkInTheWaterException extends DangerInTheWater {}
+        class Dolphin {
+            public void swim() throws CannotSwimException {
+                // logic
+            }
+        }
+        
+### Adding Custom Constructors
+
+These one liners messages exceptions are pretty useful but we can pass more parameters to them with custom constructors. The following are some examples of the most common constructors defined by the Exception class:
+
+        public class CannotSwimException extends Exception {
+            public CannotSwimException() {
+                super(); // Optional, compiler will insert it automatically
+            }
+            public CannotSwimException(Exception e) {
+                super(e);
+            }
+            public CannotSwimException(String message) {
+                super(message);
+            }
+        }
+        
+> **Note:** The default no-argument constructor is provided automatically if you don't write any constructors of your own (already seen on Chapter about Class Design)
+
+These are some great additions to other ways of calling the constructor of an exception, but we can also create some custom ones like the following:
+
+
+        public class CannotSwimException extends Exception {
+            public CannotSwimException(Exception e) {
+                super("Cannot swim because: " + e.toString());
+            }
+        }
+        
+This is just one example of the many things that we can do inside constructors of custom exceptions.
