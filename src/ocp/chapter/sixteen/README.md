@@ -69,3 +69,9 @@ A stack trace shows the exception along with the method calls it took to get the
         }
         
 ## Automating Resource Management
+
+A try-with-resources statement ensures that any resources declared in the try clause are automatically closed at the conclusion of the try block. This feature is also known as _automatic resource management_, because Java automatically takes care of closing the resources for you.
+
+### Constructing Try-With-Resources Statements
+
+
