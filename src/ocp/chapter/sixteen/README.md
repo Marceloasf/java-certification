@@ -74,4 +74,20 @@ A try-with-resources statement ensures that any resources declared in the try cl
 
 ### Constructing Try-With-Resources Statements
 
+The first rule when using try-with-resources statements, is that it requires resources that implement the _AutoCloseable_ interface. So for example, you cannot use an try-with-resouces statement with a String variable since the String class doesn't implement the AutoCloseable interface. But what makes this interface so special? It contains a method called close() which the JVM calls it inside a "hidden" finally block, which we can refer as an implicit finally block. This AutoCloseable interface method can be overriden by classes that implement it.
 
+The second rule we should be familiar with is that a try-with-resoucers statement can iunclude multiple resources, which are all closed in the **reverse order** in which they are delcared. So resources are separated by a semicolon with the last semicolon being optional. The following would be closed in the reverse order:
+
+        try(var bookRead = new MyFileReader("1");
+            var movieRead = new MyFileReader("2");
+            var tvRead = new MyFileReader("3");) {
+            ...   
+         } ...
+ 
+ It will try anything inside the try block and then it'll close in the following order: 3, 2 and 1. If we added a finally block (explicit one), it would be executed **after** the close() implicit finally block.
+ 
+ The last rule we should know is that resources declared within a try-with-resources statement are in scope only within the try block. So for example those MyFileReader classes that we declared on the try-with-resources above are only available inside the try block, they can't be used on the catch or finally blocks.
+ 
+ ### Learning the New Effectively Final Feature
+  
+ 
