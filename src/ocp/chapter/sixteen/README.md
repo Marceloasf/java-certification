@@ -88,6 +88,42 @@ The second rule we should be familiar with is that a try-with-resoucers statemen
  
  The last rule we should know is that resources declared within a try-with-resources statement are in scope only within the try block. So for example those MyFileReader classes that we declared on the try-with-resources above are only available inside the try block, they can't be used on the catch or finally blocks.
  
- ### Learning the New Effectively Final Feature
-  
+### Learning the New Effectively Final Feature
+
+Since Java 9 we can use resources declared prior to the try-with-resources statement, provided they are marked **final** or **effectively final**. The syntax is almost the same as the others, just need to use the resource name in place of the resource declaration, separated by a semicolon (;).
+
+        public void relax() {
+                final var bookReader = new MyFileReader("4");
+                MyFileReader movieReader = new MyFileReader("5");
+                try (bookReader;
+                     var tvReader = new MyFileReader("6");
+                     movieReader) {
+                        ...
+                } finally {
+                        ...
+                }
+        }
+         
+As we can see in the example above, the usage of the final and effectively final variables is different than the common resource declaration one, but it works the same way. About effectively final, just remember that we know that this movieReader variable is effectively final because it gets assigned a value **only once**.
+
+The following example could come accros you in the exam and is a non-compilant example:
+
+                var writer = Files.newBufferedWriter(path);
+                try (writer) { // DOES NOT COMPILE
+                        writer.append("Welcome to the zoo!"); // This is fine
+                }
+                writer = null; // This is the problem -- Variable is not effectively final because of this assignment
+                
+This example involves the variable not being effectively final, but there's another trick that could be in the exam and we need to be aware of, this one is when you try to access a variable that was already closed because of the automatic resource management:
+
+                var writer = Files.newBufferedWriter(path);
+                writer.append("This write is permitted but a really bad idea!");
+                try (writer) {
+                        writer.append("Welcome to the zoo!");
+                }
+                writer.append("This write will fail since the resource was closed at this point"); // IOException
+                
+Last but not least, take care when using resources declared before try-with-resources statements, even though is permited is not a good idea because these classes don't implement the AutoCloseable interface for no reason. If an exception is thrown during the process of creating a BufferedReader or Writer for a file, that could stop the whole thread from going on. So always use the try-with-resources statements with closeable classes.
+
+### Understanding Supressed Exceptions
  
