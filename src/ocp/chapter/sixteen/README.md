@@ -70,11 +70,11 @@ A stack trace shows the exception along with the method calls it took to get the
         
 ## Automating Resource Management
 
-A try-with-resources statement ensures that any resources declared in the try clause are automatically closed at the conclusion of the try block. This feature is also known as _automatic resource management_, because Java automatically takes care of closing the resources for you.
+A try-with-resources statement ensures that any resources declared in the try clause are automatically closed at the conclusion of the try clause. This feature is also known as _automatic resource management_, because Java automatically takes care of closing the resources for you.
 
 ### Constructing Try-With-Resources Statements
 
-The first rule when using try-with-resources statements, is that it requires resources that implement the _AutoCloseable_ interface. So for example, you cannot use an try-with-resouces statement with a String variable since the String class doesn't implement the AutoCloseable interface. But what makes this interface so special? It contains a method called close() which the JVM calls it inside a "hidden" finally block, which we can refer as an implicit finally block. This AutoCloseable interface method can be overriden by classes that implement it.
+The first rule when using try-with-resources statements, is that it requires resources that implement the _AutoCloseable_ interface. So for example, you cannot use an try-with-resouces statement with a String variable since the String class doesn't implement the AutoCloseable interface. But what makes this interface so special? It contains a method called close() which the JVM calls it inside a "hidden" finally clause, which we can refer as an implicit finally clause. This AutoCloseable interface method can be overriden by classes that implement it.
 
 The second rule we should be familiar with is that a try-with-resoucers statement can iunclude multiple resources, which are all closed in the **reverse order** in which they are delcared. So resources are separated by a semicolon with the last semicolon being optional. The following would be closed in the reverse order:
 
@@ -84,9 +84,9 @@ The second rule we should be familiar with is that a try-with-resoucers statemen
             ...   
          } ...
  
- It will try anything inside the try block and then it'll close in the following order: 3, 2 and 1. If we added a finally block (explicit one), it would be executed **after** the close() implicit finally block.
+ It will try anything inside the try clause and then it'll close in the following order: 3, 2 and 1. If we added a finally clause (explicit one), it would be executed **after** the close() implicit finally clause.
  
- The last rule we should know is that resources declared within a try-with-resources statement are in scope only within the try block. So for example those MyFileReader classes that we declared on the try-with-resources above are only available inside the try block, they can't be used on the catch or finally blocks.
+ The last rule we should know is that resources declared within a try-with-resources statement are in scope only within the try clause. So for example those MyFileReader classes that we declared on the try-with-resources above are only available inside the try clause, they can't be used on the catch or finally clauses.
  
 ### Learning the New Effectively Final Feature
 
@@ -106,7 +106,7 @@ Since Java 9 we can use resources declared prior to the try-with-resources state
          
 As we can see in the example above, the usage of the final and effectively final variables is different than the common resource declaration one, but it works the same way. About effectively final, just remember that we know that this movieReader variable is effectively final because it gets assigned a value **only once**.
 
-The following example could come accros you in the exam and is a non-compilant example:
+The following example could come across you in the exam and is a non-compilant example:
 
                 var writer = Files.newBufferedWriter(path);
                 try (writer) { // DOES NOT COMPILE
@@ -127,3 +127,25 @@ Last but not least, take care when using resources declared before try-with-reso
 
 ### Understanding Supressed Exceptions
  
+What happens if the close() method doesn't work? It'll throw an exception and how do we deal with that? Basically we can wrap the class that implements AutoCloseable in a try-with-resources with a catch, that will catch all the exceptions from the try clause and also from the close() method if any are thrown in there.
+
+Now imagine that we handle the one exception from the close() method and another one from the try clause, when this happens Java supress all the exceptions but the first one, so in this case the first one would be one throwed inside the try clause, this would be the first exception and the close() exception would be thrown too but it would be supressed by Java. For example:
+
+        try (JammedTurkeyCage t = new JammedTurkeyCage()) {
+                throw new IllegalStateException("Turkey ran off");
+        } catch (IllegalStateException e) {
+                System.out.println("Caught: ", e.getMessage()); // prints "Turkey ran off"
+                for (Throwable t: e.getSuppresed()) 
+                        System.out.println("Supressed: ", t.getMessage()); // prints "close() exception message"
+        }
+        
+> **Note:** Java remembers the supressed exception that go with a primary exception even if we don't handle them in the code, for ex if the thrown exception was a RuntimeException instead of the IllegalState one, Java would throw the RuntimeException but it would also print the Supressed exception from the catch.
+
+If more than one resource thrown an exception, the first one to be thrown becomes the primary exception, with the rest being grouped as suppressed exceptions. Since resources are closed in reverse order in which they are declared, the primary exception would be on the last declared resource that throws an exception.
+
+> **Note:** Keep in mind that suppress exceptions are only those thrown in the try clause.
+
+## Declaring Assertions
+
+
+
