@@ -147,5 +147,61 @@ If more than one resource thrown an exception, the first one to be thrown become
 
 ## Declaring Assertions
 
+An assertion is a boolean expression that you place at a point in your code where you expect something to be true. An assert statement contains this statement along with an optional message. 
 
+> **Note:** We can turn on assertions for testing and debugging while leaving them off when the program is running.
 
+### Validating Data with the assert Statement
+
+The syntaxx for an assert statement has two forms:
+
+        assert test_value; // boolean expression
+        assert test_value: message; // optional message
+
+When the assertions are enabled and the boolean expression evaluates to false, then an AssertionError wil lbe thrown at runtime. Remember that programs aren't supposed to catch Errors, so this means that assertion failures are **fatal** and end the program.
+
+These are some examples of usage:
+
+        assert 1 == age;
+        assert (2 == height);
+        assert 100.0 == length : "Problem with length";
+        assert ("Cecelia".equals(name)): "Failed to verify user data";
+
+The three possible outcomes of an assert statement are as follows:
+
+- If assertions are disabled, Java skips the assertion and goes to on in the code.
+- If assertions are enabled and the boolean expression is true, then our assertion has been validated and nothing happens. The program continues to execute in its normal manner.
+- If assertions are enabled and the boolean expression is false, then our assertion is invalid and an AssertionError is thrown (stops the program).
+
+### Enabling Assertions
+
+By default, assert statements are ignored by the JVM at runtime, to enable them use the -enableassertions or -ea flags on the command line. To run a java single-file source-code we can execute the following:
+
+        java -ea Filename.java
+        java -enableassertions Filename.java
+
+Using these flags without any arguments enables assertions in all classes. We can also enable assertions for a specific class or package, for example:
+
+        java -ea:com.demos... my.programs.Main // only for a package
+        java -ea:com.demos.TestColors my.programs.Main // only for a class
+
+### Disabling Assertions
+
+If we wanted to enable assertions for the entire class but disable it in some specific packages or classes, we could do that using -disableassertions or -da flags on the command line:
+        
+        java -ea:com.demos... -da:com.demos... my.programs.Main // only for a package
+        java -ea:com.demos... -da:com.demos.TestColors my.programs.Main // only for a class
+
+### Assertions Applications
+
+The following is a list that will not be on the exam, but is just here to show you some ideas of how they can be used.
+
+| Usage | Description | 
+|: ----- | : ------ |
+| Internal invariants | Assert that a value is within a certain constraint, such as assert x < 0. |
+| Class invariants | Assert the validity of an object's state. Class invariants are typically private methods within the class that return a boolean. |
+| Control flow invariants | Assert that a line of code you assume is unreachable is never reached. |
+| Pre-conditions | Assert that certain conditions are met before a method is invoked. |
+| Post-conditions | Assert that certain conditions are met after a method executes successfully. |
+
+## Working with Dates and Times
