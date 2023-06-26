@@ -460,3 +460,61 @@ These are some examples of how we can use these symbols:
         println(f3.format(d)); // $1,234,567.47
 
 ### Localizing Dates
+
+Like numbers, date formats can vary by locale. The following table shows methods used to retrieve an instance of a DateTimeFormatter using the default locale.
+
+|Description|Using default Locale|
+|:-|:-|
+|For formatting dates|DateTimeFormatter.ofLocalizedDate(dateStyle)|
+|For formatting times|DateTimeFormatter.ofLocalizedTime(dateStyle)|
+|For formatting dates and times|DateTimeFormatter.ofLocalizedDateTime(dateStyle, timeStyle) and DateTimeFormatter.ofLocalizedDateTime(dateTimeStyle)|
+
+Each method in the table takes a FormatStyle parameter, with posible values SHORT, MEDIUM, LONG and FULL. For the exam we don't need to know the format of each of these styles. If we need to specify a locale all we gotta do is append withLocale(Locale locale) to the method call.
+
+Examples of usage:
+
+        Locale.setDefault(new Locale("en", "US"));
+        var italy = new Locale("it", "IT");
+        var dt = LocalDateTime.of(2020, Month.OCTOBER, 20, 15, 12, 34);
+
+        print(DateTimeFormatter.ofLocalizedDate(SHORT), dt, italy);
+        // 10/20/20, 20/10/20
+
+        print(DateTimeFormatter.ofLocalizedTime(SHORT), dt, italy);
+        // 3:12 PM, 15:12
+
+        print(DateTimeFormatter.ofLocalizedDateTime(SHORT), dt, italy);
+        // 10/20/20, 3:12 PM, 20/10/20, 15:12
+
+As we can see on the above examples, we are outputing each value with both locales declared on the top. Applying a locale has a big impact on the built-in date and time formatters.
+
+### Specifying a Locale Category
+
+When we set a default locale, several display and formatting option are internally selected. If we need a finer-grained control of the default locale, Java actually subdivides the underlying formatting options into distinct categories, with the Locale.Category enum. This enum is a nested element in Locale, which supports distinct locales for displaying and foramtting data. For the exam we should be familiar with the two enum values:
+
+- **DISPLAY**: Category used for displaying data about the locale.
+- **FORMAT**: Category used for formatting dates, numbers or currencies.
+
+We can see some examples of these on the following code snippet:
+
+        public static void printCurrency(Locale locale, double money) {
+                println(NumberFormat.getCurrencyInstance().format(money) + ", " + locale.getDisplayLanguage());
+        }
+
+        ...
+
+        var spain = new Locale("es", "ES");
+        var money = 1.23;
+        
+        Locale.setDefault(new Locale("en", "US"));
+        printCurrency(spain, money); // $1.23, Spanish
+
+        Locale.setDefault(Category.DISPLAY, spain);
+        printCurrency(spain, money); // $1.23, español
+
+        Locale.setDefault(Category.FORMAT, spain);
+        printCurrency(spain, money); // 1,23 €, español
+
+For the exam we just need to know that we can set parts of the locale independently. Also know that calling Locale.setDefault(localeOptions) after the previous code snippet will change both locale categories to the inputted one.
+
+## Loading Properties with Resource Bundles
