@@ -205,3 +205,122 @@ The following is a list that will not be on the exam, but is just here to show y
 | Post-conditions | Assert that certain conditions are met after a method executes successfully. |
 
 ## Working with Dates and Times
+
+In this exam you'll need to know how to work with Date and Time API, but knowing many of the varios date/time classes and their various methods, how to specify amounts of time with the Period and Duration classes, and even how to resolve values across time zones with daylight savings.
+
+### Understanding Date and Time Types
+
+Java includes numerous classes to model the examples in the previous paragraph. These are listed in the following table:
+
+|Class|Description|Example|
+|:-|:-|:-|
+|java.time.LocalDate|Date with day, month, year|Birth date|
+|java.time.LocalTime|Time of a day|Midnight|
+|java.time.LocalDateTime|Day and time with no time zone|10 a.m. next Monday|
+|java.time.ZonedDateTime|Date and time with a specific time zone|9 a.m. EST on 2/20/2021|
+
+Each of these types contains a static method called now() that allows you to get the current value.
+
+        System.out.println(LocalDate.now());
+        System.out.println(LocalTime.now());
+        System.out.println(LocalDateTime.now());
+        System.out.println(ZonedDateTime.now());
+
+The output is as it follows:
+
+        2020-10-14
+        12:45:20.854
+        2020-10-14T12:45:20.854
+        2020-10-14T12:45:20.854-04:00[America/New_York]
+
+### Using the of() Methods
+
+We can create some date and time values using the of() methods in each class.
+
+        LocalDate date1 = LocalDate.of(2020, Month.OCTOBER, 20);
+        LocalDate date2 = LocalDate.of(2020, 10, 20);
+
+Both pass in the year, month and date. Although it's good to use the Month constants to make the code easier to read, we can also pass the int number of the month directly.
+
+> **Note:** While programmers often count from zero, working with dates is one of the few times where it is expected to count from 1, just like in the real world.
+
+When creating a time we can choose how detailed you want to be. We can specify the just the hour and minute, or we can include the number of seconds. We can even include nanoseconds if we want to be very precise (a nanosecond is a billionth of a second). 
+
+        LocalTime time1 = LocalTime.of(6, 15); // hour and minute
+        LocalTime time2 = LocalTime.of(6, 15, 30); // + seconds
+        LocalTime time3 = LocalTime.of(6, 15, 30, 200); // + nanoseconds
+
+We can combine dates and times in multiple ways.
+
+        var dateTime1 = LocalDateTime.of(2020, Month.OCTOBER, 20, 6, 15, 30);
+
+        LocalDate date = LocalDate.of(2020, Month.OCTOBER, 20);
+        LocalTime time = LocalTime.of(6, 15);
+        var dateTime2 = LocalDateTime.of(date, time);
+
+> **Note:** Did you noticed that we didn't used a single constructor in all these examples? This is an example of the usage of the **Factory Pattern**, which rather than use a constructor, the creation of objects is delegated to a _static_ factory method.
+
+### Formatting Dates and Times
+
+Thee date and times classes support many methods to get data out of them.
+
+        LocalDate date = LocalDate.of(2020, Month.OCTOBER, 20);
+        System.out.println(date.getDayOfWeek()); // TUESDAY
+        System.out.println(date.getMonth()); // OCTOBER
+        System.out.println(date.getYear()); // 2020
+        System.out.println(date.getDayOfYear()); // 294
+
+Java also provides a class called **DateTimeFormatter** to display standard formats:
+
+        LocalDate date = LocalDate.of(2020, Month.OCTOBER, 20);
+        LocalTime time = LocalTime.of(11, 12, 34);
+        LocalDateTime dateTime = LocalDateTime.of(date, time);
+
+        System.out.println(date.format(DateTimeFormatter.ISO_LOCAL_DATE)); // 2020-10-20
+        System.out.println(time.format(DateTimeFormatter.ISO_LOCAL_TIME)); // 11:12:34
+        System.out.println(dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)); // 2020-10-20T11:12:34
+
+The DateTimeFormatter will throw an exception if it encounters an incompatible type. For example the usage of DateTimeFormatter.ISO_LOCAL_TIME with a LocalDate type object.
+
+If we want to we can create a custom format with the DateTimeFormatter class:
+
+        var customFormat = DateTimeFormatter.ofPattern("MMMM dd, yyyy 'at' hh:mm");
+        System.out.println(dt.format(customFormat)); // October 20, 2020 at 11:12
+
+Breaking this down we see that we have the usage of M, d, y and the symbols or letters go on. Java assigns each symbol or letter a specific date/time part. For example, M is used for month, while y is used for year. The case here matters! Using m instead of M means that you want minutes instead of months. 
+
+> **Note:** If we want to include a custom text value in the pattern we can do that using the single quote as you saw in the example from above. This is called escaping characters.
+
+#### Learning the Standard Date/Time Symbols
+
+For the exam we need to be familiar enough with the various symbols that can be used in a date/time String. The following table shows the most common of them:
+
+|Symbol|Meaning|Examples|
+|:-|:-|:-|
+|y|Year|20,2020|
+|M|Month|1,01,Jan,January|
+|d|Day|5, 05|
+|h|Hour|9,09|
+|m|Minute|45|
+|s|Second|52|
+|a|a.m./p.m.|AM,PM|
+|z|Time Zone Name|Eastern Standard Time, EST|
+|Z|Time Zone Offset|-0400|
+
+As you can see we hve some variations on their usage, for example when using Month depending on how we use the letter M, MM, MMM or MMMM makes a difference in the final result.
+
+We need to make sure the format String is compatible with the underlying date/time type. We can't use Day, Month and Year with a LocalTime object. So the following shows which symbols we can use with each of the date/time objects:
+
+|Symbol|LocalDate|LocalTime|LocalDateTime|ZonedDateTime|
+|:-|:-|:-|:-|:-|
+|y|Yes|No|Yes|Yes|
+|M|Yes|No|Yes|Yes|
+|d|Yes|No|Yes|Yes|
+|h|No|Yes|Yes|Yes|
+|m|No|Yes|Yes|Yes|
+|s|No|Yes|Yes|Yes|
+|a|No|Yes|Yes|Yes|
+|z|No|No|No|Yes|
+|Z|No|No|No|Yes|
+
+## Supporting Internationalization and Localization
