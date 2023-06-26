@@ -324,3 +324,55 @@ We need to make sure the format String is compatible with the underlying date/ti
 |Z|No|No|No|Yes|
 
 ## Supporting Internationalization and Localization
+
+_Internationalization_ is the process of designing you program so it can be adapted. This involves placing strings in a properties file and ensuring the proper data formatters are used. _Localization_ means actually supporting multiple locales or geographic regions. Locale can be seen as being like a language and country pairing. Localization includes translating strings to different languages. It also includes outputting dates and numbers in the correct format for that locale.
+
+> **Note:** Initially, your program does not need to support multiple locales. The key is to future-proof your application by using these techniques. This way, when your product becomes successful, you can add support for new languages or regions without rewriting everything.
+
+### Picking a Locale
+
+The Locale class is in the java.util package. The first useful Locale to find is the user's current locale.
+
+        Locale locale = Locale.getDefault();
+        System.out.println(locale); // pt_BR
+
+This default output tells us which locale our computer is using.
+
+Locale Formats example:
+
+- en: Only shows lowercase language code.
+- en_US: Shows lowercase language code plus uppercase country code.
+
+> **Note:** For the exam we don't need to memorize the langue our country codes. The exam will ley us know about any that are being used.
+
+There are some built-in constants in Java's Locale class, with some common locales:
+
+        System.out.println(Locale.GERMAN); // de
+        System.out.println(Locale.GERMANY); // de_DE
+
+The second way of selecting a Locale is to use the constructors to create a new object. For example:
+
+        System.out.println(new Locale("fr")); // fr
+        System.out.println(new Locale("hi", "IN")); // hi_IN
+
+Java let's us create a Locale with an invalid language or country, such as xx_XX, but the program will not behavior as expected since there's no match for that.
+
+The third way to create a Locale, which is the more flexible one, involves the **builder design pattern**. This pattern lets us set all of the properties that we care about and then build the object at the end.  
+
+        Locale l1 = new Locale.Builder()
+                .setLanguage("en")
+                .setRegion("US")
+                .build;
+
+        Locale l2 = new Locale.Builder()
+                .setRegion("US")
+                .setLanguage("en")
+                .build;
+
+> **Note:** The builder pattern in Java is often implemented with an instance of a static nested class. Since the builder and the target class tend to be tightly coupled, it makes sense for them to be defined within the same class.
+
+- We can change the default locale of the computer with: Locale.setDefault(Locale locale)
+        - We can use this in the exam and in our practice, but in the real world scenarios we rarely write code that changes a user's default locale.
+
+### Localizing Numbers
+
