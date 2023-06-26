@@ -376,3 +376,87 @@ The third way to create a Locale, which is the more flexible one, involves the *
 
 ### Localizing Numbers
 
+Formatting or parsing currency and number values can change depending on your locale. For example, in the USA the dollar sign is prepended before the value along with the decimal point for values less tahn one dollar, such as $2.15. In Germany, the euro symbol is appeneded to the value along with a comma for values less than one euro, such as 2,15 €.
+
+Luckily for us, the java.text package includes classes to save the day. The following sections cover how to format numbers, currency and dates based on the locale.
+
+The first step to formatting or parsing data is the same, obtain an instance of a NumberFormat. The following table contains factory methods to get a NumberFormat:
+
+|Description|Using default Locale and a specified Locale|
+|:-|:-|
+|A general-purpose formatter|NumberFormat.getInstance() and NumberFormat.getInstance(locale)|
+|Same as getInstance|NumberFormat.getNumberInstance() and NumberFormat.getNumberInstance(locale)|
+|For formatting monetary amounts|NumberFormat.getCurrencyInstance() and NumberFormat.getCurrencyInstance(locale)|
+|For formatting percentages|NumberFormat.getPercentInstance() and NumberFormat.getPercentInstance(locale)|
+|Rounds decimal values before displaying|NumberFormat.getIntegerInstance() and NumberFormat.getIntegerInstance(locale)|
+
+#### Formatting Numbers
+
+The NumberFormat.format() method formats the given number based on the locale associated with the NumberFormat object.
+
+        int attendeesPerYear = 3_200_000;
+        int attendeesPerMonth = attendeesPerYear/12;
+
+        var us = NumberFormat.getInstance(Locale.US);
+        println(us.format(attendeesPerMonth));
+
+        var gr = NumberFormat.getInstance(Locale.GERMANY);
+        println(gr.format(attendeesPerMonth));
+
+        var ca = NumberFormat.getInstance(Locale.CANADA_FRENCH);
+        println(ca.format(attendeesPerMonth));
+        
+Even though they look similar, the output results are different because of the locale:
+
+- 266,666
+- 266.666
+- 266 666
+
+Formatting currency works the same way:
+
+        double price = 48;
+        var myLocale = NumberFormat.getCurrencyInstance();
+        println(myLocale.format(price));
+
+When we run this with a default locale of en_US it outputs $48.00, on the other hand if we run it with the default locale of en_GB for Great Britain, it outputs £48.00.
+
+> **Note:** In the real world, use int or BigDecimal for money and not double. Doing math on amounts with double is dangerous because the values are stored as floating-point numbers. Losing some pennies or fractions of pennies during transactions isn't a good idea.
+
+
+#### Parsing Numbers
+
+The NumberFormat.parse() method accomplishes the conversion from a String to a structured object or primitive value, taking the locale into consideration.
+
+> **Note:** As in other parse() methods implemented in Java, this one throws a ParseException too, so remember to handle it.
+
+        String s = "40.45";
+
+        var us = NumberFormat.getInstance(Locale.US);
+        println(us.parse(s)); // 40.45
+
+        var fr = NumberFormat.getInstance(Locale.FRENCH);
+        println(fr.parse(s)); // 40
+
+In the US, a dot (.) is part of a number and the number is parsed how you might expected. But in France a decimal point is not used to separate numbers, so Java pareses it as a formatting character and it stops looking at the rest of the number. So always make sure you pare the values using the right locale.
+
+#### Writing a Custom Number Formatter
+
+The patterns when creating custom formatters can get complex, but we need to know only about two formatting characters:
+
+- #: Omit the position if no digit exists for it.
+- 0: Put a 0 in the position if no digit exists for it.
+
+These are some examples of how we can use these symbols:
+
+        double d = 1234567.467;
+        
+        NumberFormat f1 = new DecimalFormat("###,###,###.0");
+        println(f1.format(d)); // 1,234,567.5
+        
+        NumberFormat f2 = new DecimalFormat("000,000,000.00000");
+        println(f2.format(d)); // 001,234,567.46700
+        
+        NumberFormat f3 = new DecimalFormat("$#,###,###.##");
+        println(f3.format(d)); // $1,234,567.47
+
+### Localizing Dates
