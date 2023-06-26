@@ -636,3 +636,11 @@ What if a property is not found in any resource bundle? Then, an exception is th
 
 Sometimes we want to format the text data from a resource bundle. The convetion is to use a number inside braces such as {0}, {1}, etc. The number indicates the order in which the parameters will be passed. Although resource bundles don't support this directly, the MessageFormat class does.
 
+For example:
+
+        helloByName=Hello, {0} and {1}
+
+In Javam we can read in the value normally, after that we can run it through the MessageFormat class to substitute the parameters. The second parameter to format() is a vararg, allowing you to specify any number of input values. Given a resource bundle rb:
+
+        String format = rb.getString("helloByName");
+        print(MessageFormat.format(format, "Tammy", "Henry")); // Hello, Tammy and Henry
